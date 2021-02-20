@@ -11,4 +11,34 @@ jobs:
           npm install
       - run: |
           npm run all
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto commit packaged action"
+
+  # test action works running from the graph  
+  enforce-changelog:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: read-version
+        run: |
+          echo "::set-output name=version::$(jq ".version" package.json)"
+      - id: changelog-enforcer
+        uses: dangoslen/changelog-enforcer@v2
+        with:
+          expectedLatestVersion: ${{ steps.read-version.outputs.version }}
+      - if: failure()
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          check_for_duplicate_msg: true
+          msg: |
+            Hey @${{ github.event.pull_request.user.login }}, the Changelog Enforcer failed. Can you take a look at the error below and correct it? Thanks!
+
+            ```
+            ${{ steps.changelog-enforcer.outputs.errorMessage }}
+            ```
+
   
