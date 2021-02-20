@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "depenadbot-helper",
+  "version": "0.1.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "A GitHub Action to auto-add dependabot changes to your changelog and increment version numbers",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,24 +15,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/dangoslen/dependabot-helper.git"
   },
   "keywords": [
-    "actions",
+    "dependabot",
     "node",
-    "setup"
+    "typescript",
+    "actions",
+    "changelog"
   ],
-  "author": "",
+  "author": "@dangoslen",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.6"
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.30",
     "@typescript-eslint/parser": "^4.15.1",
     "@vercel/ncc": "^0.27.0",
-    "eslint": "^7.17.0",
+    "eslint": "^7.20.0",
     "eslint-plugin-github": "^4.1.1",
     "eslint-plugin-jest": "^24.1.3",
     "jest": "^26.6.3",
