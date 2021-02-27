@@ -2,10 +2,14 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
+  versionPattern:
+    description: |
+      "A regex pattern used to extract the versions from the changelog. Changelog Enforcer assumes the use of the KeepAChangelog.com convention, and 
+      as such looks for a line starting with '## [version] - date. Your regex should match the version as the 2nd match group.
+      The regex pattern is used with global and multiline flags. Also note that since this
+      is passed as a String, you will need to escape a backslash \ character via \\"
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    default: "^## \\[((v|V)?\\d*\\.\\d*\\.\\d*-?\\w*|unreleased|Unreleased|UNRELEASED)\\]"
 runs:
   using: 'node12'
   main: 'dist/index.js'
