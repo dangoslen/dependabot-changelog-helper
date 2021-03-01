@@ -2,12 +2,11 @@ import readline from 'readline'
 import fs from 'fs'
 import {EOL} from 'os'
 import {DependabotEntry} from './entry-extractor'
-import {PathLike} from 'fs'
 
 interface ParsedResult {
   changelogLineNumber: number
   versionFound: boolean
-  dependencySectionFound: boolean,
+  dependencySectionFound: boolean
   contents: string[]
 }
 
@@ -18,8 +17,8 @@ export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
   newVersionLineNumber: number,
-  changelogPath: PathLike
-) {
+  changelogPath: fs.PathLike
+): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
   const result: ParsedResult = await parseChangelogForEntry(
     versionRegex,
@@ -31,32 +30,37 @@ export async function updateChangelog(
   let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
   let lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
-    changelogEntry = `### Dependencies` + EOL + changelogEntry
+    changelogEntry = `### Dependencies${EOL}${changelogEntry}`
   }
   if (!result.versionFound) {
-    changelogEntry = `## [${version}]` + EOL + changelogEntry + EOL
+    changelogEntry = `## [${version}]${EOL}${changelogEntry}${EOL}`
     lineNumber = newVersionLineNumber
   }
   writeLine(lineNumber, changelogPath, changelogEntry, result.contents)
 }
 
-function writeLine(lineNumber: number, changelogPath: PathLike, changelogEntry : string, contents: string[]) {
-  var length = contents.push('')
-  for (var l = length - 1; l > lineNumber; l--) {
-    contents[l] = contents[l - 1]
+function writeLine(
+  lineNumber: number,
+  changelogPath: fs.PathLike,
+  changelogEntry: string,
+  contents: string[]
+): void {
+  const length = contents.push('')
+  for (let i = length - 1; i > lineNumber; i--) {
+    contents[i] = contents[i - 1]
   }
   contents[lineNumber] = changelogEntry
   fs.writeFileSync(changelogPath, contents.join(EOL))
 }
 
-function buildVersionRegex(version: string) {
+function buildVersionRegex(version: string): RegExp {
   return new RegExp(`^## \\[${version}\\]`)
 }
 
 async function parseChangelogForEntry(
   versionRegex: RegExp,
-  changelogPath: PathLike
-) {
+  changelogPath: fs.PathLike
+): Promise<ParsedResult> {
   const fileStream = readline.createInterface({
     input: fs.createReadStream(changelogPath),
     terminal: false
@@ -68,7 +72,7 @@ async function parseChangelogForEntry(
   let dependencySectionFound = false
   let foundEntryLine
 
-  var contents = []
+  const contents = []
 
   // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
   for await (const line of fileStream) {
@@ -80,9 +84,9 @@ async function parseChangelogForEntry(
 
     if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
       dependencySectionFound = true
-      changelogLineNumber = lineNumber 
-    } 
-    
+      changelogLineNumber = lineNumber
+    }
+
     if (!versionFound && versionRegex.test(line)) {
       versionFound = true
       changelogLineNumber = lineNumber + 1
@@ -92,20 +96,24 @@ async function parseChangelogForEntry(
     if (foundEntryLine) {
       changelogLineNumber = lineNumber
     } else {
-        lineNumber++
+      lineNumber++
     }
   }
 
   // If we are at the end of the file, and we never found the last entry of the dependcies,
   // it is because the last entry was the last line of the file
-  if (contents.length == lineNumber && !foundEntryLine && dependencySectionFound) {
+  if (
+    contents.length === lineNumber &&
+    !foundEntryLine &&
+    dependencySectionFound
+  ) {
     changelogLineNumber = lineNumber
   }
 
   return {
-    changelogLineNumber: changelogLineNumber,
-    versionFound: versionFound,
-    dependencySectionFound: dependencySectionFound,
-    contents: contents
+    changelogLineNumber,
+    versionFound,
+    dependencySectionFound,
+    contents
   }
 }

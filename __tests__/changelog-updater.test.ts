@@ -1,4 +1,4 @@
-import { addDependabotEntry } from '../src/changelog-updater'
+import { updateChangelog } from '../src/changelog-updater'
 import { DependabotEntry } from '../src/entry-extractor'
 
 const { Readable } = require("stream")
@@ -55,7 +55,7 @@ test("adds an entry to the changelog - section already exists with entry", async
     fs.createReadStream.mockReturnValue(readable);
     fs.readFileSync.mockReturnValue(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES)
 
-    await addDependabotEntry(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
+    await updateChangelog(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
 
     // Should only be called once
     const params = fs.writeFileSync.mock.calls[0]
@@ -76,7 +76,7 @@ test("adds an entry to the changelog - section already exists, but no entry", as
     fs.createReadStream.mockReturnValue(readable);
     fs.readFileSync.mockReturnValue(CHANGELOG_WITH_PROPER_SECTIONS)
 
-    await addDependabotEntry(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
+    await updateChangelog(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
 
     // Should only be called once
     const params = fs.writeFileSync.mock.calls[0]
@@ -96,7 +96,7 @@ test("adds an entry to the changelog - section does not exist, but version does"
     fs.createReadStream.mockReturnValue(readable);
     fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDECIES)
 
-    await addDependabotEntry(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
+    await updateChangelog(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
 
     // Should only be called once
     const params = fs.writeFileSync.mock.calls[0]
@@ -116,7 +116,7 @@ test("adds an entry to the changelog - multiple versions", async () => {
     fs.createReadStream.mockReturnValue(readable);
     fs.readFileSync.mockReturnValue(CHANGELOG_WITH_MULTIPLE_VERSIONS)
 
-    await addDependabotEntry(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
+    await updateChangelog(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
 
     // Should only be called once
     const params = fs.writeFileSync.mock.calls[0]
@@ -141,7 +141,7 @@ test("adds an entry to the changelog - no version section", async () => {
     fs.createReadStream.mockReturnValue(readable);
     fs.readFileSync.mockReturnValue(CHANGELOG_WITH_NO_VERSION)
 
-    await addDependabotEntry(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
+    await updateChangelog(PACKAGE_ENTRY, "UNRELEASED", 2, './CHANGELOG.md')
 
     // Should only be called once
     const params = fs.writeFileSync.mock.calls[0]
