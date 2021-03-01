@@ -18,6 +18,8 @@ jobs:
   dependabot-helper:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - uses: ./
         with:
           version: UNRELEASED
@@ -25,19 +27,20 @@ jobs:
           activationLabel: 'dependabot-helper'
           changelogPath: './CHANGELOG.md'
 
-  enforce-changelog:
-    needs: dependabot-helper
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Auto commit packaged action"
+
       - id: read-version
         run: |
           echo "::set-output name=version::$(jq ".version" package.json)"
           echo "::set-output name=tag::$(jq ".version" package.json)"
+
       - id: changelog-enforcer
         uses: dangoslen/changelog-enforcer@v2
         with:
           expectedLatestVersion: "${{ steps.read-version.outputs.tag }}"
+          
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:
