@@ -12,7 +12,7 @@ export function getDependabotEntry(title: string): DependabotEntry {
     throw new Error('Unable to extract entry from pull request title!')
   }
 
-  return  {
+  return {
     package: result[1],
     oldVersion: result[2],
     newVersion: result[3]

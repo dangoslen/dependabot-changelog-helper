@@ -13,12 +13,15 @@
         "outFiles": ["${workspaceFolder}/lib/**/*.js"]
       },
       {
+        "name": "Jest Debug opened file",
         "type": "node",
         "request": "launch",
-        "name": "Run Tests",
-        "program": "${workspaceFolder}/src/${file}",
-        "preLaunchTask": "tsc: build - tsconfig.json",
-        "outFiles": ["${workspaceFolder}/lib/**/*.js"]
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/jest",
+        "args": ["test", "${fileBasenameNoExtension}", "--runInBand", "--no-cache", "--watchAll"],
+        "cwd": "${workspaceRoot}",
+        "protocol": "inspector",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
       },
     ]
   }

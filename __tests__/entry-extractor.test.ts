@@ -1,4 +1,4 @@
-import { DependabotEntry, getDependabotEntry } from '../src/entry-extractor'
+import {DependabotEntry, getDependabotEntry} from '../src/entry-extractor'
 
 test('extracts package and simple number verions', async () => {
   const entry: DependabotEntry = getDependabotEntry(
