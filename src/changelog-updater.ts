@@ -17,6 +17,7 @@ const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 export async function addDependabotEntry(
   entry: DependabotEntry,
   version: string,
+  newVersionLineNumber: number,
   changelogPath: PathLike
 ) {
   const versionRegex: RegExp = buildVersionRegex(version)
@@ -28,13 +29,15 @@ export async function addDependabotEntry(
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
+  let lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies` + EOL + changelogEntry
   }
   if (!result.versionFound) {
-    changelogEntry = `## [${version}]` + EOL + changelogEntry
+    changelogEntry = `## [${version}]` + EOL + changelogEntry + EOL
+    lineNumber = newVersionLineNumber
   }
-  writeLine(result.changelogLineNumber, changelogPath, changelogEntry, result.contents)
+  writeLine(lineNumber, changelogPath, changelogEntry, result.contents)
 }
 
 function writeLine(lineNumber: number, changelogPath: PathLike, changelogEntry : string, contents: string[]) {
