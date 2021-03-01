@@ -12,7 +12,7 @@ interface ParsedResult {
 }
 
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### [Dependencies|DEPENDENCIES]/)
-const EMPTY_LINE_REGEX = new RegExp(/^[\s|\Z]$/)
+const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 
 export async function addDependabotEntry(
   entry: DependabotEntry,
@@ -27,7 +27,7 @@ export async function addDependabotEntry(
 
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
-  let changelogEntry = buildDependencyEntry(entry)
+  let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies` + EOL + changelogEntry
   }
@@ -49,11 +49,6 @@ function writeLine(lineNumber: number, changelogPath: PathLike, changelogEntry :
 function buildVersionRegex(version: string) {
   return new RegExp(`^## \\[${version}\\]`)
 }
-
-function buildDependencyEntry(entry: DependabotEntry) {
-  return `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
-}
-
 
 async function parseChangelogForEntry(
   versionRegex: RegExp,
@@ -82,12 +77,12 @@ async function parseChangelogForEntry(
 
     if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
       dependencySectionFound = true
-      changelogLineNumber = lineNumber
+      changelogLineNumber = lineNumber 
     } 
     
     if (!versionFound && versionRegex.test(line)) {
       versionFound = true
-      changelogLineNumber = lineNumber
+      changelogLineNumber = lineNumber + 1
     }
 
     foundEntryLine = dependencySectionFound && EMPTY_LINE_REGEX.test(line)
