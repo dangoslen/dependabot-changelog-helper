@@ -8,7 +8,7 @@ inputs:
       "The version to find in the CHANGELOG to add dependabot entries underneath"
     required: true
     default: "UNRELEASED"
-  changeLogPath:
+  changelogPath:
     description: |
       "The path to the CHANGELOG file to add dependabot entries to"
     required: true

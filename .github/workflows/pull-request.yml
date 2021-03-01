@@ -1,9 +1,9 @@
 name: 'pull-request'
-on: # rebuild any PRs and main branch changes
+on:
   pull_request:
 
 jobs:
-  build: # make sure build/ci work properly
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,9 +15,18 @@ jobs:
         with:
           commit_message: "Auto commit packaged action"
 
-  # test action works running from the graph  
+  dependabot-helper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./
+        with:
+          version: UNRELEASED
+          newVersionLineNumber: 3
+          activationLabel: 'dependabot-helper'
+          changelogPath: './CHANGELOG.md'
+
   enforce-changelog:
-    needs: build
+    needs: dependabot-helper
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
