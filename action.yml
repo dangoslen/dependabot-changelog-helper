@@ -1,15 +1,28 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Dependabot Helper'
+description: |
+  "Helps keep your repository uo-to-date when Dependabot updates your dependencies."
+author: '@dangoslen'
 inputs:
-  versionPattern:
+  version:
     description: |
-      "A regex pattern used to extract the versions from the changelog. Changelog Enforcer assumes the use of the KeepAChangelog.com convention, and 
-      as such looks for a line starting with '## [version] - date. Your regex should match the version as the 2nd match group.
-      The regex pattern is used with global and multiline flags. Also note that since this
-      is passed as a String, you will need to escape a backslash \ character via \\"
+      "The version to find in the CHANGELOG to add dependabot entries underneath"
     required: true
-    default: "^## \\[((v|V)?\\d*\\.\\d*\\.\\d*-?\\w*|unreleased|Unreleased|UNRELEASED)\\]"
+    default: "UNRELEASED"
+  changeLogPath:
+    description: |
+      "The path to the CHANGELOG file to add dependabot entries to"
+    required: true
+    default: './CHANGELOG.md'
+  activationLabel:
+    description: |
+      "The label to indicate that the Dependabot Helper should run"
+    required: true
+    default: 'dependencies'
+  newVersionLineNumber:
+    description: |
+      "If the desired version is not found in the file, this is the default line number (0-indexed) in which to place the new version"
+    required: true
+    default: 2
 runs:
   using: 'node12'
   main: 'dist/index.js'

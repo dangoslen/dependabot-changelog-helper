@@ -14,7 +14,7 @@ interface ParsedResult {
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### [Dependencies|DEPENDENCIES]/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 
-export async function addDependabotEntry(
+export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
   newVersionLineNumber: number,
