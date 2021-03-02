@@ -12,7 +12,7 @@ async function run(): Promise<void> {
     const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'))
 
     if (label !== '' && pullRequestHasLabel(label)) {
-      const entry: DependabotEntry = getDependabotEntry(github.context.payload.pull_request)
+      const entry: DependabotEntry = getDependabotEntry(github.context.payload)
       await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
     }
   } catch (error) {

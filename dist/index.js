@@ -36,10 +36,14 @@ const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
 function updateChangelog(entry, version, newVersionLineNumber, changelogPath) {
     return __awaiter(this, void 0, void 0, function* () {
         const versionRegex = buildVersionRegex(version);
-        const result = yield parseChangelogForEntry(versionRegex, changelogPath);
+        let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`;
+        const result = yield parseChangelogForEntry(versionRegex, changelogEntry, changelogPath);
+        // If the entry was already found, we don't write a change to the changelog
+        if (result.foundDuplicateEntry) {
+            return;
+        }
         // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
         // sections exist
-        let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`;
         let lineNumber = result.changelogLineNumber;
         if (!result.dependencySectionFound) {
             changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
@@ -63,7 +67,7 @@ function writeLine(lineNumber, changelogPath, changelogEntry, contents) {
 function buildVersionRegex(version) {
     return new RegExp(`^## \\[${version}\\]`);
 }
-function parseChangelogForEntry(versionRegex, changelogPath) {
+function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
         const fileStream = readline_1.default.createInterface({
@@ -74,14 +78,15 @@ function parseChangelogForEntry(versionRegex, changelogPath) {
         let changelogLineNumber = 0;
         let versionFound = false;
         let dependencySectionFound = false;
-        let foundEntryLine;
+        let foundLastEntry = false;
+        let foundDuplicateEntry = false;
         const contents = [];
         try {
             // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
             for (var fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), !fileStream_1_1.done;) {
                 const line = fileStream_1_1.value;
                 contents.push(line);
-                if (foundEntryLine) {
+                if (foundLastEntry) {
                     continue;
                 }
                 if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
@@ -92,8 +97,9 @@ function parseChangelogForEntry(versionRegex, changelogPath) {
                     versionFound = true;
                     changelogLineNumber = lineNumber + 1;
                 }
-                foundEntryLine = dependencySectionFound && EMPTY_LINE_REGEX.test(line);
-                if (foundEntryLine) {
+                foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line);
+                foundDuplicateEntry = !foundLastEntry && line.includes(changelogEntry);
+                if (foundLastEntry) {
                     changelogLineNumber = lineNumber;
                 }
                 else {
@@ -111,11 +117,12 @@ function parseChangelogForEntry(versionRegex, changelogPath) {
         // If we are at the end of the file, and we never found the last entry of the dependcies,
         // it is because the last entry was the last line of the file
         if (contents.length === lineNumber &&
-            !foundEntryLine &&
+            !foundLastEntry &&
             dependencySectionFound) {
             changelogLineNumber = lineNumber;
         }
         return {
+            foundDuplicateEntry,
             changelogLineNumber,
             versionFound,
             dependencySectionFound,
@@ -135,15 +142,17 @@ function parseChangelogForEntry(versionRegex, changelogPath) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getDependabotEntry = void 0;
 const TITLE_REGEX = new RegExp(/Bumps? ([\w|\-|_]*) from (.*) to (.*)/);
-function getDependabotEntry(title) {
-    const result = TITLE_REGEX.exec(title);
-    if (result === null) {
+function getDependabotEntry(event) {
+    const pullRequestNumber = event.pull_request.number;
+    const titleResult = TITLE_REGEX.exec(event.pull_request.title);
+    if (titleResult === null) {
         throw new Error('Unable to extract entry from pull request title!');
     }
     return {
-        package: result[1],
-        oldVersion: result[2],
-        newVersion: result[3]
+        pullRequestNumber,
+        package: titleResult[1],
+        oldVersion: titleResult[2],
+        newVersion: titleResult[3]
     };
 }
 exports.getDependabotEntry = getDependabotEntry;
@@ -197,8 +206,7 @@ function run() {
             const label = core.getInput('label');
             const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'));
             if (label !== '' && pullRequestHasLabel(label)) {
-                const title = getPullRequestTitle();
-                const entry = entry_extractor_1.getDependabotEntry(title);
+                const entry = entry_extractor_1.getDependabotEntry(github.context.payload);
                 yield changelog_updater_1.updateChangelog(entry, version, newVersionLineNumber, changelogPath);
             }
         }
@@ -209,9 +217,6 @@ function run() {
 }
 function pullRequestHasLabel(label) {
     return getPullRequestLabels().includes(label);
-}
-function getPullRequestTitle() {
-    return github.context.payload.pull_request.title;
 }
 function getPullRequestLabels() {
     return github.context.payload.pull_request.labels.map((l) => l.get['name']);
