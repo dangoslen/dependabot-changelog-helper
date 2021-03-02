@@ -4,6 +4,7 @@ import {EOL} from 'os'
 import {DependabotEntry} from './entry-extractor'
 
 interface ParsedResult {
+  foundDuplicateEntry: boolean
   changelogLineNumber: number
   versionFound: boolean
   dependencySectionFound: boolean
@@ -20,14 +21,20 @@ export async function updateChangelog(
   changelogPath: fs.PathLike
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
+  let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
   const result: ParsedResult = await parseChangelogForEntry(
     versionRegex,
+    changelogEntry,
     changelogPath
   )
 
+  // If the entry was already found, we don't write a change to the changelog
+  if (result.foundDuplicateEntry) {
+    return
+  }
+
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
-  let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`
   let lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies${EOL}${changelogEntry}`
@@ -59,6 +66,7 @@ function buildVersionRegex(version: string): RegExp {
 
 async function parseChangelogForEntry(
   versionRegex: RegExp,
+  changelogEntry: string,
   changelogPath: fs.PathLike
 ): Promise<ParsedResult> {
   const fileStream = readline.createInterface({
@@ -70,7 +78,8 @@ async function parseChangelogForEntry(
   let changelogLineNumber = 0
   let versionFound = false
   let dependencySectionFound = false
-  let foundEntryLine
+  let foundLastEntry = false
+  let foundDuplicateEntry = false
 
   const contents = []
 
@@ -78,7 +87,7 @@ async function parseChangelogForEntry(
   for await (const line of fileStream) {
     contents.push(line)
 
-    if (foundEntryLine) {
+    if (foundLastEntry) {
       continue
     }
 
@@ -92,8 +101,9 @@ async function parseChangelogForEntry(
       changelogLineNumber = lineNumber + 1
     }
 
-    foundEntryLine = dependencySectionFound && EMPTY_LINE_REGEX.test(line)
-    if (foundEntryLine) {
+    foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line)
+    foundDuplicateEntry = !foundLastEntry && line.includes(changelogEntry)
+    if (foundLastEntry) {
       changelogLineNumber = lineNumber
     } else {
       lineNumber++
@@ -104,13 +114,14 @@ async function parseChangelogForEntry(
   // it is because the last entry was the last line of the file
   if (
     contents.length === lineNumber &&
-    !foundEntryLine &&
+    !foundLastEntry &&
     dependencySectionFound
   ) {
     changelogLineNumber = lineNumber
   }
 
   return {
+    foundDuplicateEntry,
     changelogLineNumber,
     versionFound,
     dependencySectionFound,

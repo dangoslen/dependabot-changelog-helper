@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
       - run: |
           npm install
       - run: |
@@ -19,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
 
       - uses: ./
         with:
@@ -31,6 +35,11 @@ jobs:
         with:
           commit_message: "Auto commit packaged action"
 
+  enforce-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
       - id: read-version
         run: |
           echo "::set-output name=version::$(jq ".version" package.json)"
@@ -40,7 +49,7 @@ jobs:
         uses: dangoslen/changelog-enforcer@v2
         with:
           expectedLatestVersion: "${{ steps.read-version.outputs.tag }}"
-          
+
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:

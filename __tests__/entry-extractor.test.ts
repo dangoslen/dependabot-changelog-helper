@@ -1,9 +1,17 @@
 import {DependabotEntry, getDependabotEntry} from '../src/entry-extractor'
 
+const PULL_REQUEST = {
+  number: 123,
+  title: 'Bumps package from 6.0 to 7.0'
+}
+
+const PULL_REQUEST_ALPHA_TO_BETA = {
+  number: 123,
+  title: 'Bumps package-with-dashes from 6.0-alpha to 6.0-beta'
+}
+
 test('extracts package and simple number verions', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
-    'Bumps package from 6.0 to 7.0'
-  )
+  const entry: DependabotEntry = getDependabotEntry(PULL_REQUEST)
 
   expect(entry.package).toStrictEqual('package')
   expect(entry.oldVersion).toStrictEqual('6.0')
@@ -11,9 +19,7 @@ test('extracts package and simple number verions', async () => {
 })
 
 test('extracts package and -alpha -beta versions', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
-    'Bumps package-with-dashes from 6.0-alpha to 6.0-beta'
-  )
+  const entry: DependabotEntry = getDependabotEntry(PULL_REQUEST_ALPHA_TO_BETA)
 
   expect(entry.package).toStrictEqual('package-with-dashes')
   expect(entry.oldVersion).toStrictEqual('6.0-alpha')

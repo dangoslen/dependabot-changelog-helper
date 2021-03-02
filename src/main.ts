@@ -12,9 +12,7 @@ async function run(): Promise<void> {
     const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'))
 
     if (label !== '' && pullRequestHasLabel(label)) {
-      const title: string = getPullRequestTitle()
-      const entry: DependabotEntry = getDependabotEntry(title)
-
+      const entry: DependabotEntry = getDependabotEntry(github.context.payload.pull_request)
       await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
     }
   } catch (error) {
@@ -24,10 +22,6 @@ async function run(): Promise<void> {
 
 function pullRequestHasLabel(label: string): boolean {
   return getPullRequestLabels().includes(label)
-}
-
-function getPullRequestTitle(): string {
-  return github.context.payload.pull_request!.title
 }
 
 function getPullRequestLabels(): string[] {
