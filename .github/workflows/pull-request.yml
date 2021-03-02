@@ -42,13 +42,13 @@ jobs:
 
       - id: read-version
         run: |
-          echo "::set-output name=version::$(jq ".version" package.json)"
-          echo "::set-output name=tag::v$(jq ".version" package.json)"
+          echo ::set-output name=version::$(jq -r ".version" package.json)
+          echo ::set-output name=tag::v$(jq -r ".version" package.json)
 
       - id: changelog-enforcer
         uses: dangoslen/changelog-enforcer@v2
         with:
-          expectedLatestVersion: "${{ steps.read-version.outputs.tag }}"
+          expectedLatestVersion: ${{ steps.read-version.outputs.tag }}
 
       - if: failure()
         uses: unsplash/comment-on-pr@master
