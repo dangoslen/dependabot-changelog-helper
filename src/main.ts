@@ -8,7 +8,7 @@ async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
     const changelogPath: PathLike = core.getInput('changelogPath')
-    const label: string = core.getInput('label')
+    const label: string = core.getInput('activationLabel')
     const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'))
 
     if (label !== '' && pullRequestHasLabel(label)) {

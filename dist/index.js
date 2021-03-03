@@ -203,7 +203,7 @@ function run() {
         try {
             const version = core.getInput('version');
             const changelogPath = core.getInput('changelogPath');
-            const label = core.getInput('label');
+            const label = core.getInput('activationLabel');
             const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'));
             if (label !== '' && pullRequestHasLabel(label)) {
                 const entry = entry_extractor_1.getDependabotEntry(github.context.payload);
