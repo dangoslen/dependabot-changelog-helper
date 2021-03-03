@@ -1,19 +1,33 @@
+import {PathLike} from 'fs'
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
+import {DependabotEntry, getDependabotEntry} from './entry-extractor'
+import {updateChangelog} from './changelog-updater'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const version: string = core.getInput('version')
+    const changelogPath: PathLike = core.getInput('changelogPath')
+    const label: string = core.getInput('label')
+    const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'))
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
+    if (label !== '' && pullRequestHasLabel(label)) {
+      const entry: DependabotEntry = getDependabotEntry(github.context.payload)
+      await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
+}
+
+function pullRequestHasLabel(label: string): boolean {
+  return getPullRequestLabels().includes(label)
+}
+
+function getPullRequestLabels(): string[] {
+  return github.context.payload.pull_request!.labels.map(
+    (l: Map<string, string>) => l.get['name']
+  )
 }
 
 run()
