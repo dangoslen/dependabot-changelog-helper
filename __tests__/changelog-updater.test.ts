@@ -172,3 +172,24 @@ test('does not update the changelog on duplicate entru', async () => {
   // Should only be called once
   expect(fs.writeFileSync).toBeCalledTimes(0)
 })
+
+const CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bumps \`package\` from v1 to v2
+
+## [v0.9.0]
+### Added
+- Something`
+
+test('does not update the changelog on duplicate entry when not the list item', async () => {
+  const readable = Readable.from([CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE])
+  fs.createReadStream.mockReturnValue(readable)
+  fs.readFileSync.mockReturnValue(CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE)
+
+  await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', 2, './CHANGELOG.md')
+
+  // Should only be called once
+  expect(fs.writeFileSync).toBeCalledTimes(0)
+})

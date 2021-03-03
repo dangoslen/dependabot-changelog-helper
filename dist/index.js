@@ -86,6 +86,11 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
             for (var fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), !fileStream_1_1.done;) {
                 const line = fileStream_1_1.value;
                 contents.push(line);
+                // Only check the line if we haven't found the entry before
+                if (!foundDuplicateEntry && line.startsWith(changelogEntry)) {
+                    foundDuplicateEntry = true;
+                }
+                // If we have found the last Dependencies entry for the version, just continue to the next line
                 if (foundLastEntry) {
                     continue;
                 }
@@ -98,7 +103,6 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
                     changelogLineNumber = lineNumber + 1;
                 }
                 foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line);
-                foundDuplicateEntry = !foundLastEntry && line.includes(changelogEntry);
                 if (foundLastEntry) {
                     changelogLineNumber = lineNumber;
                 }
