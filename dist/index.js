@@ -182,7 +182,8 @@ function run() {
             const version = core.getInput('version');
             const changelogPath = core.getInput('changelogPath');
             const label = core.getInput('activationLabel');
-            const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'));
+            // Line numbers in files are read as 1-indexed, but we deal with contents as 0-indexed
+            const newVersionLineNumber = Number(core.getInput('newVersionLineNumber')) - 1;
             if (label !== '' && pullRequestHasLabel(label)) {
                 const entry = entry_extractor_1.getDependabotEntry(github.context.payload);
                 yield changelog_updater_1.updateChangelog(entry, version, newVersionLineNumber, changelogPath);
