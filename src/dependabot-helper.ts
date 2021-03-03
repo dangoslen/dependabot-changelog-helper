@@ -26,7 +26,7 @@ function pullRequestHasLabel(label: string): boolean {
 
 function getPullRequestLabels(): string[] {
   return github.context.payload.pull_request!.labels.map(
-    (l: Map<string, string>) => l.get['name']
+    (l: {name?: string}) => l.name
   )
 }
 
