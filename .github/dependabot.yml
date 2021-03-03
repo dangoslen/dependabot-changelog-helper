@@ -9,6 +9,7 @@ updates:
       interval: 'weekly'
     labels:
       - dependabot-helper
+    target-branch: 'releases/v1.0'
 
   # Enable version updates for npm
   - package-ecosystem: 'github-actions'
@@ -19,3 +20,4 @@ updates:
       interval: 'weekly'
     labels:
       - dependabot-helper
+    target-branch: 'releases/v1.0'
