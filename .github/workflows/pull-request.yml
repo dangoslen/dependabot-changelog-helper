@@ -13,7 +13,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.read-versions.outputs.version  }}
+      version: ${{ steps.read-version.outputs.version  }}
     steps:
       - uses: actions/checkout@v2
       - id: read-version
