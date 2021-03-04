@@ -86,6 +86,11 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
             for (var fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), !fileStream_1_1.done;) {
                 const line = fileStream_1_1.value;
                 contents.push(line);
+                // Only check the line if we haven't found the entry before
+                if (!foundDuplicateEntry && line.startsWith(changelogEntry)) {
+                    foundDuplicateEntry = true;
+                }
+                // If we have found the last Dependencies entry for the version, just continue to the next line
                 if (foundLastEntry) {
                     continue;
                 }
@@ -98,7 +103,6 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
                     changelogLineNumber = lineNumber + 1;
                 }
                 foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line);
-                foundDuplicateEntry = !foundLastEntry && line.includes(changelogEntry);
                 if (foundLastEntry) {
                     changelogLineNumber = lineNumber;
                 }
@@ -134,33 +138,7 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
 
 /***/ }),
 
-/***/ 789:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDependabotEntry = void 0;
-const TITLE_REGEX = new RegExp(/Bumps? ([\w|\-|_]*) from (.*) to (.*)/);
-function getDependabotEntry(event) {
-    const pullRequestNumber = event.pull_request.number;
-    const titleResult = TITLE_REGEX.exec(event.pull_request.title);
-    if (titleResult === null) {
-        throw new Error('Unable to extract entry from pull request title!');
-    }
-    return {
-        pullRequestNumber,
-        package: titleResult[1],
-        oldVersion: titleResult[2],
-        newVersion: titleResult[3]
-    };
-}
-exports.getDependabotEntry = getDependabotEntry;
-//# sourceMappingURL=entry-extractor.js.map
-
-/***/ }),
-
-/***/ 109:
+/***/ 588:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -203,8 +181,9 @@ function run() {
         try {
             const version = core.getInput('version');
             const changelogPath = core.getInput('changelogPath');
-            const label = core.getInput('label');
-            const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'));
+            const label = core.getInput('activationLabel');
+            // Line numbers in files are read as 1-indexed, but we deal with contents as 0-indexed
+            const newVersionLineNumber = Number(core.getInput('newVersionLineNumber')) - 1;
             if (label !== '' && pullRequestHasLabel(label)) {
                 const entry = entry_extractor_1.getDependabotEntry(github.context.payload);
                 yield changelog_updater_1.updateChangelog(entry, version, newVersionLineNumber, changelogPath);
@@ -219,10 +198,36 @@ function pullRequestHasLabel(label) {
     return getPullRequestLabels().includes(label);
 }
 function getPullRequestLabels() {
-    return github.context.payload.pull_request.labels.map((l) => l.get['name']);
+    return github.context.payload.pull_request.labels.map((l) => l.name);
 }
 run();
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=dependabot-helper.js.map
+
+/***/ }),
+
+/***/ 789:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getDependabotEntry = void 0;
+const TITLE_REGEX = new RegExp(/Bumps? ([\w|\-|_]*) from (.*) to (.*)/);
+function getDependabotEntry(event) {
+    const pullRequestNumber = event.pull_request.number;
+    const titleResult = TITLE_REGEX.exec(event.pull_request.title);
+    if (titleResult === null) {
+        throw new Error('Unable to extract entry from pull request title!');
+    }
+    return {
+        pullRequestNumber,
+        package: titleResult[1],
+        oldVersion: titleResult[2],
+        newVersion: titleResult[3]
+    };
+}
+exports.getDependabotEntry = getDependabotEntry;
+//# sourceMappingURL=entry-extractor.js.map
 
 /***/ }),
 
@@ -6223,7 +6228,7 @@ module.exports = require("zlib");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __nccwpck_require__(109);
+/******/ 	return __nccwpck_require__(588);
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
