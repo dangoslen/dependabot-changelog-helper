@@ -212,7 +212,14 @@ run();
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getDependabotEntry = void 0;
-const TITLE_REGEX = new RegExp(/Bumps? ([\w|\-|_]*) from (.*) to (.*)/);
+/** Regex explanation
+ *                                 --- Matches Bump or Bumps
+ *                                 |     --- Matches any non-whitespace character; matching as a few as possible
+ *                                 |     |          --- Matches any non-whitespace character
+ *                                 |     |          |          --- Matches any non-whitespace character
+ *                                 |     |          |          |
+ */
+const TITLE_REGEX = new RegExp(/Bumps? (\S+?) from (\S*) to (\S*)/);
 function getDependabotEntry(event) {
     const pullRequestNumber = event.pull_request.number;
     const titleResult = TITLE_REGEX.exec(event.pull_request.title);

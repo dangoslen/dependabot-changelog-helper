@@ -1,6 +1,13 @@
 import {WebhookPayload} from '@actions/github/lib/interfaces'
 
-const TITLE_REGEX = new RegExp(/Bumps? ([\w|\-|_]*) from (.*) to (.*)/)
+/** Regex explanation
+ *                                 --- Matches Bump or Bumps
+ *                                 |     --- Matches any non-whitespace character; matching as a few as possible
+ *                                 |     |          --- Matches any non-whitespace character
+ *                                 |     |          |          --- Matches any non-whitespace character
+ *                                 |     |          |          |
+ */
+const TITLE_REGEX = new RegExp(/Bumps? (\S+?) from (\S*) to (\S*)/)
 
 export interface DependabotEntry {
   pullRequestNumber: number

@@ -1,12 +1,19 @@
 name: 'pull-request'
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - labeled
+      - unlabeled
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.read-versions.outputs.version  }}
+      version: ${{ steps.read-version.outputs.version  }}
     steps:
       - uses: actions/checkout@v2
       - id: read-version
@@ -36,7 +43,7 @@ jobs:
           token: ${{ secrets.ACTION_TOKEN }}
       - uses: ./
         with:
-          version: ${{ needs.setup.outputs.verion }}
+          version: ${{ needs.setup.outputs.version }}
           newVersionLineNumber: 3
           activationLabel: 'dependabot-helper'
           changelogPath: './CHANGELOG.md'
