@@ -8,11 +8,14 @@ async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
     const changelogPath: PathLike = core.getInput('changelogPath')
-    const label: string = core.getInput('label')
-    const newVersionLineNumber = Number(core.getInput('newVersionLineNumber'))
+    const label: string = core.getInput('activationLabel')
+
+    // Line numbers in files are read as 1-indexed, but we deal with contents as 0-indexed
+    const newVersionLineNumber =
+      Number(core.getInput('newVersionLineNumber')) - 1
 
     if (label !== '' && pullRequestHasLabel(label)) {
-      const entry: DependabotEntry = getDependabotEntry(github.context.payload.pull_request)
+      const entry: DependabotEntry = getDependabotEntry(github.context.payload)
       await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
     }
   } catch (error) {
@@ -26,7 +29,7 @@ function pullRequestHasLabel(label: string): boolean {
 
 function getPullRequestLabels(): string[] {
   return github.context.payload.pull_request!.labels.map(
-    (l: Map<string, string>) => l.get['name']
+    (l: {name?: string}) => l.name
   )
 }
 

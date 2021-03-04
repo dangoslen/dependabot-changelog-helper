@@ -86,7 +86,12 @@ async function parseChangelogForEntry(
   // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
   for await (const line of fileStream) {
     contents.push(line)
+    // Only check the line if we haven't found the entry before
+    if (!foundDuplicateEntry && line.startsWith(changelogEntry)) {
+      foundDuplicateEntry = true
+    }
 
+    // If we have found the last Dependencies entry for the version, just continue to the next line
     if (foundLastEntry) {
       continue
     }
@@ -102,7 +107,6 @@ async function parseChangelogForEntry(
     }
 
     foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line)
-    foundDuplicateEntry = !foundLastEntry && line.includes(changelogEntry)
     if (foundLastEntry) {
       changelogLineNumber = lineNumber
     } else {
