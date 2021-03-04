@@ -43,7 +43,7 @@ jobs:
           token: ${{ secrets.ACTION_TOKEN }}
       - uses: ./
         with:
-          version: ${{ needs.setup.outputs.verion }}
+          version: ${{ needs.setup.outputs.version }}
           newVersionLineNumber: 3
           activationLabel: 'dependabot-helper'
           changelogPath: './CHANGELOG.md'
