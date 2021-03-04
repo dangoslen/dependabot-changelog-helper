@@ -6,3 +6,4 @@
 ### Dependencies
 - Bumps `eslint` from 7.17.0 to 7.21.0
 - Bumps `@types/node` from 14.14.30 to 14.14.31
+- Bumps `eslint-plugin-jest` from 24.1.3 to 24.1.5
