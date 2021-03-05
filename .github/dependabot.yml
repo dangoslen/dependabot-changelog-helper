@@ -9,6 +9,7 @@ updates:
       interval: 'weekly'
     labels:
       - dependabot-helper
+      - dependencies
     target-branch: 'releases/v1.0'
 
   # Enable version updates for npm
@@ -20,4 +21,5 @@ updates:
       interval: 'weekly'
     labels:
       - dependabot-helper
+      - dependencies
     target-branch: 'releases/v1.0'
