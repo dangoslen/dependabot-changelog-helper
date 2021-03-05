@@ -1,0 +1,44 @@
+name: "Release Workflow"
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: read versions
+        id: read_version
+        run: |
+          echo ::set-output name=version::$(jq -r ".version" package.json)
+          echo ::set-output name=tag::v$(jq -r ".version" package.json)
+        
+      - name: read changelog entry for version
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: "${{ steps.read_version.outputs.version }}"
+          path: ./CHANGELOG.md
+
+      - name: check for existing release
+        id: check_release
+        run: |
+          TAG=$(git ls-remote --tags origin | grep ${{ steps.read_version.outputs.tag }} || [[ $? == 1 ]] && echo '')
+          MISSING=$([[ -z "$TAG" ]] && echo 'true' || echo 'false')
+          echo ::set-output name=missing::$MISSING
+        
+      - name: create release
+        if: ${{ steps.check_release.outputs.missing == 'true' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ steps.read_version.outputs.tag }}"
+          release_name: Changelog Enforcer ${{ steps.read_version.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }} 
+          draft: false
+          prerelease: false
