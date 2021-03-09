@@ -188,9 +188,9 @@ const CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION = `# Changelog
 - Something`
 
 test('does not update the changelog on duplicate entry when not the list item', async () => {
-  const readable = Readable.from([CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE])
+  const readable = Readable.from([CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION])
   fs.createReadStream.mockReturnValue(readable)
-  fs.readFileSync.mockReturnValue(CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE)
+  fs.readFileSync.mockReturnValue(CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION)
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', 2, './CHANGELOG.md')
 
@@ -210,5 +210,29 @@ test('does not update the changelog on duplicate entry when not the list item', 
 ## [v0.9.0]
 ### Added
 - Something`
+  )
+})
+
+const CHANGELOG_WITH_ENTRY_TO_UPDATE = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bumps \`package\` from v1 to v1.1`
+
+test('updates and entry for an existing package in the same version', async () => {
+  const readable = Readable.from([CHANGELOG_WITH_ENTRY_TO_UPDATE])
+  fs.createReadStream.mockReturnValue(readable)
+  fs.readFileSync.mockReturnValue(CHANGELOG_WITH_ENTRY_TO_UPDATE)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', 2, './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bumps \`package\` from v1 to v2`
   )
 })
