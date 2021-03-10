@@ -33,8 +33,7 @@ test('adds an entry to the changelog - section already exists with entry', async
 ## [UNRELEASED]
 ### Dependencies
 - Bumps \`different-package\` from v1 to v2
-- Bumps \`package\` from v1 to v2`
-  )
+- Bumps \`package\` from v1 to v2`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS = `# Changelog
@@ -55,8 +54,7 @@ test('adds an entry to the changelog - section already exists, but no entry', as
 
 ## [UNRELEASED]
 ### Dependencies
-- Bumps \`package\` from v1 to v2`
-  )
+- Bumps \`package\` from v1 to v2`)
 })
 
 const CHANGELOG_MISSING_DEPENDECIES = `# Changelog
@@ -76,8 +74,7 @@ test('adds an entry to the changelog - section does not exist, but version does'
 
 ## [UNRELEASED]
 ### Dependencies
-- Bumps \`package\` from v1 to v2`
-  )
+- Bumps \`package\` from v1 to v2`)
 })
 
 const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
@@ -109,8 +106,7 @@ test('adds an entry to the changelog - multiple versions', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bumps \`foo\` from bar to foo-bar`
-  )
+- Bumps \`foo\` from bar to foo-bar`)
 })
 
 const CHANGELOG_WITH_NO_VERSION = `# Changelog
@@ -137,8 +133,7 @@ test('adds an entry to the changelog - no version section', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bumps \`foo\` from bar to foo-bar`
-  )
+- Bumps \`foo\` from bar to foo-bar`)
 })
 
 const CHANGELOG_WITH_DUPLICATE_ENTRY = `# Changelog
@@ -188,16 +183,20 @@ const CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION = `# Changelog
 - Something`
 
 test('does not update the changelog on duplicate entry when not the list item', async () => {
-  const readable = Readable.from([CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION])
+  const readable = Readable.from([
+    CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION
+  ])
   fs.createReadStream.mockReturnValue(readable)
-  fs.readFileSync.mockReturnValue(CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION)
+  fs.readFileSync.mockReturnValue(
+    CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_IN_DIFFERENT_VERSION
+  )
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', 2, './CHANGELOG.md')
 
   const params = fs.writeFileSync.mock.calls[0]
   expect(params[0]).toStrictEqual('./CHANGELOG.md')
   expect(params[1]).toStrictEqual(
-`# Changelog
+    `# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
@@ -229,7 +228,7 @@ test('updates and entry for an existing package in the same version', async () =
   const params = fs.writeFileSync.mock.calls[0]
   expect(params[0]).toStrictEqual('./CHANGELOG.md')
   expect(params[1]).toStrictEqual(
-`# Changelog
+    `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
