@@ -41,14 +41,12 @@ jobs:
     needs: [ setup ]
     steps:
       - uses: actions/checkout@v2
-
       - uses: ./
         with:
           version: ${{ needs.setup.outputs.version }}
           newVersionLineNumber: 3
           activationLabel: 'dependabot-helper'
           changelogPath: './CHANGELOG.md'
-
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Updated Changelog"
@@ -57,7 +55,6 @@ jobs:
         uses: dangoslen/changelog-enforcer@v2
         with:
           expectedLatestVersion: ${{ needs.setup.outputs.version }}
-
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:
