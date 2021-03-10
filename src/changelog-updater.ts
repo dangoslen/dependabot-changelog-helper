@@ -40,15 +40,23 @@ export async function updateChangelog(
   }
 }
 
-function buildEntryLine(entry: DependabotEntry) : string {
-  return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${entry.newVersion}`
+function buildEntryLine(entry: DependabotEntry): string {
+  return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${
+    entry.newVersion
+  }`
 }
 
-function buildEntryLineStart(entry: DependabotEntry) : string {
+function buildEntryLineStart(entry: DependabotEntry): string {
   return `- Bumps \`${entry.package}\` from`
 }
 
-function addNewEntry(entry: DependabotEntry, version: string, newVersionLineNumber: number, changelogPath: fs.PathLike, result: ParsedResult) {
+function addNewEntry(
+  entry: DependabotEntry,
+  version: string,
+  newVersionLineNumber: number,
+  changelogPath: fs.PathLike,
+  result: ParsedResult
+): void {
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = buildEntryLine(entry)
@@ -63,8 +71,12 @@ function addNewEntry(entry: DependabotEntry, version: string, newVersionLineNumb
   writeEntry(lineNumber, changelogPath, changelogEntry, result.contents)
 }
 
-function updateEntry(entry: DependabotEntry, changelogPath: fs.PathLike, result: ParsedResult) {
-  let lineNumber = result.changelogLineNumber
+function updateEntry(
+  entry: DependabotEntry,
+  changelogPath: fs.PathLike,
+  result: ParsedResult
+): void {
+  const lineNumber = result.changelogLineNumber
   const existingLine = result.contents[lineNumber]
   const existingPackage = existingLine.split(' to ')[0]
   const changelogEntry = `${existingPackage} to ${entry.newVersion}`
@@ -85,7 +97,8 @@ function writeEntry(
   fs.writeFileSync(changelogPath, contents.join(EOL))
 }
 
-function overwriteEntry(lineNumber: number,
+function overwriteEntry(
+  lineNumber: number,
   changelogPath: fs.PathLike,
   changelogEntry: string,
   contents: string[]
@@ -131,17 +144,11 @@ async function parseChangelogForEntry(
     }
 
     // Only check the line if we haven't found the entry before
-    if (
-      versionFound 
-      && line.startsWith(entryLine)
-    ) {
+    if (versionFound && line.startsWith(entryLine)) {
       foundDuplicateEntry = true
-    } else if (
-      versionFound 
-      && line.startsWith(entryLineStart)
-      ) {
-        foundEntryToUpdate = true
-        changelogLineNumber = lineNumber
+    } else if (versionFound && line.startsWith(entryLineStart)) {
+      foundEntryToUpdate = true
+      changelogLineNumber = lineNumber
     }
 
     if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
@@ -163,7 +170,12 @@ async function parseChangelogForEntry(
 
   // If we are at the end of the file, and we never found the last entry of the dependencies,
   // it is because the last entry was the last line of the file
-  changelogLineNumber = lastLineCheck(changelogLineNumber, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, dependencySectionFound)
+  changelogLineNumber = lastLineCheck(
+    changelogLineNumber,
+    lineNumber,
+    foundLastEntry || foundDuplicateEntry || foundEntryToUpdate,
+    dependencySectionFound
+  )
 
   return {
     foundDuplicateEntry,
@@ -175,11 +187,13 @@ async function parseChangelogForEntry(
   }
 }
 
-function lastLineCheck(changelogLineNumber: number, fileLength: number, foundLastEntry: boolean, dependencySectionFound: boolean) : number {
-  if (
-    !foundLastEntry &&
-    dependencySectionFound
-  ) {
+function lastLineCheck(
+  changelogLineNumber: number,
+  fileLength: number,
+  foundLastEntry: boolean,
+  dependencySectionFound: boolean
+): number {
+  if (!foundLastEntry && dependencySectionFound) {
     return fileLength
   }
   return changelogLineNumber
