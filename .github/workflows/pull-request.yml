@@ -41,6 +41,8 @@ jobs:
     needs: [ setup ]
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
       - uses: ./
         with:
           version: ${{ needs.setup.outputs.version }}
@@ -50,7 +52,6 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Updated Changelog"
-
       - id: changelog-enforcer
         uses: dangoslen/changelog-enforcer@v2
         with:
@@ -73,21 +74,20 @@ jobs:
     needs: [ setup ]
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
       - name: get changelog entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
           version: "${{ needs.setup.outputs.version }}"
           path: ./CHANGELOG.md
-
       - name: check for release
         id: check_release
         run: |
           TAG=$(git ls-remote --tags origin | grep ${{ needs.setup.outputs.tag }} || [[ $? == 1 ]] && echo '')
           MISSING=$([[ -z "$TAG" ]] && echo 'true' || echo 'false')
           echo ::set-output name=missing::$MISSING
-
       - name: preview changelog
         if: ${{ steps.check_release.outputs.missing == 'true' }}
         uses: unsplash/comment-on-pr@master
