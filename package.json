@@ -12,11 +12,11 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
     "test:badge": "jest --coverage && make-coverage-badge",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test && npm make-coverage-badge"
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test:badge"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dangoslen/dependabot-helper.git"
+    "url": "git+https://github.com/dangoslen/dependabot-changelog-helper.git"
   },
   "keywords": [
     "dependabot",
