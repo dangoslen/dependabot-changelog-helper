@@ -36,27 +36,48 @@ const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
 function updateChangelog(entry, version, newVersionLineNumber, changelogPath) {
     return __awaiter(this, void 0, void 0, function* () {
         const versionRegex = buildVersionRegex(version);
-        let changelogEntry = `- Bumps \`${entry.package}\` from ${entry.oldVersion} to ${entry.newVersion}`;
-        const result = yield parseChangelogForEntry(versionRegex, changelogEntry, changelogPath);
+        const result = yield parseChangelogForEntry(versionRegex, entry, changelogPath);
         // If the entry was already found, we don't write a change to the changelog
         if (result.foundDuplicateEntry) {
             return;
         }
-        // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
-        // sections exist
-        let lineNumber = result.changelogLineNumber;
-        if (!result.dependencySectionFound) {
-            changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
+        if (result.foundEntryToUpdate) {
+            updateEntry(entry, changelogPath, result);
         }
-        if (!result.versionFound) {
-            changelogEntry = `## [${version}]${os_1.EOL}${changelogEntry}${os_1.EOL}`;
-            lineNumber = newVersionLineNumber;
+        else {
+            addNewEntry(entry, version, newVersionLineNumber, changelogPath, result);
         }
-        writeLine(lineNumber, changelogPath, changelogEntry, result.contents);
     });
 }
 exports.updateChangelog = updateChangelog;
-function writeLine(lineNumber, changelogPath, changelogEntry, contents) {
+function buildEntryLine(entry) {
+    return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${entry.newVersion}`;
+}
+function buildEntryLineStart(entry) {
+    return `- Bumps \`${entry.package}\` from`;
+}
+function addNewEntry(entry, version, newVersionLineNumber, changelogPath, result) {
+    // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
+    // sections exist
+    let changelogEntry = buildEntryLine(entry);
+    let lineNumber = result.changelogLineNumber;
+    if (!result.dependencySectionFound) {
+        changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
+    }
+    if (!result.versionFound) {
+        changelogEntry = `## [${version}]${os_1.EOL}${changelogEntry}${os_1.EOL}`;
+        lineNumber = newVersionLineNumber;
+    }
+    writeEntry(lineNumber, changelogPath, changelogEntry, result.contents);
+}
+function updateEntry(entry, changelogPath, result) {
+    const lineNumber = result.changelogLineNumber;
+    const existingLine = result.contents[lineNumber];
+    const existingPackage = existingLine.split(' to ')[0];
+    const changelogEntry = `${existingPackage} to ${entry.newVersion}`;
+    overwriteEntry(lineNumber, changelogPath, changelogEntry, result.contents);
+}
+function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
     const length = contents.push('');
     for (let i = length - 1; i > lineNumber; i--) {
         contents[i] = contents[i - 1];
@@ -64,10 +85,14 @@ function writeLine(lineNumber, changelogPath, changelogEntry, contents) {
     contents[lineNumber] = changelogEntry;
     fs_1.default.writeFileSync(changelogPath, contents.join(os_1.EOL));
 }
+function overwriteEntry(lineNumber, changelogPath, changelogEntry, contents) {
+    contents[lineNumber] = changelogEntry;
+    fs_1.default.writeFileSync(changelogPath, contents.join(os_1.EOL));
+}
 function buildVersionRegex(version) {
     return new RegExp(`^## \\[${version}\\]`);
 }
-function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
+function parseChangelogForEntry(versionRegex, entry, changelogPath) {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
         const fileStream = readline_1.default.createInterface({
@@ -80,19 +105,26 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
         let dependencySectionFound = false;
         let foundLastEntry = false;
         let foundDuplicateEntry = false;
+        let foundEntryToUpdate = false;
+        const entryLine = buildEntryLine(entry);
+        const entryLineStart = buildEntryLineStart(entry);
         const contents = [];
         try {
             // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
             for (var fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), !fileStream_1_1.done;) {
                 const line = fileStream_1_1.value;
                 contents.push(line);
-                // Only check the line if we haven't found the entry before
-                if (!foundDuplicateEntry && line.startsWith(changelogEntry)) {
-                    foundDuplicateEntry = true;
-                }
                 // If we have found the last Dependencies entry for the version, just continue to the next line
                 if (foundLastEntry) {
                     continue;
+                }
+                // Only check the line if we haven't found the entry before
+                if (versionFound && line.startsWith(entryLine)) {
+                    foundDuplicateEntry = true;
+                }
+                else if (versionFound && line.startsWith(entryLineStart)) {
+                    foundEntryToUpdate = true;
+                    changelogLineNumber = lineNumber;
                 }
                 if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
                     dependencySectionFound = true;
@@ -106,9 +138,7 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
                 if (foundLastEntry) {
                     changelogLineNumber = lineNumber;
                 }
-                else {
-                    lineNumber++;
-                }
+                lineNumber++;
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -118,21 +148,24 @@ function parseChangelogForEntry(versionRegex, changelogEntry, changelogPath) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        // If we are at the end of the file, and we never found the last entry of the dependcies,
+        // If we are at the end of the file, and we never found the last entry of the dependencies,
         // it is because the last entry was the last line of the file
-        if (contents.length === lineNumber &&
-            !foundLastEntry &&
-            dependencySectionFound) {
-            changelogLineNumber = lineNumber;
-        }
+        changelogLineNumber = lastLineCheck(changelogLineNumber, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, dependencySectionFound);
         return {
             foundDuplicateEntry,
+            foundEntryToUpdate,
             changelogLineNumber,
             versionFound,
             dependencySectionFound,
             contents
         };
     });
+}
+function lastLineCheck(changelogLineNumber, fileLength, foundLastEntry, dependencySectionFound) {
+    if (!foundLastEntry && dependencySectionFound) {
+        return fileLength;
+    }
+    return changelogLineNumber;
 }
 //# sourceMappingURL=changelog-updater.js.map
 
