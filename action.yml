@@ -17,7 +17,7 @@ inputs:
     description: |
       "The label to indicate that the action should run"
     required: true
-    default: 'dependencies'
+    default: 'dependabot'
   newVersionLineNumber:
     description: |
       "If the desired version is not found in the file, this is the default line number (1-indexed) in which to place the new version"
@@ -26,3 +26,6 @@ inputs:
 runs:
   using: 'node12'
   main: 'dist/index.js'
+branding:
+  color: green
+  icon: edit
