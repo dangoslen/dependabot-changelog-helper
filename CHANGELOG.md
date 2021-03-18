@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0]
+### Added
+- Adds proper GitHub Action branding
+### Changed
+- Updates the [README.md](./README.md) for proper formatting
+- Updates the default value for `activationLabel` from `dependencies` to `dependabot`
+
 ## [0.2.0]
 ### Added
 - Addresses #22. Previously updated package entries in the same version will be updated if a newer update comes along
