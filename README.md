@@ -68,9 +68,9 @@ Below are the properties allowed by the Dependabot Changelog Helper.
 * The path to the CHANGELOG file to add dependabot entries to.
 
 #### `activationLabel`
-* Default: `dependencies`
+* Default: `dependabot`
 * The label to indicate that the action should run
 
-### `newVersionLineNumber`
+#### `newVersionLineNumber`
 * Default: 3
 * If the desired version is not found in the file, this is the default line number (1-indexed) in which to place the new version
