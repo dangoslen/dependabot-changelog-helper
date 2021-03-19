@@ -134,7 +134,7 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
                     versionFound = true;
                     changelogLineNumber = lineNumber + 1;
                 }
-                foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line);
+                foundLastEntry = versionFound && EMPTY_LINE_REGEX.test(line);
                 if (foundLastEntry) {
                     changelogLineNumber = lineNumber;
                 }
@@ -150,7 +150,7 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
         }
         // If we are at the end of the file, and we never found the last entry of the dependencies,
         // it is because the last entry was the last line of the file
-        changelogLineNumber = lastLineCheck(changelogLineNumber, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, dependencySectionFound);
+        changelogLineNumber = lastLineCheck(changelogLineNumber, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, versionFound);
         return {
             foundDuplicateEntry,
             foundEntryToUpdate,
@@ -161,8 +161,8 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
         };
     });
 }
-function lastLineCheck(changelogLineNumber, fileLength, foundLastEntry, dependencySectionFound) {
-    if (!foundLastEntry && dependencySectionFound) {
+function lastLineCheck(changelogLineNumber, fileLength, foundLastEntry, versionFound) {
+    if (!foundLastEntry && versionFound) {
         return fileLength;
     }
     return changelogLineNumber;
