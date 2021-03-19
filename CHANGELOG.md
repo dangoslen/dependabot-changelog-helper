@@ -2,7 +2,7 @@
 
 ## [0.3.1]
 ### Changed
-- If now `### Dependencies` section is found the desired version entry, it is now appeneded to the end of all sections rather than being appened right after the version entry
+- If a `### Dependencies` section is not found under the desired version entry, it is now appeneded to the end of all sections rather than being appened right after the version entry
 
 ## [0.3.0]
 ### Added
