@@ -235,3 +235,33 @@ test('updates and entry for an existing package in the same version', async () =
 - Bumps \`package\` from v1 to v2`
   )
 })
+
+const CHANGELOG_WITH_VERSION_MISSING_DEP_SECTION_BUT_HAS_OTHERS = `# Changelog
+
+## [v1.0.0]
+### Added
+### Removed`
+
+test('updates version with new section and entry', async () => {
+  const readable = Readable.from([
+    CHANGELOG_WITH_VERSION_MISSING_DEP_SECTION_BUT_HAS_OTHERS
+  ])
+  fs.createReadStream.mockReturnValue(readable)
+  fs.readFileSync.mockReturnValue(
+    CHANGELOG_WITH_VERSION_MISSING_DEP_SECTION_BUT_HAS_OTHERS
+  )
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', 2, './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+    `# Changelog
+
+## [v1.0.0]
+### Added
+### Removed
+### Dependencies
+- Bumps \`package\` from v1 to v2`
+  )
+})

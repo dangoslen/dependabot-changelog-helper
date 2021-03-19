@@ -161,7 +161,7 @@ async function parseChangelogForEntry(
       changelogLineNumber = lineNumber + 1
     }
 
-    foundLastEntry = dependencySectionFound && EMPTY_LINE_REGEX.test(line)
+    foundLastEntry = versionFound && EMPTY_LINE_REGEX.test(line)
     if (foundLastEntry) {
       changelogLineNumber = lineNumber
     }
@@ -174,7 +174,7 @@ async function parseChangelogForEntry(
     changelogLineNumber,
     lineNumber,
     foundLastEntry || foundDuplicateEntry || foundEntryToUpdate,
-    dependencySectionFound
+    versionFound
   )
 
   return {
@@ -191,9 +191,9 @@ function lastLineCheck(
   changelogLineNumber: number,
   fileLength: number,
   foundLastEntry: boolean,
-  dependencySectionFound: boolean
+  versionFound: boolean
 ): number {
-  if (!foundLastEntry && dependencySectionFound) {
+  if (!foundLastEntry && versionFound) {
     return fileLength
   }
   return changelogLineNumber
