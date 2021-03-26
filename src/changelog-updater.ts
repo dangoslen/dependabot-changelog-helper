@@ -138,8 +138,9 @@ async function parseChangelogForEntry(
   for await (const line of fileStream) {
     contents.push(line)
 
-    // If we have found the last Dependencies entry for the version, just continue to the next line
-    if (foundLastEntry) {
+    // If we have found the line to update, the last line to add the entry after, or have found
+    // a duplicate line, just push the line
+    if (foundLastEntry || foundDuplicateEntry || foundEntryToUpdate) {
       continue
     }
 

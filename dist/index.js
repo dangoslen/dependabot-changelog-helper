@@ -114,8 +114,9 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
             for (var fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), !fileStream_1_1.done;) {
                 const line = fileStream_1_1.value;
                 contents.push(line);
-                // If we have found the last Dependencies entry for the version, just continue to the next line
-                if (foundLastEntry) {
+                // If we have found the line to update, the last line to add the entry after, or have found
+                // a duplicate line, just push the line
+                if (foundLastEntry || foundDuplicateEntry || foundEntryToUpdate) {
                     continue;
                 }
                 // Only check the line if we haven't found the entry before
