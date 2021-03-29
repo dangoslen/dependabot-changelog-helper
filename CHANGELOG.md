@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.2]
+### Fixed
+- Fixes an issue where if a previous dependabot entry is found but wrote the update to the wrong line
+
 ## [0.3.1]
 ### Changed
 - If a `### Dependencies` section is not found under the desired version entry, it is now appeneded to the end of all sections rather than being appened right after the version entry

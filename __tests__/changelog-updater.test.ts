@@ -265,3 +265,39 @@ test('updates version with new section and entry', async () => {
 - Bumps \`package\` from v1 to v2`
   )
 })
+
+const CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bumps \`package\` from v1 to v1.1
+
+## [v0.9.0]
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+
+test('Does not update lines additional times', async () => {
+  mockFiles(CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', 2, './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+    `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bumps \`package\` from v1 to v2
+
+## [v0.9.0]
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+  )
+})
+
+function mockFiles(changelog: string) {
+  const readable = Readable.from([changelog])
+  fs.createReadStream.mockReturnValue(readable)
+  fs.readFileSync.mockReturnValue(changelog)
+}
