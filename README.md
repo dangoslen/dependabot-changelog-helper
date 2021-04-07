@@ -11,7 +11,7 @@ But sometimes it can feel overwhelming and require additional work to update thi
 
 **The purpose of this action is to help you easily manage some of those needs by auto-updating your changelog!**
 
-Built around the [Keep-a-changleog]() format, this action will look for an entry line for an updated package and either
+Built around the [Keep-a-Changleog](https://keepachangelog.com/) format, this action will look for an entry line for an updated package and either
 
 * Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
 * Update it if the package has been upgraded after an initial entry was written
@@ -35,7 +35,6 @@ on:
 jobs:
   changelog:
     runs-on: ubuntu-latest
-    needs: [ setup ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -46,14 +45,8 @@ jobs:
         with:
           version: ${{ needs.setup.outputs.version }}
           newVersionLineNumber: 3
-          activationLabel: 'dependabot-helper'
+          activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Updated Changelog"
-
-      - id: changelog-enforcer
-        uses: dangoslen/changelog-enforcer@v2
 ```
 
 ### Inputs / Properties
@@ -61,11 +54,11 @@ Below are the properties allowed by the Dependabot Changelog Helper.
 
 #### `version`
 * Default: `UNRELEASED`
-* The version to find in the CHANGELOG to add dependabot entries to.
+* The version to find in the changelog to add dependabot entries to.
 
 #### `changeLogPath`
 * Default: `./CHANGELOG.md`
-* The path to the CHANGELOG file to add dependabot entries to.
+* The path to the changelog file to add dependabot entries to.
 
 #### `activationLabel`
 * Default: `dependabot`
