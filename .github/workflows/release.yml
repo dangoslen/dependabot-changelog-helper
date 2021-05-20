@@ -35,10 +35,17 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         with:
           tag_name: "${{ steps.read_version.outputs.tag }}"
           release_name: Dependabot Changelog Helper ${{ steps.read_version.outputs.version }}
           body: ${{ steps.changelog_reader.outputs.changes }} 
           draft: false
           prerelease: false
+
+      - name: update major version tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: "${{ steps.read-version.outputs.major_tag }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}

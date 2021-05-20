@@ -17,7 +17,9 @@ jobs:
       tag: ${{ steps.read-version.outputs.tag  }}
     steps:
       - uses: actions/checkout@v2
-      
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - id: read-version
         run: |
           echo "::set-output name=version::$(jq -r ".version" package.json)"
@@ -29,6 +31,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.ACTION_TOKEN }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - run: |
           npm install
@@ -47,6 +50,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.ACTION_TOKEN }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: ./
         with:
