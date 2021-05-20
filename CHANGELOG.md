@@ -2,7 +2,7 @@
 
 ## [1.0.0]
 
-## First official release of the Dependabot Changelog Helper! 🚀
+### First official release of the Dependabot Changelog Helper! 🚀
 
 ### Dependencies
 - Bumps `@types/jest` from 26.0.20 to 26.0.23
