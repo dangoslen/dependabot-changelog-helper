@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.0.0]
+First official release of the Dependabot Changelog Helper! 🚀
+
 ## [0.3.2]
 ### Fixed
 - Fixes an issue where if a previous dependabot entry is found but wrote the update to the wrong line
