@@ -6,6 +6,7 @@ First official release of the Dependabot Changelog Helper! 🚀
 - Bumps `@types/jest` from 26.0.20 to 26.0.23
 - Bumps `typescript` from 4.1.3 to 4.2.4
 - Bumps `ts-jest` from 26.4.4 to 26.5.6
+- Bumps `prettier` from 2.2.1 to 2.3.0
 
 ## [0.3.2]
 ### Fixed
