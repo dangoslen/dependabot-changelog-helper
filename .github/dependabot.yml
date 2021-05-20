@@ -10,7 +10,7 @@ updates:
     labels:
       - dependabot
       - dependencies
-    target-branch: 'releases/v1.0'
+    target-branch: 'releases/v1.1'
 
   # Enable version updates for npm
   - package-ecosystem: 'github-actions'
@@ -22,4 +22,4 @@ updates:
     labels:
       - dependabot
       - dependencies
-    target-branch: 'releases/v1.0'
+    target-branch: 'releases/v1.1'
