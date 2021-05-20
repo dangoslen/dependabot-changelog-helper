@@ -48,6 +48,6 @@ jobs:
       - name: update major version tag
         uses: richardsimko/update-tag@v1
         with:
-          tag_name: "${{ steps.read-version.outputs.major_tag }}"
+          tag_name: "${{ steps.read_version.outputs.major_tag }}"
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
