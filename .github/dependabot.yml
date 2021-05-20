@@ -8,7 +8,7 @@ updates:
     schedule:
       interval: 'weekly'
     labels:
-      - dependabot-helper
+      - dependabot
       - dependencies
     target-branch: 'releases/v1.0'
 
@@ -20,6 +20,6 @@ updates:
     schedule:
       interval: 'weekly'
     labels:
-      - dependabot-helper
+      - dependabot
       - dependencies
     target-branch: 'releases/v1.0'
