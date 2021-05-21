@@ -1,4 +1,4 @@
-name: 'Dependabot Helper'
+name: 'Dependabot Changelog Helper'
 description: |
   "Helps keep your repository uo-to-date when Dependabot updates your dependencies."
 author: '@dangoslen'
