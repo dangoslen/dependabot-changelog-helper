@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `@types/node` from 14.14.31 to 15.6.0
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
