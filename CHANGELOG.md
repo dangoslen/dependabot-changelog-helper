@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `@typescript-eslint/parser` from 4.15.1 to 4.25.0
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
