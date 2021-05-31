@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `@vercel/ncc` from 0.27.0 to 0.28.6
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
