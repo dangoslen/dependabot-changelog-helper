@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `@actions/core` from 1.2.7 to 1.4.0
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
