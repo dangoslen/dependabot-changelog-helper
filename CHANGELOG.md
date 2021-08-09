@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `eslint-plugin-jest` from 24.1.5 to 24.4.0
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
