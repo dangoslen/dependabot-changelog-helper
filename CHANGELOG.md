@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `@types/jest` from 26.0.23 to 26.0.24
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
