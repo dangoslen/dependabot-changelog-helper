@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `jest-circus` from 26.6.3 to 27.0.6
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
