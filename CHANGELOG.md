@@ -1,6 +1,8 @@
 # Changelog
 
 ## [1.0.0]
+### Dependencies
+- Bumps `prettier` from 2.3.0 to 2.3.2
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
