@@ -61,7 +61,7 @@ jobs:
           commit_message: "Updated Changelog"
 
       - id: changelog-enforcer
-        uses: dangoslen/changelog-enforcer@v2
+        uses: dangoslen/changelog-enforcer@v3.1.0
         with:
           expectedLatestVersion: ${{ needs.setup.outputs.version }}
 
