@@ -16,7 +16,7 @@ jobs:
       version: ${{ steps.read-version.outputs.version  }}
       tag: ${{ steps.read-version.outputs.tag  }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ setup ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ setup ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           token: ${{ secrets.ACTION_TOKEN }}
 
