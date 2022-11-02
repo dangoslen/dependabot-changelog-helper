@@ -18,7 +18,7 @@ async function run(): Promise<void> {
       const entry: DependabotEntry = getDependabotEntry(github.context.payload)
       await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
     }
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message)
   }
 }
