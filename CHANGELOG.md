@@ -1,8 +1,10 @@
 # Changelog
 
 ## [v1.1.0]
-
-## 
+### Changed
+- Updates the `pull_request` workflow to use the `pull_request_target` and the `verified` label. See [#90](https://github.com/dangoslen/dependabot-changelog-helper/pull/90)
+## Dependecies
+- Many major changes. None are recorded explicity since there was such a long time between `v1.0.0` and `v1.1.0`. See [#90](https://github.com/dangoslen/dependabot-changelog-helper/pull/90)
 
 ## [v1.0.0]
 
