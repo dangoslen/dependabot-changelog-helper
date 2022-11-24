@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "::set-output name=version::$(jq -r ".version" package.json)"
           echo "::set-output name=tag::v$(jq -r ".version" package.json)"
+    
 
   build:
     runs-on: ubuntu-latest
