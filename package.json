@@ -1,6 +1,6 @@
 {
   "name": "depenadbot-helper",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": false,
   "description": "A GitHub Action to auto-add dependabot changes to your changelog and increment version numbers",
   "main": "lib/dependabot-helper.js",
@@ -28,7 +28,7 @@
   "author": "@dangoslen",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.7",
+    "@actions/core": "^1.10.0",
     "@actions/github": "^4.0.0",
     "make-coverage-badge": "^1.2.0"
   },

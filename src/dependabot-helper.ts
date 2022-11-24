@@ -7,19 +7,20 @@ import {updateChangelog} from './changelog-updater'
 async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
-    const changelogPath: PathLike = core.getInput('changelogPath')
     const label: string = core.getInput('activationLabel')
 
-    // Line numbers in files are read as 1-indexed, but we deal with contents as 0-indexed
-    const newVersionLineNumber =
-      Number(core.getInput('newVersionLineNumber')) - 1
+    const changelogPath: PathLike = core.getInput('changelogPath')
 
     if (label !== '' && pullRequestHasLabel(label)) {
       const entry: DependabotEntry = getDependabotEntry(github.context.payload)
-      await updateChangelog(entry, version, newVersionLineNumber, changelogPath)
+      await updateChangelog(entry, version, changelogPath)
     }
-  } catch (error) {
-    core.setFailed(error.message)
+  } catch (err) {
+    if (err instanceof Error) {
+      core.setFailed(err.message)
+    } else {
+      core.setFailed(`Unexpected error ${err}`);
+    }
   }
 }
 
