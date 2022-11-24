@@ -2,7 +2,6 @@ import readline from 'readline'
 import fs from 'fs'
 import {EOL} from 'os'
 import {DependabotEntry} from './entry-extractor'
-import { versions } from 'process'
 
 interface ParsedResult {
   foundDuplicateEntry: boolean
@@ -13,7 +12,9 @@ interface ParsedResult {
   contents: string[]
 }
 
-const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/)
+const UNRELEASED_REGEX = new RegExp(
+  /^## \[(unreleased|Unreleased|UNRELEASED)\]/
+)
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 
@@ -23,11 +24,11 @@ export async function updateChangelog(
   changelogPath: fs.PathLike
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
-  
-  const versions: Array<RegExp> = [versionRegex, UNRELEASED_REGEX]
-  for (const version of versions) {
-    const found = await searchAndUpdateVersion(version, entry, changelogPath)
-    
+
+  const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
+  for (const regex of regexs) {
+    const found = await searchAndUpdateVersion(regex, entry, changelogPath)
+
     // If we found the version, we have updated the changelog or we had a duplicate
     if (found) {
       return
@@ -44,18 +45,18 @@ async function searchAndUpdateVersion(
 ): Promise<Boolean> {
   const result = await parseChangelogForEntry(
     versionRegex,
-    entry, 
+    entry,
     changelogPath
   )
 
   if (!result.versionFound) {
     return false
-  } 
-  
+  }
+
   if (result.foundEntryToUpdate) {
     updateEntry(entry, changelogPath, result)
   }
-  
+
   if (!result.foundDuplicateEntry) {
     addNewEntry(entry, changelogPath, result)
   }
@@ -81,7 +82,7 @@ function addNewEntry(
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = buildEntryLine(entry)
-  let lineNumber = result.changelogLineNumber
+  const lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies${EOL}${changelogEntry}`
   }

@@ -1,8 +1,8 @@
-import { FSWatcher, PathLike } from 'fs'
+import {FSWatcher, PathLike} from 'fs'
 import {updateChangelog} from '../src/changelog-updater'
 import {DependabotEntry} from '../src/entry-extractor'
 
-const { Readable } = require('stream')
+const {Readable} = require('stream')
 const fs = require('fs')
 
 const PACKAGE_ENTRY: DependabotEntry = {
@@ -250,5 +250,5 @@ test('Does not update lines additional times', async () => {
 function mockReadStream(changelog: string) {
   fs.createReadStream.mockImplementation((_: PathLike) => {
     return Readable.from([changelog])
-  })  
+  })
 }
