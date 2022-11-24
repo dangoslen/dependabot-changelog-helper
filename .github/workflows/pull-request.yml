@@ -86,12 +86,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.ACTION_TOKEN }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: get changelog entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: "${{ needs.setup.outputs.version }}"
+          version: ${{ needs.setup.outputs.version }}
           path: ./CHANGELOG.md
 
       - name: check for release
