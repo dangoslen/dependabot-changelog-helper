@@ -2,12 +2,12 @@
 
 ## [UNRELEASED]
 
-## [v2.0.0]
+## [2.0.0]
 
 ### Breaking Changes
 - `newVersionLineNumber` is removed. Instead, if a version is not found, this action now looks for an unreleased version. If neither version can be found, the action will error. Read more in the [README.md](./README.md#version)
 
-## [v1.0.0]
+## [1.0.0]
 
 ### First official release of the Dependabot Changelog Helper! 🚀
 
