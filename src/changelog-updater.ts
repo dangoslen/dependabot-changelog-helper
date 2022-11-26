@@ -12,32 +12,56 @@ interface ParsedResult {
   contents: string[]
 }
 
-const DEPENDENCY_SECTION_REGEX = new RegExp(/^### [Dependencies|DEPENDENCIES]/)
+const UNRELEASED_REGEX = new RegExp(
+  /^## \[(unreleased|Unreleased|UNRELEASED)\]/
+)
+const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 
 export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
-  newVersionLineNumber: number,
   changelogPath: fs.PathLike
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
-  const result: ParsedResult = await parseChangelogForEntry(
+
+  const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
+  for (const regex of regexs) {
+    const found = await searchAndUpdateVersion(regex, entry, changelogPath)
+
+    // If we found the version, we have updated the changelog or we had a duplicate
+    if (found) {
+      return
+    }
+  }
+
+  throw new Error(`Could not find version ${version} or the unreleased version`)
+}
+
+async function searchAndUpdateVersion(
+  versionRegex: RegExp,
+  entry: DependabotEntry,
+  changelogPath: fs.PathLike
+): Promise<Boolean> {
+  const result = await parseChangelogForEntry(
     versionRegex,
     entry,
     changelogPath
   )
 
-  // If the entry was already found, we don't write a change to the changelog
-  if (result.foundDuplicateEntry) {
-    return
+  if (!result.versionFound) {
+    return false
   }
 
   if (result.foundEntryToUpdate) {
     updateEntry(entry, changelogPath, result)
-  } else {
-    addNewEntry(entry, version, newVersionLineNumber, changelogPath, result)
   }
+
+  if (!result.foundDuplicateEntry) {
+    addNewEntry(entry, changelogPath, result)
+  }
+
+  return true
 }
 
 function buildEntryLine(entry: DependabotEntry): string {
@@ -52,21 +76,15 @@ function buildEntryLineStart(entry: DependabotEntry): string {
 
 function addNewEntry(
   entry: DependabotEntry,
-  version: string,
-  newVersionLineNumber: number,
   changelogPath: fs.PathLike,
   result: ParsedResult
 ): void {
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = buildEntryLine(entry)
-  let lineNumber = result.changelogLineNumber
+  const lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies${EOL}${changelogEntry}`
-  }
-  if (!result.versionFound) {
-    changelogEntry = `## [${version}]${EOL}${changelogEntry}${EOL}`
-    lineNumber = newVersionLineNumber
   }
   writeEntry(lineNumber, changelogPath, changelogEntry, result.contents)
 }
@@ -168,6 +186,8 @@ async function parseChangelogForEntry(
     }
     lineNumber++
   }
+
+  fileStream.close()
 
   // If we are at the end of the file, and we never found the last entry of the dependencies,
   // it is because the last entry was the last line of the file

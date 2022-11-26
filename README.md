@@ -44,7 +44,6 @@ jobs:
       - uses: ./
         with:
           version: ${{ needs.setup.outputs.version }}
-          newVersionLineNumber: 3
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
 ```
@@ -55,6 +54,8 @@ Below are the properties allowed by the Dependabot Changelog Helper.
 #### `version`
 * Default: `UNRELEASED`
 * The version to find in the changelog to add dependabot entries to.
+
+If the `version` is not found, an unreleased version - matching the pattern `/^## [(unreleased|Unreleased|UNRELEASED)]` - is used. _Either the version you specify or an unreleased version must be present in your changelog or the action will fail._ Many changelogs default to keeping an released version at the top of the changelog as a way to incrementally build a version over time and only release a version once the right changes have been accounted for.
 
 #### `changeLogPath`
 * Default: `./CHANGELOG.md`
