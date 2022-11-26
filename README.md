@@ -41,7 +41,7 @@ jobs:
           # Depending on your needs, you can use a token that will re-trigger workflows
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }} 
-      - uses: ./
+      - uses: dangoslen/dependabot-changelog-helper@v2
         with:
           version: ${{ needs.setup.outputs.version }}
           activationLabel: 'dependabot'
@@ -64,7 +64,3 @@ If the `version` is not found, an unreleased version - matching the pattern `/^#
 #### `activationLabel`
 * Default: `dependabot`
 * The label to indicate that the action should run
-
-#### `newVersionLineNumber`
-* Default: 3
-* If the desired version is not found in the file, this is the default line number (1-indexed) in which to place the new version
