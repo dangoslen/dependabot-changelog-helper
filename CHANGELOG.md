@@ -1,6 +1,8 @@
 # Changelog
 
 ## [UNRELEASED]
+### Dependencies
+- Bumps `prettier` from 2.3.0 to 2.8.0
 
 ## [2.0.0]
 
