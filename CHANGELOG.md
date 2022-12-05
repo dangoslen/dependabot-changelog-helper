@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 ### Dependencies
 - Bumps `prettier` from 2.3.0 to 2.8.0
+- Bumps `eslint` from 8.28.0 to 8.29.0
 
 ## [2.0.0]
 
