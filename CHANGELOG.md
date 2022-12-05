@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 ### Dependencies
 - Bumps `prettier` from 2.3.0 to 2.8.0
+- Bumps `@types/node` from 14.18.33 to 18.11.10
 
 ## [2.0.0]
 
