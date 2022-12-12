@@ -2,7 +2,8 @@
 
 ## [UNRELEASED]
 ### Dependencies
-- Bumps `prettier` from 2.3.0 to 2.8.0
+- Bumps `prettier` from 2.8.0 to 2.8.1
+- Bumps `prettier` from 2.3.0 to 2.8.1
 
 ## [2.0.0]
 
