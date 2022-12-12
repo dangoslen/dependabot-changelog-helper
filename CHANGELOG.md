@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 ### Dependencies
 - Bumps `prettier` from 2.3.0 to 2.8.0
+- Bumps `eslint-plugin-github` from 4.4.1 to 4.6.0
 
 ## [2.0.0]
 
