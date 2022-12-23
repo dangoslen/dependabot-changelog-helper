@@ -2,13 +2,13 @@
 
 Thanks for your interest in contributing! This is a very small and specific project - we would like to keep it that way.
 
-If you have an idea for a new feature, please open an [issue](https://github.com/dangoslen/changelog-dependabot-helper/issues/new) first and discuss your idea for enhancement.
+If you have an idea for a new feature, please open an [issue](https://github.com/dangoslen/dependabot-changleog-helper/issues/new) first and discuss your idea for enhancement.
 
-If you have run into a problem, likewise open an [issue](https://github.com/dangoslen/changelog-enforcer/issues/new) and we will address it as best as we see fit. 
+If you have run into a problem, likewise open an [issue](https://github.com/dangoslen/dependabot-changleog-helper/issues/new) and we will address it as best as we see fit. 
 
 ## Development
 
-Currently, this project uses vanilla javascript via `node`. Dependencies are managed via `npm`.
+Currently, this project uses typescript via `node`. Dependencies are managed via `npm`.
 
 ### Installing
 
