@@ -10,12 +10,12 @@ This action helps you easily auto-update your changelog!
 
 ### We all love Dependabot...
 
-But it can feel overwhelming and require additional work to update things like versions and changelogs. 
+But it can feel overwhelming and require additional work to update things like versions and changelogs.
 
 Built around the [Keep-a-Changelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
 
-* Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
-* Update it if the package has been upgraded after an initial entry was written
+- Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
+- Update it if the package has been upgraded after an initial entry was written
 
 ### Usage
 
@@ -41,7 +41,7 @@ jobs:
         with:
           # Depending on your needs, you can use a token that will re-trigger workflows
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
-          token: ${{ secrets.GITHUB_TOKEN }} 
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: dangoslen/dependabot-changelog-helper@v2
         with:
           version: ${{ needs.setup.outputs.version }}
@@ -69,12 +69,12 @@ This is a way to incrementally build a version over time and only release a vers
 
 #### `changeLogPath`
 
-| Default    | Description                                                        |
-| ---------- | ------------------------------------------------------------------ |
+| Default          | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
 | `./CHANGELOG.md` | The path to the changelog file to add Dependabot entries to. |
 
 #### `activationLabel`
 
-| Default | Description                                            |
-| ------- | ------------------------------------------------------ |
+| Default      | Description                                       |
+| ------------ | ------------------------------------------------- |
 | `dependabot` | The label to indicate that the action should run. |
