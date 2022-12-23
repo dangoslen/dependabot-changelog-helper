@@ -83,7 +83,7 @@ jobs:
       - id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: "${{ steps.read_version.outputs.tag }}"
+          version: ${{ steps.read_version.outputs.version }}
           path: ./CHANGELOG.md
 
       - id: check_release
