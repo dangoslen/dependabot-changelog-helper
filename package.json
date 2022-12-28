@@ -11,7 +11,7 @@
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
-    "test:badge": "jest --coverage && make-coverage-badge",
+    "test:badges": "jest --coverage && make-coverage-badge",
     "all": "npm run build && npm run format && npm run lint && npm run package && npm run test:badge"
   },
   "repository": {

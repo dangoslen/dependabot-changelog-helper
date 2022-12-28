@@ -31,6 +31,7 @@ jobs:
         with: 
           token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          
       - run: npm install
       - run: npm run test:badges
       - run: npm run package
@@ -64,9 +65,8 @@ jobs:
       - id: changelog-enforcer
         uses: dangoslen/changelog-enforcer@v2
         with:
-          expectedLatestVersion: ${{ steps.read-version.outputs.version }}
+          expectedLatestVersion: ${{ steps.read_version.outputs.version }}
 
-          
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:
@@ -83,7 +83,7 @@ jobs:
       - id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: "${{ steps.read_version.outputs.tag }}"
+          version: ${{ steps.read_version.outputs.version }}
           path: ./CHANGELOG.md
 
       - id: check_release
