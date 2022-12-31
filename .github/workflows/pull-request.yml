@@ -10,49 +10,50 @@ on:
       - unlabeled
 
 jobs:
-  setup:
+  
+  # validates that the pull request is trusted
+  verify: 
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.read-version.outputs.version  }}
-      tag: ${{ steps.read-version.outputs.tag  }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          VERIFIED_LABEL=${{ contains(github.event.pull_request.labels.*.name, 'verified') }}
+          if [[ ( $VERIFIED_LABEL == 'false' ) ]]; then
+            echo "Pull request is not from a trusted source!"
+            exit 1
+          fi
 
-      - id: read-version
+  # unit tests
+  unit-tests:
+    needs: [ verify ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with: 
+          token: ${{ secrets.ACTION_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          
+      - run: npm install
+      - run: npm run test:badges
+      - run: npm build
+      - run: npm run package
+
+      - uses: stefanzweifel/git-auto-commit-action@v4.15.4
+        with:
+          commit_message: "Auto-package action"
+
+  # test action works running from the graph
+  enforce-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with: 
+          token: ${{ secrets.ACTION_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - id: read_version
         run: |
-          echo "::set-output name=version::$(jq -r ".version" package.json)"
-          echo "::set-output name=tag::v$(jq -r ".version" package.json)"
-    
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - run: |
-          npm install
-
-      - run: |
-          npm run all
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Auto commit packaged action"
-
-  changelog:
-    runs-on: ubuntu-latest
-    needs: [ setup ]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha }}
+          echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
+          echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
 
       - uses: ./
         with:
@@ -63,14 +64,14 @@ jobs:
           commit_message: "Updated Changelog"
 
       - id: changelog-enforcer
-        uses: dangoslen/changelog-enforcer@v2
+        uses: dangoslen/changelog-enforcer@v3
         with:
-          expectedLatestVersion: ${{ needs.setup.outputs.version }}
+          expectedLatestVersion: ${{ steps.read_version.outputs.version }}
 
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           check_for_duplicate_msg: true
           msg: |
@@ -79,35 +80,23 @@ jobs:
             ```
             ${{ steps.changelog-enforcer.outputs.errorMessage }}
             ```
-            
-  preview-release:
-    runs-on: ubuntu-latest
-    needs: [ setup ]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: get changelog entry
-        id: changelog_reader
+      - id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: ${{ needs.setup.outputs.version }}
+          version: ${{ steps.read_version.outputs.version }}
           path: ./CHANGELOG.md
 
-      - name: check for release
-        id: check_release
+      - id: check_release
         run: |
-          TAG=$(git ls-remote --tags origin | grep ${{ needs.setup.outputs.tag }} || [[ $? == 1 ]] && echo '')
+          TAG=$(git ls-remote --tags origin | grep ${{ steps.read_version.outputs.tag }} | cat )
           MISSING=$([[ -z "$TAG" ]] && echo 'true' || echo 'false')
-          echo ::set-output name=missing::$MISSING
+          echo "missing=$MISSING" >> $GITHUB_OUTPUT
 
-      - name: preview changelog
-        if: ${{ steps.check_release.outputs.missing == 'true' }}
+      - if: ${{ steps.check_release.outputs.missing == 'true' }}
         uses: unsplash/comment-on-pr@master
         env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           check_for_duplicate_msg: true
           msg: |
@@ -117,4 +106,3 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
-  
