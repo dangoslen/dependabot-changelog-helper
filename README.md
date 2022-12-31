@@ -12,7 +12,7 @@ This action helps you easily auto-update your changelog!
 
 But it can feel overwhelming and require additional work to update things like versions and changelogs.
 
-Built around the [Keep-a-Changelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
+Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
 
 - Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
 - Update it if the package has been upgraded after an initial entry was written
