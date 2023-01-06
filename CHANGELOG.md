@@ -3,6 +3,10 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+### Added
+- Adds support for Dependabot PRs that update Rust dependency requirements
+
 ### Dependencies
 - Bumps `prettier` from 2.3.0 to 2.8.0
 
