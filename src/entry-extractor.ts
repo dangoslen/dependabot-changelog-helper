@@ -8,7 +8,9 @@ import {WebhookPayload} from '@actions/github/lib/interfaces'
  *                                 |     |          |           |                --- Matches any non-whitespace character
  *                                 |     |          |           |                |
  */
-const TITLE_REGEX = new RegExp(/(?:Update|Bump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/)
+const TITLE_REGEX = new RegExp(
+  /(?:Update|Bump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
+)
 
 export interface DependabotEntry {
   pullRequestNumber: number

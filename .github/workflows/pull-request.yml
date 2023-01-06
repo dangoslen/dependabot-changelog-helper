@@ -33,9 +33,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           
       - run: npm install
-      - run: npm run test:badges
-      - run: npm build
-      - run: npm run package
+      - run: npm run all
 
       - uses: stefanzweifel/git-auto-commit-action@v4.15.4
         with:
