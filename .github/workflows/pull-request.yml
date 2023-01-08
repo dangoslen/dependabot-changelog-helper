@@ -29,13 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
         with: 
-          token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           
       - run: npm install
       - run: npm run all
 
-      - uses: stefanzweifel/git-auto-commit-action@v4.15.4
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-package action"
 
@@ -45,8 +45,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
         with: 
-          token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - id: read_version
         run: |
