@@ -272,12 +272,12 @@ run();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getDependabotEntry = void 0;
 /** Regex explanation
- *                                 --- Matches Bump, Bumps, Update or Updates, without capturing it
- *                                 |     --- Matches any non-whitespace character; matching as a few as possible
- *                                 |     |          --- Matches any non-whitespace character
- *                                 |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
- *                                 |     |          |           |                --- Matches any non-whitespace character
- *                                 |     |          |           |                |
+ *   --- Matches Bump, Bumps, Update or Updates, without capturing it
+ *  |     --- Matches any non-whitespace character; matching as a few as possible
+ *  |     |          --- Matches any non-whitespace character
+ *  |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
+ *  |     |          |           |                --- Matches any non-whitespace character
+ *  |     |          |           |                |
  */
 const TITLE_REGEX = new RegExp(/(?:Update|Bump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
 function getDependabotEntry(event) {
