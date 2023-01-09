@@ -5,6 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.4
+- Bumps `@vercel/ncc` from 0.27.0 to 0.36.0
 
 ## [2.1.0]
 
