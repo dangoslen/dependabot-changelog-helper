@@ -29,13 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
         with: 
-          token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          
       - run: npm install
-      - run: npm run test:badges
-      - run: npm run package
+      - run: npm run all
 
-      - uses: stefanzweifel/git-auto-commit-action@v4.15.4
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Auto-package action"
 
@@ -45,8 +45,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
         with: 
-          token: ${{ secrets.ACTION_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - id: read_version
         run: |
@@ -62,11 +62,10 @@ jobs:
           commit_message: "Updated Changelog"
 
       - id: changelog-enforcer
-        uses: dangoslen/changelog-enforcer@v2
+        uses: dangoslen/changelog-enforcer@v3
         with:
-          expectedLatestVersion: ${{ steps.read-version.outputs.version }}
+          expectedLatestVersion: ${{ steps.read_version.outputs.version }}
 
-          
       - if: failure()
         uses: unsplash/comment-on-pr@master
         env:
@@ -83,7 +82,7 @@ jobs:
       - id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: "${{ steps.read_version.outputs.tag }}"
+          version: ${{ steps.read_version.outputs.version }}
           path: ./CHANGELOG.md
 
       - id: check_release

@@ -4,9 +4,15 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 ### Dependencies
-- Bumps `prettier` from 2.3.0 to 2.8.0
+- Bumps `typescript` from 4.9.3 to 4.9.4
+
+## [2.1.0]
+
+### Added
+- Adds support for Dependabot PRs that update Rust dependency requirements
 
 ### Dependencies
+- Bumps `prettier` from 2.3.0 to 2.8.0
 - Bumps `stefanzweifel/git-auto-commit-action` from 4.14.1 to 4.15.4
 - Bumps `actions/checkout` from 3.0.2 to 3.1.0
 

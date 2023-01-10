@@ -10,6 +10,7 @@ updates:
     labels:
       - dependabot
       - dependencies
+      - verified
     target-branch: 'main'
 
   # Enable version updates for npm
@@ -22,4 +23,5 @@ updates:
     labels:
       - dependabot
       - dependencies
+      - verified
     target-branch: 'main'

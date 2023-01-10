@@ -1,6 +1,6 @@
 {
-  "name": "depenadbot-helper",
-  "version": "2.0.0",
+  "name": "dependabot-helper",
+  "version": "2.1.0",
   "private": false,
   "description": "A GitHub Action to auto-add dependabot changes to your changelog and increment version numbers",
   "main": "lib/dependabot-helper.js",
@@ -11,8 +11,8 @@
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
-    "test:badge": "jest --coverage && make-coverage-badge",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test:badge"
+    "test:badges": "jest --coverage && make-coverage-badge",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test:badges"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,6 @@
     "js-yaml": "^4.0.0",
     "prettier": "2.8.0",
     "ts-jest": "^26.5.6",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.4"
   }
 }

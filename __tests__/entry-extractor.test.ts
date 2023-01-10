@@ -21,6 +21,13 @@ const PULL_REQUEST_EVENT_ALPHA_TO_BETA = {
   }
 }
 
+const PULL_REQUEST_EVENT_RUST_REQUIREMENT_UPDATE = {
+  pull_request: {
+    number: 123,
+    title: 'Update clap requirement from ~2 to ~4'
+  }
+}
+
 test('extracts package and simple number verions', async () => {
   const entry: DependabotEntry = getDependabotEntry(PULL_REQUEST_EVENT)
 
@@ -47,4 +54,14 @@ test('extracts package with odd package name', async () => {
   expect(entry.package).toStrictEqual('@package-with_odd_characters+')
   expect(entry.oldVersion).toStrictEqual('6.0')
   expect(entry.newVersion).toStrictEqual('7.0')
+})
+
+test('extracts package with rust style requirement update', async () => {
+  const entry: DependabotEntry = getDependabotEntry(
+    PULL_REQUEST_EVENT_RUST_REQUIREMENT_UPDATE
+  )
+
+  expect(entry.package).toStrictEqual('clap')
+  expect(entry.oldVersion).toStrictEqual('~2')
+  expect(entry.newVersion).toStrictEqual('~4')
 })
