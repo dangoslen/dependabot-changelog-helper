@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Changed
+- Small fixes for contributing guide
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.4
 
