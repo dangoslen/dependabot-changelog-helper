@@ -156,20 +156,26 @@ async function parseChangelogForEntry(
   for await (const line of fileStream) {
     contents.push(line)
 
-    if (foundLastEntry || foundDuplicateEntry || foundEntryToUpdate || EMPTY_LINE_REGEX.test(line)) {
+    if (
+      foundLastEntry ||
+      foundDuplicateEntry ||
+      foundEntryToUpdate ||
+      EMPTY_LINE_REGEX.test(line)
+    ) {
       lineNumber++
       continue
     }
 
-    if (versionFound) { // Inside version section
-      if (line.startsWith("### ")) {
+    if (versionFound) {
+      // Inside version section
+      if (line.startsWith('### ')) {
         if (dependencySectionFound) {
           foundLastEntry = true
         } else {
           dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
           changelogLineNumber = lineNumber + 1
         }
-      } else if (line.startsWith("- ")) {
+      } else if (line.startsWith('- ')) {
         if (line.startsWith(entryLine)) {
           foundDuplicateEntry = true
         } else if (line.startsWith(entryLineStart)) {
