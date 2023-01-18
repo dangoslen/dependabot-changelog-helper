@@ -247,6 +247,89 @@ test('Does not update lines additional times', async () => {
   )
 })
 
+const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Dependencies
+- Bumps \`other-package\` from v2 to v3
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+
+test('Updates existing section when sections separated by blank lines', async () => {
+  mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Dependencies
+- Bumps \`other-package\` from v2 to v3
+- Bumps \`package\` from v1 to v2
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+  )
+})
+
+const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Removed
+- Removed a feature
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+
+test('Adds section when sections separated by blank lines', async () => {
+  mockReadStream(CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Removed
+- Removed a feature
+### Dependencies
+- Bumps \`package\` from v1 to v2
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+  )
+})
+
 function mockReadStream(changelog: string) {
   fs.createReadStream.mockImplementation((_: PathLike) => {
     return Readable.from([changelog])
