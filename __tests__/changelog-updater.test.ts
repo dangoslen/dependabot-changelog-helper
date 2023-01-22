@@ -330,6 +330,53 @@ test('Adds section when sections separated by blank lines', async () => {
   )
 })
 
+const CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Dependencies
+- Bumps \`other-package\` from v2 to v3
+
+### Removed
+- Removed a feature
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+
+test('Updates existing section when between other sections', async () => {
+  mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
+
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Dependencies
+- Bumps \`other-package\` from v2 to v3
+- Bumps \`package\` from v1 to v2
+
+### Removed
+- Removed a feature
+
+## [v0.9.0]
+
+### Dependencies
+- Bumps \`package\` from alpha to v1`
+  )
+})
+
 function mockReadStream(changelog: string) {
   fs.createReadStream.mockImplementation((_: PathLike) => {
     return Readable.from([changelog])
