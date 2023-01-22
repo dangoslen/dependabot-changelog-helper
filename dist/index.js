@@ -127,12 +127,16 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
                 try {
                     const line = _c;
                     contents.push(line);
-                    if (foundLastEntry || foundDuplicateEntry || foundEntryToUpdate || EMPTY_LINE_REGEX.test(line)) {
+                    if (foundLastEntry ||
+                        foundDuplicateEntry ||
+                        foundEntryToUpdate ||
+                        EMPTY_LINE_REGEX.test(line)) {
                         lineNumber++;
                         continue;
                     }
-                    if (versionFound) { // Inside version section
-                        if (line.startsWith("### ")) {
+                    if (versionFound) {
+                        // Inside version section
+                        if (line.startsWith('### ')) {
                             if (dependencySectionFound) {
                                 foundLastEntry = true;
                             }
@@ -141,7 +145,7 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
                                 changelogLineNumber = lineNumber + 1;
                             }
                         }
-                        else if (line.startsWith("- ")) {
+                        else if (line.startsWith('- ')) {
                             if (line.startsWith(entryLine)) {
                                 foundDuplicateEntry = true;
                             }
