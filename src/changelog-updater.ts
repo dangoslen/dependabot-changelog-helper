@@ -156,34 +156,42 @@ async function parseChangelogForEntry(
   for await (const line of fileStream) {
     contents.push(line)
 
-    // If we have found the line to update, the last line to add the entry after, or have found
-    // a duplicate line, just push the line
-    if (foundLastEntry || foundDuplicateEntry || foundEntryToUpdate) {
+    if (
+      foundLastEntry ||
+      foundDuplicateEntry ||
+      foundEntryToUpdate ||
+      EMPTY_LINE_REGEX.test(line)
+    ) {
+      lineNumber++
       continue
     }
 
-    // Only check the line if we haven't found the entry before
-    if (versionFound && line.startsWith(entryLine)) {
-      foundDuplicateEntry = true
-    } else if (versionFound && line.startsWith(entryLineStart)) {
-      foundEntryToUpdate = true
-      changelogLineNumber = lineNumber
-    }
-
-    if (versionFound && DEPENDENCY_SECTION_REGEX.test(line)) {
-      dependencySectionFound = true
-      changelogLineNumber = lineNumber
-    }
-
-    if (!versionFound && versionRegex.test(line)) {
+    if (versionFound) {
+      // Inside version section
+      if (line.startsWith('### ')) {
+        if (dependencySectionFound) {
+          foundLastEntry = true
+        } else {
+          dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
+          changelogLineNumber = lineNumber + 1
+        }
+      } else if (line.startsWith('- ')) {
+        if (line.startsWith(entryLine)) {
+          foundDuplicateEntry = true
+        } else if (line.startsWith(entryLineStart)) {
+          foundEntryToUpdate = true
+          changelogLineNumber = lineNumber
+        } else {
+          changelogLineNumber = lineNumber + 1
+        }
+      } else {
+        foundLastEntry = true
+      }
+    } else if (versionRegex.test(line)) {
       versionFound = true
       changelogLineNumber = lineNumber + 1
     }
 
-    foundLastEntry = versionFound && EMPTY_LINE_REGEX.test(line)
-    if (foundLastEntry) {
-      changelogLineNumber = lineNumber
-    }
     lineNumber++
   }
 

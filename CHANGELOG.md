@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Added
+- Adds support for Changelogs containing blank lines between sections
 ### Changed
 - Small fixes for contributing guide
 ### Dependencies
