@@ -3,12 +3,15 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Added
+- Adds support for Changelogs containing blank lines between sections
 ### Changed
 - Small fixes for contributing guide
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.4
 - Bumps `actions/checkout` from 3.1.0 to 3.3.0
 - Bumps `eslint-plugin-jest` from 27.1.6 to 27.2.1
+- Bumps `eslint` from 8.28.0 to 8.32.0
 
 ## [2.1.0]
 
