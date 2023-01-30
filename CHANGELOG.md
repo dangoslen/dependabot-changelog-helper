@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bumps `jest-circus` from 26.6.3 to 29.4.1
 
 ## [2.2.0]
 ### Added
