@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bumps `@types/node` from 18.11.18 to 18.11.19
 
 ## [2.2.0]
 ### Added
