@@ -68,7 +68,7 @@ function buildEntryLine(entry) {
     return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${entry.newVersion}`;
 }
 function buildEntryLineStart(entry) {
-    return `- Bumps \`${entry.package}\` from`;
+    return `- Bump \`${entry.package}\` from`;
 }
 function addNewEntry(entry, changelogPath, result) {
     // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
