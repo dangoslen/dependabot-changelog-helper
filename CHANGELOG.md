@@ -10,6 +10,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
 - Small fixes for contributing guide
+- Use imperative mood in changelog entry
 
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.4

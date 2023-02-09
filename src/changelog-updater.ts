@@ -71,7 +71,7 @@ function buildEntryLine(entry: DependabotEntry): string {
 }
 
 function buildEntryLineStart(entry: DependabotEntry): string {
-  return `- Bumps \`${entry.package}\` from`
+  return `- Bump \`${entry.package}\` from`
 }
 
 function addNewEntry(
