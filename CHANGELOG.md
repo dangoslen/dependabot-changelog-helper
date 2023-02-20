@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Fixed
+- Fixes an issue where a duplicate entry was added when a previous entry to update was found.
 
 ## [2.2.0]
 ### Added
