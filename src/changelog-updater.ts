@@ -55,9 +55,7 @@ async function searchAndUpdateVersion(
 
   if (result.foundEntryToUpdate) {
     updateEntry(entry, changelogPath, result)
-  }
-
-  if (!result.foundDuplicateEntry) {
+  } else if (!result.foundDuplicateEntry) {
     addNewEntry(entry, changelogPath, result)
   }
 
