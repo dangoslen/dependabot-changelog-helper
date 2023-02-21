@@ -20,7 +20,7 @@ inputs:
     default: 'dependabot'
   entryPrefix:
     description: |
-      "The prefix of the changelog entry, for example: '[entryPrefix] `dependency` from 1 to 2'"
+      "The prefix word (after the hyphen) of the changelog entry, for example: '- [entryPrefix] `dependency` from v1.0 to v2.0'"
     required: true
     default: 'Bump'
 runs:
