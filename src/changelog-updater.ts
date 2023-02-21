@@ -28,7 +28,12 @@ export async function updateChangelog(
 
   const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
   for (const regex of regexs) {
-    const found = await searchAndUpdateVersion(regex, entry, changelogPath, entryPrefix)
+    const found = await searchAndUpdateVersion(
+      regex,
+      entry,
+      changelogPath,
+      entryPrefix
+    )
 
     // If we found the version, we have updated the changelog or we had a duplicate
     if (found) {
@@ -73,12 +78,15 @@ function buildEntryLine(entryPrefix: string, entry: DependabotEntry): string {
   }`
 }
 
-function buildEntryLineStart(entryPrefix: string, entry: DependabotEntry): string {
+function buildEntryLineStart(
+  entryPrefix: string,
+  entry: DependabotEntry
+): string {
   return `- ${entryPrefix} \`${entry.package}\` from`
 }
 
 function buildEntryLineStartRegex(entry: DependabotEntry): RegExp {
-  return new RegExp("- \\w+ `" + entry.package + "` from ")
+  return new RegExp(`- \\w+ \`${entry.package}\` from `)
 }
 
 function addNewEntry(
@@ -157,7 +165,6 @@ async function parseChangelogForEntry(
   let foundEntryToUpdate = false
 
   const entryLine = buildEntryLine(entryPrefix, entry)
-  const entryLineStart = buildEntryLineStart(entryPrefix, entry)
   const entryLineStartRegex = buildEntryLineStartRegex(entry)
 
   const contents = []
