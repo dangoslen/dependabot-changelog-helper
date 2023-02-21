@@ -18,6 +18,11 @@ inputs:
       "The label to indicate that the action should run"
     required: true
     default: 'dependabot'
+  entryPrefix:
+    description: |
+      "The prefix of the changelog entry, for example: '[entryPrefix] `dependency` from 1 to 2'"
+    required: true
+    default: 'Bump'
 runs:
   using: 'node12'
   main: 'dist/index.js'
