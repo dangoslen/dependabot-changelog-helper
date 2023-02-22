@@ -5,6 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 ### Dependencies
 - Bumps `typescript` from 4.9.4 to 4.9.5
+- Bumps `eslint` from 8.32.0 to 8.34.0
 
 ## [2.2.1]
 ### Fixed
