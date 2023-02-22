@@ -1,5 +1,9 @@
 name: 'pull-request'
 on:
+  push:
+    branches:
+      - 'dg/**'
+      
   pull_request_target:
     types:
       - opened
