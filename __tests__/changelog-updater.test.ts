@@ -25,9 +25,7 @@ test('adds an entry to the changelog when section already exists with entry', as
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
@@ -46,9 +44,7 @@ test('adds an entry to the changelog when section exists under default unrelease
 
   await updateChangelog(PACKAGE_ENTRY, 'nope', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
@@ -66,9 +62,7 @@ test('adds an entry to the changelog when section already exists, but no entry',
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
@@ -86,9 +80,7 @@ test('adds an entry to the changelog when version exists but section does not', 
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
@@ -111,9 +103,7 @@ test('adds an entry to the changelog - multiple versions', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
@@ -182,9 +172,7 @@ test('updates an entry for an existing package in the same version', async () =>
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -204,9 +192,7 @@ test('updates version with new section and entry', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -232,9 +218,7 @@ test('Does not update lines additional times', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -267,9 +251,7 @@ test('Updates existing section when sections separated by blank lines', async ()
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -308,9 +290,7 @@ test('Adds section when sections separated by blank lines', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -353,9 +333,7 @@ test('Updates existing section when between other sections', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(
+  expectWrittenChangelogToBe(
     `# Changelog
 
 ## [v1.0.0]
@@ -381,4 +359,11 @@ function mockReadStream(changelog: string) {
   fs.createReadStream.mockImplementation((_: PathLike) => {
     return Readable.from([changelog])
   })
+}
+
+function expectWrittenChangelogToBe(changelog: string) {
+  expect(fs.writeFileSync).toBeCalledTimes(1)
+  const params = fs.writeFileSync.mock.calls[0]
+  expect(params[0]).toStrictEqual('./CHANGELOG.md')
+  expect(params[1]).toStrictEqual(changelog)
 }
