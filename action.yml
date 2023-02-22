@@ -19,7 +19,7 @@ inputs:
     required: true
     default: 'dependabot'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 branding:
   color: green
