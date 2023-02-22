@@ -1,10 +1,6 @@
 name: 'pull-request'
 on:
-  push:
-    branches:
-      - 'dg/**'
-      
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - synchronize
