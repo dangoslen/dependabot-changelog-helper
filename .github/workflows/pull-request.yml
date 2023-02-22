@@ -59,6 +59,7 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Updated Changelog"
+          token: ${{ secrets.ACTION_TOKEN }}
 
       - id: changelog-enforcer
         uses: dangoslen/changelog-enforcer@v3
