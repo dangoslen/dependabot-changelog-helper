@@ -6,6 +6,16 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Use imperative mood in changelog entry by default
 
+### Dependencies
+- Bumps `typescript` from 4.9.4 to 4.9.5
+- Bumps `eslint` from 8.32.0 to 8.34.0
+- Bumps `@types/node` from 18.11.18 to 18.14.1
+- Bumps `@vercel/ncc` from 0.27.0 to 0.36.1
+
+## [2.2.1]
+### Fixed
+- Fixes an issue where a duplicate entry was added when a previous entry to update was found.
+
 ## [2.2.0]
 ### Added
 - Adds support for Changelogs containing blank lines between sections
