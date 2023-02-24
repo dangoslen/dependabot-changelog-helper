@@ -78,3 +78,11 @@ This is a way to incrementally build a version over time and only release a vers
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
 | `dependabot` | The label to indicate that the action should run. |
+
+#### `entryPrefix`
+
+| Default      | Description                                       |
+| ------------ | ------------------------------------------------- |
+| `Bump`       | The start of a dependency bump entry line. |
+
+The format of an entry is `- <entryPrefix> <package> from <oldVersion> to <newVersion>`. If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version.
