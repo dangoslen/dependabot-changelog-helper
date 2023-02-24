@@ -34,12 +34,12 @@ const os_1 = __nccwpck_require__(2087);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/);
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
-function updateChangelog(entry, version, changelogPath) {
+function updateChangelog(entry, version, changelogPath, entryPrefix) {
     return __awaiter(this, void 0, void 0, function* () {
         const versionRegex = buildVersionRegex(version);
         const regexs = [versionRegex, UNRELEASED_REGEX];
         for (const regex of regexs) {
-            const found = yield searchAndUpdateVersion(regex, entry, changelogPath);
+            const found = yield searchAndUpdateVersion(regex, entry, changelogPath, entryPrefix);
             // If we found the version, we have updated the changelog or we had a duplicate
             if (found) {
                 return;
@@ -49,9 +49,9 @@ function updateChangelog(entry, version, changelogPath) {
     });
 }
 exports.updateChangelog = updateChangelog;
-function searchAndUpdateVersion(versionRegex, entry, changelogPath) {
+function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield parseChangelogForEntry(versionRegex, entry, changelogPath);
+        const result = yield parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath);
         if (!result.versionFound) {
             return false;
         }
@@ -59,21 +59,24 @@ function searchAndUpdateVersion(versionRegex, entry, changelogPath) {
             updateEntry(entry, changelogPath, result);
         }
         else if (!result.foundDuplicateEntry) {
-            addNewEntry(entry, changelogPath, result);
+            addNewEntry(entryPrefix, entry, changelogPath, result);
         }
         return true;
     });
 }
-function buildEntryLine(entry) {
-    return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${entry.newVersion}`;
+function buildEntryLine(entryPrefix, entry) {
+    return `${buildEntryLineStart(entryPrefix, entry)} ${entry.oldVersion} to ${entry.newVersion}`;
 }
-function buildEntryLineStart(entry) {
-    return `- Bump \`${entry.package}\` from`;
+function buildEntryLineStart(entryPrefix, entry) {
+    return `- ${entryPrefix} \`${entry.package}\` from`;
 }
-function addNewEntry(entry, changelogPath, result) {
+function buildEntryLineStartRegex(entry) {
+    return new RegExp(`- \\w+ \`${entry.package}\` from `);
+}
+function addNewEntry(prefix, entry, changelogPath, result) {
     // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
     // sections exist
-    let changelogEntry = buildEntryLine(entry);
+    let changelogEntry = buildEntryLine(prefix, entry);
     const lineNumber = result.changelogLineNumber;
     if (!result.dependencySectionFound) {
         changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
@@ -102,7 +105,7 @@ function overwriteEntry(lineNumber, changelogPath, changelogEntry, contents) {
 function buildVersionRegex(version) {
     return new RegExp(`^## \\[${version}\\]`);
 }
-function parseChangelogForEntry(versionRegex, entry, changelogPath) {
+function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath) {
     var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const fileStream = readline_1.default.createInterface({
@@ -116,8 +119,8 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
         let foundLastEntry = false;
         let foundDuplicateEntry = false;
         let foundEntryToUpdate = false;
-        const entryLine = buildEntryLine(entry);
-        const entryLineStart = buildEntryLineStart(entry);
+        const entryLine = buildEntryLine(entryPrefix, entry);
+        const entryLineStartRegex = buildEntryLineStartRegex(entry);
         const contents = [];
         try {
             // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
@@ -149,7 +152,7 @@ function parseChangelogForEntry(versionRegex, entry, changelogPath) {
                             if (line.startsWith(entryLine)) {
                                 foundDuplicateEntry = true;
                             }
-                            else if (line.startsWith(entryLineStart)) {
+                            else if (entryLineStartRegex.test(line)) {
                                 foundEntryToUpdate = true;
                                 changelogLineNumber = lineNumber;
                             }
@@ -251,9 +254,10 @@ function run() {
             const version = core.getInput('version');
             const label = core.getInput('activationLabel');
             const changelogPath = core.getInput('changelogPath');
+            const entryPrefix = core.getInput('entryPrefix');
             if (label !== '' && pullRequestHasLabel(label)) {
                 const entry = (0, entry_extractor_1.getDependabotEntry)(github.context.payload);
-                yield (0, changelog_updater_1.updateChangelog)(entry, version, changelogPath);
+                yield (0, changelog_updater_1.updateChangelog)(entry, version, changelogPath, entryPrefix);
             }
         }
         catch (err) {
