@@ -21,13 +21,19 @@ const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
-  changelogPath: fs.PathLike
+  changelogPath: fs.PathLike,
+  entryPrefix: string
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
 
   const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
   for (const regex of regexs) {
-    const found = await searchAndUpdateVersion(regex, entry, changelogPath)
+    const found = await searchAndUpdateVersion(
+      regex,
+      entry,
+      changelogPath,
+      entryPrefix
+    )
 
     // If we found the version, we have updated the changelog or we had a duplicate
     if (found) {
@@ -41,10 +47,12 @@ export async function updateChangelog(
 async function searchAndUpdateVersion(
   versionRegex: RegExp,
   entry: DependabotEntry,
-  changelogPath: fs.PathLike
+  changelogPath: fs.PathLike,
+  entryPrefix: string
 ): Promise<Boolean> {
   const result = await parseChangelogForEntry(
     versionRegex,
+    entryPrefix,
     entry,
     changelogPath
   )
@@ -56,30 +64,38 @@ async function searchAndUpdateVersion(
   if (result.foundEntryToUpdate) {
     updateEntry(entry, changelogPath, result)
   } else if (!result.foundDuplicateEntry) {
-    addNewEntry(entry, changelogPath, result)
+    addNewEntry(entryPrefix, entry, changelogPath, result)
   }
 
   return true
 }
 
-function buildEntryLine(entry: DependabotEntry): string {
-  return `${buildEntryLineStart(entry)} ${entry.oldVersion} to ${
+function buildEntryLine(entryPrefix: string, entry: DependabotEntry): string {
+  return `${buildEntryLineStart(entryPrefix, entry)} ${entry.oldVersion} to ${
     entry.newVersion
   }`
 }
 
-function buildEntryLineStart(entry: DependabotEntry): string {
-  return `- Bumps \`${entry.package}\` from`
+function buildEntryLineStart(
+  entryPrefix: string,
+  entry: DependabotEntry
+): string {
+  return `- ${entryPrefix} \`${entry.package}\` from`
+}
+
+function buildEntryLineStartRegex(entry: DependabotEntry): RegExp {
+  return new RegExp(`- \\w+ \`${entry.package}\` from `)
 }
 
 function addNewEntry(
+  prefix: string,
   entry: DependabotEntry,
   changelogPath: fs.PathLike,
   result: ParsedResult
 ): void {
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
-  let changelogEntry = buildEntryLine(entry)
+  let changelogEntry = buildEntryLine(prefix, entry)
   const lineNumber = result.changelogLineNumber
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies${EOL}${changelogEntry}`
@@ -129,6 +145,7 @@ function buildVersionRegex(version: string): RegExp {
 
 async function parseChangelogForEntry(
   versionRegex: RegExp,
+  entryPrefix: string,
   entry: DependabotEntry,
   changelogPath: fs.PathLike
 ): Promise<ParsedResult> {
@@ -145,8 +162,8 @@ async function parseChangelogForEntry(
   let foundDuplicateEntry = false
   let foundEntryToUpdate = false
 
-  const entryLine = buildEntryLine(entry)
-  const entryLineStart = buildEntryLineStart(entry)
+  const entryLine = buildEntryLine(entryPrefix, entry)
+  const entryLineStartRegex = buildEntryLineStartRegex(entry)
 
   const contents = []
 
@@ -176,7 +193,7 @@ async function parseChangelogForEntry(
       } else if (line.startsWith('- ')) {
         if (line.startsWith(entryLine)) {
           foundDuplicateEntry = true
-        } else if (line.startsWith(entryLineStart)) {
+        } else if (entryLineStartRegex.test(line)) {
           foundEntryToUpdate = true
           changelogLineNumber = lineNumber
         } else {
