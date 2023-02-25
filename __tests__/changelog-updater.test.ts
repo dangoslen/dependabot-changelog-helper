@@ -362,7 +362,7 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX = `# Changelog
 - Bump \`different-package\` from v1 to v2`
 
 test('adds an entry with a different prefix to the changelog when section already exists with entry', async () => {
-  mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES)
+  mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX)
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
 
@@ -399,7 +399,7 @@ const CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX = `# Changelog
 - Bump \`package\` from v1 to v1.1`
 
 test('keeps prefix on entry with a different prefix', async () => {
-  mockReadStream(CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX)
+  mockReadStream(CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX)
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
 
