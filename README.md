@@ -81,8 +81,8 @@ This is a way to incrementally build a version over time and only release a vers
 
 #### `entryPrefix`
 
-| Default      | Description                                       |
-| ------------ | ------------------------------------------------- |
-| `Bump`       | The start of a dependency bump entry line. |
+| Default      | Description                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| `Bump`       | The starting word of a dependency bump entry line. Currently only supports single world prefixes. |
 
-The format of an entry is `- <entryPrefix> <package> from <oldVersion> to <newVersion>`. If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version.
+The format of an entry is `- <entryPrefix> <package> from <oldVersion> to <newVersion>`. If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word.
