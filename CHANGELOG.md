@@ -3,8 +3,13 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+## [3.0.0]
+### Added
+- Adds a new `entryPrefix` option. See the [README](./README.md#entryprefix) for more details.
+
 ### Changed
-- Use imperative mood in changelog entry by default
+- Use imperative mood (`Bump` vs. `Bumps`) in changelog entry by default
 
 ### Dependencies
 - Bumps `typescript` from 4.9.4 to 4.9.5

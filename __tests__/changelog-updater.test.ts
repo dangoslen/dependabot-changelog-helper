@@ -366,9 +366,7 @@ test('adds an entry with a different prefix to the changelog when section alread
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
@@ -387,9 +385,7 @@ test('keeps prefix on entry with a different prefix but is otherwise a duplicate
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
@@ -407,9 +403,7 @@ test('keeps prefix on entry with a different prefix', async () => {
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
 
-  const params = fs.writeFileSync.mock.calls[0]
-  expect(params[0]).toStrictEqual('./CHANGELOG.md')
-  expect(params[1]).toStrictEqual(`# Changelog
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
