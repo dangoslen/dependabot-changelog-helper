@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bump `prettier` from 2.8.3 to 2.8.4
 
 ## [3.0.0]
 ### Added
