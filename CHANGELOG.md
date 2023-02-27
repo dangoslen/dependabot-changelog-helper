@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bump `eslint-plugin-github` from 4.4.1 to 4.6.1
 
 ## [3.0.0]
 ### Added
