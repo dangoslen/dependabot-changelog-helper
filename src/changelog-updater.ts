@@ -57,6 +57,7 @@ async function searchAndUpdateVersion(
     changelogPath
   )
 
+  // We could not find the desired version to update by the configuration of the action
   if (!result.versionFound) {
     return false
   }
@@ -70,10 +71,16 @@ async function searchAndUpdateVersion(
   return true
 }
 
+// We only want to check for duplicates based only on package and versions
+// We omit PR context - (#pr) - because we can't know which PR merged the previous bump
+function buildEntryLineForDuplicateCheck(entryPrefix: string, entry: DependabotEntry): string {
+  const lineStart = buildEntryLineStart(entryPrefix, entry)
+  return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`
+}
+
 function buildEntryLine(entryPrefix: string, entry: DependabotEntry): string {
-  return `${buildEntryLineStart(entryPrefix, entry)} ${entry.oldVersion} to ${
-    entry.newVersion
-  }`
+  const lineStart = buildEntryLineForDuplicateCheck(entryPrefix, entry)
+  return `${lineStart} (#${entry.pullRequestNumber})`
 }
 
 function buildEntryLineStart(
@@ -162,7 +169,7 @@ async function parseChangelogForEntry(
   let foundDuplicateEntry = false
   let foundEntryToUpdate = false
 
-  const entryLine = buildEntryLine(entryPrefix, entry)
+  const entryLine = buildEntryLineForDuplicateCheck(entryPrefix, entry)
   const entryLineStartRegex = buildEntryLineStartRegex(entry)
 
   const contents = []
