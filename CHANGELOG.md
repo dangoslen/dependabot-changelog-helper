@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 - Bump `actions/checkout` from 3.3.0 to 3.5.2 (#150)
 - Bump `eslint-plugin-github` from 4.4.1 to 4.7.0 (#154)
+- Bump `prettier` from 2.8.3 to 2.8.8 (#153)
 
 ## [3.0.0]
 ### Added
