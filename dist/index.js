@@ -52,6 +52,7 @@ exports.updateChangelog = updateChangelog;
 function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath);
+        // We could not find the desired version to update by the configuration of the action
         if (!result.versionFound) {
             return false;
         }
@@ -64,8 +65,15 @@ function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix)
         return true;
     });
 }
+// We only want to check for duplicates based only on package and versions
+// We omit PR context - (#pr) - because we can't know which PR merged the previous bump
+function buildEntryLineForDuplicateCheck(entryPrefix, entry) {
+    const lineStart = buildEntryLineStart(entryPrefix, entry);
+    return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`;
+}
 function buildEntryLine(entryPrefix, entry) {
-    return `${buildEntryLineStart(entryPrefix, entry)} ${entry.oldVersion} to ${entry.newVersion}`;
+    const lineStart = buildEntryLineForDuplicateCheck(entryPrefix, entry);
+    return `${lineStart} (#${entry.pullRequestNumber})`;
 }
 function buildEntryLineStart(entryPrefix, entry) {
     return `- ${entryPrefix} \`${entry.package}\` from`;
@@ -87,8 +95,20 @@ function updateEntry(entry, changelogPath, result) {
     const lineNumber = result.changelogLineNumber;
     const existingLine = result.contents[lineNumber];
     const existingPackage = existingLine.split(' to ')[0];
-    const changelogEntry = `${existingPackage} to ${entry.newVersion}`;
+    const existingPullRequests = extractAssociatedPullRequests(existingLine);
+    const pullRequests = [...existingPullRequests, `#${entry.pullRequestNumber}`];
+    const changelogEntry = `${existingPackage} to ${entry.newVersion} (${pullRequests.join(', ')})`;
     overwriteEntry(lineNumber, changelogPath, changelogEntry, result.contents);
+}
+function extractAssociatedPullRequests(existingLine) {
+    const groups = existingLine.split('(');
+    if (groups.length < 2) {
+        return [];
+    }
+    return groups[1]
+        .replace(')', '')
+        .split(',')
+        .map(s => s.trim());
 }
 function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
     const length = contents.push('');
@@ -119,7 +139,7 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath)
         let foundLastEntry = false;
         let foundDuplicateEntry = false;
         let foundEntryToUpdate = false;
-        const entryLine = buildEntryLine(entryPrefix, entry);
+        const entryLine = buildEntryLineForDuplicateCheck(entryPrefix, entry);
         const entryLineStartRegex = buildEntryLineStartRegex(entry);
         const contents = [];
         try {

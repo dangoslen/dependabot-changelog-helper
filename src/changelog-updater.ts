@@ -73,7 +73,10 @@ async function searchAndUpdateVersion(
 
 // We only want to check for duplicates based only on package and versions
 // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
-function buildEntryLineForDuplicateCheck(entryPrefix: string, entry: DependabotEntry): string {
+function buildEntryLineForDuplicateCheck(
+  entryPrefix: string,
+  entry: DependabotEntry
+): string {
   const lineStart = buildEntryLineStart(entryPrefix, entry)
   return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`
 }
@@ -120,13 +123,13 @@ function updateEntry(
   const existingPackage = existingLine.split(' to ')[0]
   const existingPullRequests = extractAssociatedPullRequests(existingLine)
   const pullRequests = [...existingPullRequests, `#${entry.pullRequestNumber}`]
-  const changelogEntry = `${existingPackage} to ${entry.newVersion} (${pullRequests.join(', ')})`
+  const changelogEntry = `${existingPackage} to ${
+    entry.newVersion
+  } (${pullRequests.join(', ')})`
   overwriteEntry(lineNumber, changelogPath, changelogEntry, result.contents)
 }
 
-function extractAssociatedPullRequests(
-  existingLine: string
-): string[] {
+function extractAssociatedPullRequests(existingLine: string): string[] {
   const groups = existingLine.split('(')
   if (groups.length < 2) {
     return []
