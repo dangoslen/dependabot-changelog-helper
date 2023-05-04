@@ -5,7 +5,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 ### Added
 - Includes the number of the Dependabot pull request at the end of each entry line. A sample line is below
+### Dependencies
+- Bump `actions/checkout` from 3.3.0 to 3.5.2 (#150)
   - `- Bump <package> from <old-version> to <new-version> (#pr)`
+### Dependencies
+- Bump `actions/checkout` from 3.3.0 to 3.5.2 (#150)
 
 ## [3.0.0]
 ### Added
