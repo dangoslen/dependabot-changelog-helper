@@ -118,8 +118,23 @@ function updateEntry(
   const lineNumber = result.changelogLineNumber
   const existingLine = result.contents[lineNumber]
   const existingPackage = existingLine.split(' to ')[0]
-  const changelogEntry = `${existingPackage} to ${entry.newVersion}`
+  const existingPullRequests = extractAssociatedPullRequests(existingLine)
+  const pullRequests = [...existingPullRequests, `#${entry.pullRequestNumber}`]
+  const changelogEntry = `${existingPackage} to ${entry.newVersion} (${pullRequests.join(', ')})`
   overwriteEntry(lineNumber, changelogPath, changelogEntry, result.contents)
+}
+
+function extractAssociatedPullRequests(
+  existingLine: string
+): string[] {
+  const groups = existingLine.split('(')
+  if (groups.length < 2) {
+    return []
+  }
+  return groups[1]
+    .replace(')', '')
+    .split(',')
+    .map(s => s.trim())
 }
 
 function writeEntry(

@@ -177,7 +177,27 @@ test('updates an entry for an existing package in the same version', async () =>
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2`
+- Bump \`package\` from v1 to v2 (#123)`
+  )
+})
+
+const CHANGELOG_WITH_ENTRY_TO_UPDATE_WITH_PULL_REQUEST = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`package\` from v1 to v1.1 (#100)`
+
+test('updates an entry with pull request context for an existing package in the same version', async () => {
+  mockReadStream(CHANGELOG_WITH_ENTRY_TO_UPDATE_WITH_PULL_REQUEST)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
+
+  expectWrittenChangelogToBe(
+    `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`package\` from v1 to v2 (#100, #123)`
   )
 })
 
@@ -207,13 +227,13 @@ const CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v1.1
+- Bump \`package\` from v1 to v1.1 (#100, #101)
 
 ## [v0.9.0]
 ### Dependencies
 - Bump \`package\` from alpha to v1`
 
-test('Does not update lines additional times', async () => {
+test('does not update lines additional times', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES)
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
@@ -223,7 +243,7 @@ test('Does not update lines additional times', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2
+- Bump \`package\` from v1 to v2 (#100, #101, #123)
 
 ## [v0.9.0]
 ### Dependencies
@@ -389,7 +409,7 @@ test('keeps prefix on entry with a different prefix but is otherwise a duplicate
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2`)
+- Bump \`package\` from v1 to v2 (#123)`)
 })
 
 const CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX = `# Changelog
@@ -407,7 +427,7 @@ test('keeps prefix on entry with a different prefix', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2`)
+- Bump \`package\` from v1 to v2 (#123)`)
 })
 
 function mockReadStream(changelog: string) {
