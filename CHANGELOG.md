@@ -11,7 +11,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `prettier` from 2.8.3 to 2.8.8 (#153)
 - Bump `eslint` from 8.34.0 to 8.39.0 (#152)
 - Bump `@types/node` from 18.14.1 to 18.16.3 (#151)
-- Bumps `jest-circus` from 26.6.3 to 29.4.3 (#140)
+- Bumps `jest-circus` from 26.6.3 to 29.4.3 (#140, #140)
 - Bumps `jest` from 26.6.3 to 29.4.3 (#140)
 
 ## [3.0.0]
