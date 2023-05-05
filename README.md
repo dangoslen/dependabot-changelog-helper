@@ -42,11 +42,18 @@ jobs:
           # Depending on your needs, you can use a token that will re-trigger workflows
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: dangoslen/dependabot-changelog-helper@v2
+
+      - uses: dangoslen/dependabot-changelog-helper@v3
         with:
           version: ${{ needs.setup.outputs.version }}
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
+
+      # This step is required for committing the changes to your branch. 
+      # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs 
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Updated Changelog"
 ```
 
 ### Inputs / Properties
