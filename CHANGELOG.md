@@ -4,6 +4,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+
 ## [3.1.0]
 ### Added
 - Includes the number of the Dependabot pull request at the end of each entry line. Examples are in the depedency section below
