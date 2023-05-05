@@ -124,7 +124,7 @@ function updateEntry(
   const existingPullRequests = extractAssociatedPullRequests(existingLine)
 
   const currentPullRequest = `#${entry.pullRequestNumber}`
-  
+
   // We want to avoid accidentally re-updating the changelog multiple times with the same PR number
   // If we see the current PR number is reflected in the context, we don't need to update
   if (existingPullRequests.includes(currentPullRequest)) {

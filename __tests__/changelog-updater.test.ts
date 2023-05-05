@@ -267,8 +267,9 @@ test('does not update lines additional times, even with multiple invocations', a
 
 ## [v0.9.0]
 ### Dependencies
-- Bump \`package\` from alpha to v1`
-  , 2)
+- Bump \`package\` from alpha to v1`,
+    2
+  )
 })
 
 const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
