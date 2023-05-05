@@ -122,7 +122,16 @@ function updateEntry(
   const existingLine = result.contents[lineNumber]
   const existingPackage = existingLine.split(' to ')[0]
   const existingPullRequests = extractAssociatedPullRequests(existingLine)
-  const pullRequests = [...existingPullRequests, `#${entry.pullRequestNumber}`]
+
+  const currentPullRequest = `#${entry.pullRequestNumber}`
+  
+  // We want to avoid accidentally re-updating the changelog multiple times with the same PR number
+  // If we see the current PR number is reflected in the context, we don't need to update
+  if (existingPullRequests.includes(currentPullRequest)) {
+    return
+  }
+
+  const pullRequests = [...existingPullRequests, currentPullRequest]
   const changelogEntry = `${existingPackage} to ${
     entry.newVersion
   } (${pullRequests.join(', ')})`

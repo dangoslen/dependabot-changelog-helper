@@ -251,6 +251,26 @@ test('does not update lines additional times', async () => {
   )
 })
 
+test('does not update lines additional times, even with multiple invocations', async () => {
+  mockReadStream(CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES)
+
+  // Run twice to make sure we only add the PR context once
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
+
+  expectWrittenChangelogToBe(
+    `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`package\` from v1 to v2 (#100, #101, #123)
+
+## [v0.9.0]
+### Dependencies
+- Bump \`package\` from alpha to v1`
+  , 2)
+})
+
 const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
 
 ## [v1.0.0]
@@ -436,8 +456,8 @@ function mockReadStream(changelog: string) {
   })
 }
 
-function expectWrittenChangelogToBe(changelog: string) {
-  expect(fs.writeFileSync).toBeCalledTimes(1)
+function expectWrittenChangelogToBe(changelog: string, calls = 1) {
+  expect(fs.writeFileSync).toBeCalledTimes(calls)
   const params = fs.writeFileSync.mock.calls[0]
   expect(params[0]).toStrictEqual('./CHANGELOG.md')
   expect(params[1]).toStrictEqual(changelog)
