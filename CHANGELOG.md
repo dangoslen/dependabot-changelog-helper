@@ -11,6 +11,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `prettier` from 2.8.3 to 2.8.8 (#153)
 - Bump `eslint` from 8.34.0 to 8.39.0 (#152)
 - Bump `@types/node` from 18.14.1 to 18.16.3 (#151)
+- Bumps `jest-circus` from 26.6.3 to 29.4.3 (#140)
+- Bumps `jest` from 26.6.3 to 29.4.3 (#140)
 
 ## [3.0.0]
 ### Added
@@ -23,8 +25,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bumps `typescript` from 4.9.4 to 4.9.5
 - Bumps `eslint` from 8.32.0 to 8.34.0
 - Bumps `@types/node` from 18.11.18 to 18.14.1
-- Bumps `jest-circus` from 26.6.3 to 29.4.3
-- Bumps `@vercel/ncc` from 0.27.0 to 0.36.1
+- Bumps `@vercel/ncc` from 0.27.0 to 0.36.1 
 
 ## [2.2.1]
 ### Fixed
