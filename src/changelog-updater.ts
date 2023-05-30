@@ -224,7 +224,7 @@ async function parseChangelogForEntry(
           dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
           changelogLineNumber = lineNumber + 1
         }
-      } else if (line.startsWith('- ')) {
+      } else if (line.trim().startsWith('- ')) {
         if (line.startsWith(entryLine)) {
           foundDuplicateEntry = true
         } else if (entryLineStartRegex.test(line)) {
