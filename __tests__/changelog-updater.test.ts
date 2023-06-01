@@ -328,7 +328,9 @@ const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES
 - Bump \`package\` from alpha to v1`
 
 test('updates existing section when sections separated by blank lines contain nested entries', async () => {
-  mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES)
+  mockReadStream(
+    CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES
+  )
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
 
@@ -409,7 +411,9 @@ const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTR
 - Bump \`package\` from alpha to v1`
 
 test('adds section when sections separated by blank lines contain nested entries', async () => {
-  mockReadStream(CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES)
+  mockReadStream(
+    CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES
+  )
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
 
