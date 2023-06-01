@@ -3,9 +3,10 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+## [3.1.1]
 ### Fixed
 - Support nested lists in changelogs #161 
-
 
 ## [3.1.0]
 ### Added
