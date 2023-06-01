@@ -17,6 +17,7 @@ const UNRELEASED_REGEX = new RegExp(
 )
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
+const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
 
 export async function updateChangelog(
   entry: DependabotEntry,
@@ -224,7 +225,7 @@ async function parseChangelogForEntry(
           dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
           changelogLineNumber = lineNumber + 1
         }
-      } else if (line.trim().startsWith('- ')) {
+      } else if (SECTION_ENTRY_REGEX.test(line)) {
         if (line.startsWith(entryLine)) {
           foundDuplicateEntry = true
         } else if (entryLineStartRegex.test(line)) {
