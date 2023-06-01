@@ -311,6 +311,47 @@ test('updates existing section when sections separated by blank lines', async ()
   )
 })
 
+const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+  - Added a new subfeature
+
+### Dependencies
+- Bump \`other-package\` from v2 to v3
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1`
+
+test('updates existing section when sections separated by blank lines contain nested entries', async () => {
+  mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
+
+  expectWrittenChangelogToBe(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+  - Added a new subfeature
+
+### Dependencies
+- Bump \`other-package\` from v2 to v3
+- Bump \`package\` from v1 to v2 (#123)
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1`
+  )
+})
+
 const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
 
 ## [v1.0.0]
@@ -338,6 +379,48 @@ test('adds section when sections separated by blank lines', async () => {
 
 ### Added
 - Added a new feature
+
+### Removed
+- Removed a feature
+### Dependencies
+- Bump \`package\` from v1 to v2 (#123)
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1`
+  )
+})
+
+const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+  - Added a new subfeature
+
+### Removed
+- Removed a feature
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1`
+
+test('adds section when sections separated by blank lines contain nested entries', async () => {
+  mockReadStream(CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Bump')
+
+  expectWrittenChangelogToBe(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+  - Added a new subfeature
 
 ### Removed
 - Removed a feature
