@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `eslint-plugin-github` from 4.7.0 to 4.8.0 (#166)
 - Bump `prettier` from 2.8.3 to 2.8.8 (#157)
 - Bump `@types/node` from 18.16.4 to 20.2.5 (#167)
+- Bump `eslint` from 8.39.0 to 8.42.0 (#168)
 
 ## [3.1.1]
 ### Fixed
