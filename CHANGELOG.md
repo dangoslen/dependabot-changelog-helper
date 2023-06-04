@@ -5,6 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 ### Dependencies
 - Bump `typescript` from 4.9.5 to 5.1.3 (#165)
+- Bump `prettier` from 2.8.3 to 2.8.8 (#157)
 
 ## [3.1.1]
 ### Fixed
