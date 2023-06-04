@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bump `typescript` from 4.9.5 to 5.1.3 (#165)
 
 ## [3.1.1]
 ### Fixed
