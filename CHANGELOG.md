@@ -4,7 +4,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
-## [v3.2.0]
+## [3.2.0]
 ### Added
 - Provides better [documentation for the entry format](./README.md#entry-format)
 
