@@ -14,8 +14,19 @@ But it can feel overwhelming and require additional work to update things like v
 
 Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
 
-- Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
-- Update it if the package has been upgraded after an initial entry was written
+- Adds an entry if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
+- Updates the entry if one has been found within the same version. 
+  - This includes update the upgraded version and the associated pull request numbers
+
+### Entry Format
+
+The format for an entry is as follows
+
+```
+- <entryPrefix> <package> from <oldVersion> to <newVersion> (#pr-number[, #pr-number])`
+```
+
+The `<entryPrefix>` can be controlled via the [entry-prefix input](#entryprefix).
 
 ### Usage
 
@@ -92,4 +103,4 @@ This is a way to incrementally build a version over time and only release a vers
 | ------------ | ------------------------------------------------------------------------------------------------- |
 | `Bump`       | The starting word of a dependency bump entry line. Currently only supports single world prefixes. |
 
-The format of an entry is `- <entryPrefix> <package> from <oldVersion> to <newVersion>`. If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word.
+If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
