@@ -3,6 +3,11 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+## [v3.2.0]
+### Added
+- Provides better [documentation for the entry format](./README.md#entry-format)
+
 ### Dependencies
 - Bump `typescript` from 4.9.5 to 5.1.3 (#165)
 - Bump `eslint-plugin-github` from 4.7.0 to 4.8.0 (#166)
