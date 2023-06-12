@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Dependencies
+- Bump `@types/node` from 20.2.5 to 20.3.0 (#170)
 
 ## [3.2.0]
 ### Added
