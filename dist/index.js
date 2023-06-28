@@ -87,6 +87,11 @@ function addNewEntry(prefix, entry, changelogPath, result) {
     const lineNumber = result.changelogLineNumber;
     if (!result.dependencySectionFound) {
         changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
+        // Check if the line number is last.
+        // If not, add a space between the last section and the next version
+        if (lineNumber < result.contents.length - 1) {
+            changelogEntry = `${changelogEntry}${os_1.EOL}`;
+        }
     }
     writeEntry(lineNumber, changelogPath, changelogEntry, result.contents);
 }
@@ -163,8 +168,17 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath)
                         continue;
                     }
                     if (versionFound) {
-                        // Inside version section
-                        if (line.startsWith('### ')) {
+                        // If we are finding a new version after having found the right version
+                        // and if we have not found the dependency section
+                        // we need to add the dependency section before the new version
+                        if (line.startsWith('## ') && !dependencySectionFound) {
+                            foundLastEntry = true;
+                            changelogLineNumber = lineNumber;
+                        }
+                        else if (line.startsWith('### ')) {
+                            // If we are finding a new section and we have found the right version
+                            // and we have found the dependency section, we are moving into a new section
+                            // Otherwise, see if this is the dependency section
                             if (dependencySectionFound) {
                                 foundLastEntry = true;
                             }
@@ -173,23 +187,22 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath)
                                 changelogLineNumber = lineNumber + 1;
                             }
                         }
-                        else if (line.startsWith('- ')) {
-                            if (line.startsWith(entryLine)) {
-                                foundDuplicateEntry = true;
-                            }
-                            else if (entryLineStartRegex.test(line)) {
-                                foundEntryToUpdate = true;
-                                changelogLineNumber = lineNumber;
-                            }
-                            else {
-                                changelogLineNumber = lineNumber + 1;
-                            }
+                        else if (line.startsWith(entryLine)) {
+                            // If we are finding a duplicate line, we have found duplicate entry and we will skip
+                            foundDuplicateEntry = true;
                         }
-                        else {
-                            foundLastEntry = true;
+                        else if (entryLineStartRegex.test(line)) {
+                            // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+                            foundEntryToUpdate = true;
+                            changelogLineNumber = lineNumber;
+                        }
+                        else if (line.startsWith('- ')) {
+                            // Assume we find the last line if we find an entry
+                            changelogLineNumber = lineNumber + 1;
                         }
                     }
                     else if (versionRegex.test(line)) {
+                        // If we have not found the version, see if this is the version
                         versionFound = true;
                         changelogLineNumber = lineNumber + 1;
                     }
