@@ -17,6 +17,7 @@ const UNRELEASED_REGEX = new RegExp(
 )
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
+const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
 
 export async function updateChangelog(
   entry: DependabotEntry,
@@ -228,7 +229,7 @@ async function parseChangelogForEntry(
         // Then we have found the last entry regardless of if we found the dependency section
         foundLastEntry = true
 
-        // If we haven't found the dependency section, we need to set the changeLogNumber
+        // If we haven't found the dependency section, we need to set the line to update number
         if (!dependencySectionFound) {
           lineToUpdate = lineNumber
         }
@@ -242,7 +243,7 @@ async function parseChangelogForEntry(
           dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
           lineToUpdate = lineNumber + 1
         }
-      } else if (dependencySectionFound) {
+      } else if (SECTION_ENTRY_REGEX.test(line)) {
         if (line.startsWith(entryLine)) {
           // If we are finding a duplicate line, we have found duplicate entry and we will skip
           foundDuplicateEntry = true

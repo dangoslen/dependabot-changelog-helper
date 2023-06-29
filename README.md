@@ -14,8 +14,19 @@ But it can feel overwhelming and require additional work to update things like v
 
 Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
 
-- Add it if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
-- Update it if the package has been upgraded after an initial entry was written
+- Adds an entry if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
+- Updates the entry if one has been found within the same version. 
+  - This includes update the upgraded version and the associated pull request numbers
+
+### Entry Format
+
+The format for an entry is as follows
+
+```
+- <entryPrefix> <package> from <oldVersion> to <newVersion> (#pr-number[, #pr-number])`
+```
+
+The `<entryPrefix>` can be controlled via the [entry-prefix input](#entryprefix).
 
 ### Usage
 
@@ -42,11 +53,18 @@ jobs:
           # Depending on your needs, you can use a token that will re-trigger workflows
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: dangoslen/dependabot-changelog-helper@v2
+
+      - uses: dangoslen/dependabot-changelog-helper@v3
         with:
           version: ${{ needs.setup.outputs.version }}
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
+
+      # This step is required for committing the changes to your branch. 
+      # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs 
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Updated Changelog"
 ```
 
 ### Inputs / Properties
@@ -85,4 +103,4 @@ This is a way to incrementally build a version over time and only release a vers
 | ------------ | ------------------------------------------------------------------------------------------------- |
 | `Bump`       | The starting word of a dependency bump entry line. Currently only supports single world prefixes. |
 
-The format of an entry is `- <entryPrefix> <package> from <oldVersion> to <newVersion>`. If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word.
+If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 

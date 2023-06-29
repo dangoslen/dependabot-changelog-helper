@@ -33,6 +33,7 @@ const os_1 = __nccwpck_require__(2037);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
 const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/);
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
+const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /);
 function updateChangelog(entry, version, changelogPath, entryPrefix) {
     return __awaiter(this, void 0, void 0, function* () {
         const versionRegex = buildVersionRegex(version);
@@ -154,68 +155,63 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath)
         const contents = [];
         try {
             // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
-            for (var _d = true, fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), _a = fileStream_1_1.done, !_a;) {
+            for (var _d = true, fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), _a = fileStream_1_1.done, !_a; _d = true) {
                 _c = fileStream_1_1.value;
                 _d = false;
-                try {
-                    const line = _c;
-                    contents.push(line);
-                    if (foundLastEntry ||
-                        foundDuplicateEntry ||
-                        foundEntryToUpdate ||
-                        EMPTY_LINE_REGEX.test(line)) {
-                        lineNumber++;
-                        continue;
-                    }
-                    if (versionFound) {
-                        // If we are finding a new version after having found the right version
-                        if (line.startsWith('## ')) {
-                            // Then we have found the last entry regardless of if we found the dependency section
-                            foundLastEntry = true;
-                            // If we haven't found the dependency section, we need to set the changeLogNumber
-                            if (!dependencySectionFound) {
-                                lineToUpdate = lineNumber;
-                            }
-                        }
-                        else if (line.startsWith('### ')) {
-                            // If we are finding a new section and we have found the right version
-                            // and we have found the dependency section, we are moving into a new section
-                            // Otherwise, see if this is the dependency section
-                            if (dependencySectionFound) {
-                                foundLastEntry = true;
-                            }
-                            else {
-                                dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line);
-                                lineToUpdate = lineNumber + 1;
-                            }
-                        }
-                        else if (dependencySectionFound) {
-                            if (line.startsWith(entryLine)) {
-                                // If we are finding a duplicate line, we have found duplicate entry and we will skip
-                                foundDuplicateEntry = true;
-                            }
-                            else if (entryLineStartRegex.test(line)) {
-                                // If we are finding the start to the entry, we have an entry to update and we will overwrite it
-                                foundEntryToUpdate = true;
-                                lineToUpdate = lineNumber;
-                            }
-                            else {
-                                // Assume we find the last line if we find an entry
-                                // We will append our new entry to end on the next line
-                                lineToUpdate = lineNumber + 1;
-                            }
-                        }
-                    }
-                    else if (versionRegex.test(line)) {
-                        // If we have not found the version, see if this is the version
-                        versionFound = true;
-                        lineToUpdate = lineNumber + 1;
-                    }
+                const line = _c;
+                contents.push(line);
+                if (foundLastEntry ||
+                    foundDuplicateEntry ||
+                    foundEntryToUpdate ||
+                    EMPTY_LINE_REGEX.test(line)) {
                     lineNumber++;
+                    continue;
                 }
-                finally {
-                    _d = true;
+                if (versionFound) {
+                    // If we are finding a new version after having found the right version
+                    if (line.startsWith('## ')) {
+                        // Then we have found the last entry regardless of if we found the dependency section
+                        foundLastEntry = true;
+                        // If we haven't found the dependency section, we need to set the line to update number
+                        if (!dependencySectionFound) {
+                            lineToUpdate = lineNumber;
+                        }
+                    }
+                    else if (line.startsWith('### ')) {
+                        // If we are finding a new section and we have found the right version
+                        // and we have found the dependency section, we are moving into a new section
+                        // Otherwise, see if this is the dependency section
+                        if (dependencySectionFound) {
+                            foundLastEntry = true;
+                        }
+                        else {
+                            dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line);
+                            lineToUpdate = lineNumber + 1;
+                        }
+                    }
+                    else if (SECTION_ENTRY_REGEX.test(line)) {
+                        if (line.startsWith(entryLine)) {
+                            // If we are finding a duplicate line, we have found duplicate entry and we will skip
+                            foundDuplicateEntry = true;
+                        }
+                        else if (entryLineStartRegex.test(line)) {
+                            // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+                            foundEntryToUpdate = true;
+                            lineToUpdate = lineNumber;
+                        }
+                        else {
+                            // Assume we find the last line if we find an entry
+                            // We will append our new entry to end on the next line
+                            lineToUpdate = lineNumber + 1;
+                        }
+                    }
                 }
+                else if (versionRegex.test(line)) {
+                    // If we have not found the version, see if this is the version
+                    versionFound = true;
+                    lineToUpdate = lineNumber + 1;
+                }
+                lineNumber++;
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
