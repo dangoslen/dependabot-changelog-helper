@@ -6,7 +6,7 @@ import {DependabotEntry} from './entry-extractor'
 interface ParsedResult {
   foundDuplicateEntry: boolean
   foundEntryToUpdate: boolean
-  changelogLineNumber: number
+  lineToUpdate: number
   versionFound: boolean
   dependencySectionFound: boolean
   contents: string[]
@@ -106,7 +106,7 @@ function addNewEntry(
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = buildEntryLine(prefix, entry)
-  const lineNumber = result.changelogLineNumber
+  const lineNumber = result.lineToUpdate
   if (!result.dependencySectionFound) {
     changelogEntry = `### Dependencies${EOL}${changelogEntry}`
 
@@ -125,7 +125,7 @@ function updateEntry(
   changelogPath: fs.PathLike,
   result: ParsedResult
 ): void {
-  const lineNumber = result.changelogLineNumber
+  const lineNumber = result.lineToUpdate
   const existingLine = result.contents[lineNumber]
   const existingPackage = existingLine.split(' to ')[0]
   const existingPullRequests = extractAssociatedPullRequests(existingLine)
@@ -196,7 +196,7 @@ async function parseChangelogForEntry(
   })
 
   let lineNumber = 0
-  let changelogLineNumber = 0
+  let lineToUpdate = 0
   let versionFound = false
   let dependencySectionFound = false
   let foundLastEntry = false
@@ -224,11 +224,14 @@ async function parseChangelogForEntry(
 
     if (versionFound) {
       // If we are finding a new version after having found the right version
-      // and if we have not found the dependency section
-      // we need to add the dependency section before the new version
-      if (line.startsWith('## ') && !dependencySectionFound) {
+      if (line.startsWith('## ')) {
+        // Then we have found the last entry regardless of if we found the dependency section
         foundLastEntry = true
-        changelogLineNumber = lineNumber
+
+        // If we haven't found the dependency section, we need to set the changeLogNumber
+        if (!dependencySectionFound) {
+          lineToUpdate = lineNumber
+        }
       } else if (line.startsWith('### ')) {
         // If we are finding a new section and we have found the right version
         // and we have found the dependency section, we are moving into a new section
@@ -237,24 +240,26 @@ async function parseChangelogForEntry(
           foundLastEntry = true
         } else {
           dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
-          changelogLineNumber = lineNumber + 1
+          lineToUpdate = lineNumber + 1
         }
-      } else if (line.startsWith(entryLine)) {
-        // If we are finding a duplicate line, we have found duplicate entry and we will skip
-        foundDuplicateEntry = true
-      } else if (entryLineStartRegex.test(line)) {
-        // If we are finding the start to the entry, we have an entry to update and we will overwrite it
-        foundEntryToUpdate = true
-        changelogLineNumber = lineNumber
-      } else if (line.startsWith('- ')) {
-        // Assume we find the last line if we find an entry
-        // We will append our new entry to end on the next line
-        changelogLineNumber = lineNumber + 1
+      } else if (dependencySectionFound) {
+        if (line.startsWith(entryLine)) {
+          // If we are finding a duplicate line, we have found duplicate entry and we will skip
+          foundDuplicateEntry = true
+        } else if (entryLineStartRegex.test(line)) {
+          // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+          foundEntryToUpdate = true
+          lineToUpdate = lineNumber
+        } else {
+          // Assume we find the last line if we find an entry
+          // We will append our new entry to end on the next line
+          lineToUpdate = lineNumber + 1
+        }
       }
     } else if (versionRegex.test(line)) {
       // If we have not found the version, see if this is the version
       versionFound = true
-      changelogLineNumber = lineNumber + 1
+      lineToUpdate = lineNumber + 1
     }
 
     lineNumber++
@@ -264,8 +269,8 @@ async function parseChangelogForEntry(
 
   // If we are at the end of the file, and we never found the last entry of the dependencies,
   // it is because the last entry was the last line of the file
-  changelogLineNumber = lastLineCheck(
-    changelogLineNumber,
+  lineToUpdate = lastLineCheck(
+    lineToUpdate,
     lineNumber,
     foundLastEntry || foundDuplicateEntry || foundEntryToUpdate,
     versionFound
@@ -274,7 +279,7 @@ async function parseChangelogForEntry(
   return {
     foundDuplicateEntry,
     foundEntryToUpdate,
-    changelogLineNumber,
+    lineToUpdate,
     versionFound,
     dependencySectionFound,
     contents
@@ -282,7 +287,7 @@ async function parseChangelogForEntry(
 }
 
 function lastLineCheck(
-  changelogLineNumber: number,
+  lineToUpdate: number,
   fileLength: number,
   foundLastEntry: boolean,
   versionFound: boolean
@@ -290,5 +295,5 @@ function lastLineCheck(
   if (!foundLastEntry && versionFound) {
     return fileLength
   }
-  return changelogLineNumber
+  return lineToUpdate
 }
