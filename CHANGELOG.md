@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `eslint` from 8.42.0 to 8.43.0 (#172)
 - Bump `eslint-plugin-jest` from 27.2.1 to 27.2.2 (#173)
 - Bump `@types/node` from 20.2.5 to 20.3.2 (#176)
+- Bump `typescript` from 5.1.3 to 5.1.6 (#175)
 
 ## [3.2.0]
 ### Added
