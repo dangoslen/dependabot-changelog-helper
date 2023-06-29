@@ -5,6 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 ### Dependencies
 - Bump `actions/checkout` from 3.5.2 to 3.5.3 (#171)
+- Bump `eslint-plugin-jest` from 27.2.1 to 27.2.2 (#173)
 
 ## [3.2.0]
 ### Added
