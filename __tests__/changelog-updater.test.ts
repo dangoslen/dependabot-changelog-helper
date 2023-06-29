@@ -462,7 +462,7 @@ const CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION = `# Changelog
   several lines
 `
 
-test('add section and accounts for multi-line entry ', async () => {
+test('add section and accounts for multi-line entry', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION)
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
@@ -492,7 +492,7 @@ const CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changel
 - Update \`other-package\` from beta to alpha
 `
 
-test('updates section with an etnry and accounts for multi-line entry ', async () => {
+test('updates section with an etnry and accounts for multi-line entry', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS)
 
   await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
@@ -508,6 +508,40 @@ test('updates section with an etnry and accounts for multi-line entry ', async (
 
 ### Dependencies
 - Update \`other-package\` from beta to alpha
+- Update \`package\` from v1 to v2 (#123)`)
+})
+
+const CHANGELOG_WITH_SUB_SECTION_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+
+### Dependencies
+- Update \`other-package\` from beta to alpha
+    - sub entry for some more context
+`
+
+test('updates section with an etnry and accounts for multi-line entry', async () => {
+  mockReadStream(CHANGELOG_WITH_SUB_SECTION_ENTRY_AND_DEPENDENCY_SECTION_EXISTS)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+
+### Dependencies
+- Update \`other-package\` from beta to alpha
+    - sub entry for some more context
 - Update \`package\` from v1 to v2 (#123)`)
 })
 
