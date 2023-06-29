@@ -69,14 +69,14 @@ test('adds an entry to the changelog when section already exists, but no entry',
 - Bump \`package\` from v1 to v2 (#123)`)
 })
 
-const CHANGELOG_MISSING_DEPENDECIES = `# Changelog
+const CHANGELOG_MISSING_DEPENDENCIES = `# Changelog
 
 ## [UNRELEASED]`
 
 test('adds section and an entry to the changelog when version exists but section does not', async () => {
-  const readable = Readable.from([CHANGELOG_MISSING_DEPENDECIES])
+  const readable = Readable.from([CHANGELOG_MISSING_DEPENDENCIES])
   fs.createReadStream.mockReturnValue(readable)
-  fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDECIES)
+  fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDENCIES)
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md', 'Bump')
 
