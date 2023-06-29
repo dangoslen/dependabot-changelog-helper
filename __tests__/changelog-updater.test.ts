@@ -69,14 +69,14 @@ test('adds an entry to the changelog when section already exists, but no entry',
 - Bump \`package\` from v1 to v2 (#123)`)
 })
 
-const CHANGELOG_MISSING_DEPENDECIES = `# Changelog
+const CHANGELOG_MISSING_DEPENDENCIES = `# Changelog
 
 ## [UNRELEASED]`
 
-test('adds an entry to the changelog when version exists but section does not', async () => {
-  const readable = Readable.from([CHANGELOG_MISSING_DEPENDECIES])
+test('adds section and an entry to the changelog when version exists but section does not', async () => {
+  const readable = Readable.from([CHANGELOG_MISSING_DEPENDENCIES])
   fs.createReadStream.mockReturnValue(readable)
-  fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDECIES)
+  fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDENCIES)
 
   await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md', 'Bump')
 
@@ -384,6 +384,7 @@ test('adds section when sections separated by blank lines', async () => {
 
 ### Removed
 - Removed a feature
+
 ### Dependencies
 - Bump \`package\` from v1 to v2 (#123)
 
@@ -428,6 +429,7 @@ test('adds section when sections separated by blank lines contain nested entries
 
 ### Removed
 - Removed a feature
+
 ### Dependencies
 - Bump \`package\` from v1 to v2 (#123)
 
@@ -536,6 +538,65 @@ test('keeps prefix on entry with a different prefix', async () => {
 ## [v1.0.0]
 ### Dependencies
 - Bump \`package\` from v1 to v2 (#123)`)
+})
+
+const CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION = `# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+`
+
+test('add section and accounts for multi-line entry', async () => {
+  mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+### Dependencies
+- Update \`package\` from v1 to v2 (#123)`)
+})
+
+const CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+
+### Dependencies
+- Update \`other-package\` from beta to alpha
+`
+
+test('updates section with an entry and accounts for multi-line entry', async () => {
+  mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS)
+
+  await updateChangelog(PACKAGE_ENTRY, 'v1.0.0', './CHANGELOG.md', 'Update')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Added
+- Some feature
+  the goes
+  across
+  several lines
+
+### Dependencies
+- Update \`other-package\` from beta to alpha
+- Update \`package\` from v1 to v2 (#123)`)
 })
 
 function mockReadStream(changelog: string) {

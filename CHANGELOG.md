@@ -10,6 +10,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `@types/node` from 20.2.5 to 20.3.2 (#176)
 - Bump `typescript` from 5.1.3 to 5.1.6 (#175)
 
+### Fixed
+- Fixes support for sections with irregular entries or content.
+
 ## [3.2.0]
 ### Added
 - Provides better [documentation for the entry format](./README.md#entry-format)
