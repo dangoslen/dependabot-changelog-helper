@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `@types/node` from 20.3.2 to 20.3.3 (#180)
+
 ## [3.3.0]
 ### Dependencies
 - Bump `actions/checkout` from 3.5.2 to 3.5.3 (#171)
