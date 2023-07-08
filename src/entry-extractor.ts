@@ -1,7 +1,7 @@
 import {WebhookPayload} from '@actions/github/lib/interfaces'
 
 /** Regex explanation
- *   --- Matches Bump, Bumps, Update or Updates, without capturing it
+ *   --- Matches Bump, bump, Bumps, bumps, Update, update, Updates or update, without capturing it
  *  |     --- Matches any non-whitespace character; matching as a few as possible
  *  |     |          --- Matches any non-whitespace character
  *  |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
@@ -9,7 +9,7 @@ import {WebhookPayload} from '@actions/github/lib/interfaces'
  *  |     |          |           |                |
  */
 const TITLE_REGEX = new RegExp(
-  /(?:Update|Bump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
+  /(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
 )
 
 export interface DependabotEntry {
