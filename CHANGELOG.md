@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Added
+- Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
 
 ## [3.3.0]
 ### Dependencies
