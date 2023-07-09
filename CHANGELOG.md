@@ -9,6 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 - Bump `@types/node` from 20.3.2 to 20.4.1 (#183)
 - Bump `eslint` from 8.43.0 to 8.44.0 (#179)
+- Bump `ts-jest` from 29.1.0 to 29.1.1 (#178)
 
 ## [3.3.0]
 ### Dependencies
