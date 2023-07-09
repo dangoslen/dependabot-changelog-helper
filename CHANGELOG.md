@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 - Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
 
+### Dependencies
+- Bump `@types/node` from 20.3.2 to 20.4.1 (#183)
+
 ## [3.3.0]
 ### Dependencies
 - Bump `actions/checkout` from 3.5.2 to 3.5.3 (#171)
