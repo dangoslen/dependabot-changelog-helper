@@ -28,6 +28,20 @@ const PULL_REQUEST_EVENT_RUST_REQUIREMENT_UPDATE = {
   }
 }
 
+const PULL_REQUEST_LOWER_CASE_BUMP_WITH_PREFIX = {
+  pull_request: {
+    number: 123,
+    title: 'a prefix: bump package from v2 to v4'
+  }
+}
+
+const PULL_REQUEST_LOWER_CASE_UPDATE_WITH_DOCKER_PREFIX = {
+  pull_request: {
+    number: 123,
+    title: '[docker]: update deps from v2 to v4'
+  }
+}
+
 test('extracts package and simple number verions', async () => {
   const entry: DependabotEntry = getDependabotEntry(PULL_REQUEST_EVENT)
 
@@ -64,4 +78,24 @@ test('extracts package with rust style requirement update', async () => {
   expect(entry.package).toStrictEqual('clap')
   expect(entry.oldVersion).toStrictEqual('~2')
   expect(entry.newVersion).toStrictEqual('~4')
+})
+
+test('extracts package with prefix and lowercase bump', async () => {
+  const entry: DependabotEntry = getDependabotEntry(
+    PULL_REQUEST_LOWER_CASE_BUMP_WITH_PREFIX
+  )
+
+  expect(entry.package).toStrictEqual('package')
+  expect(entry.oldVersion).toStrictEqual('v2')
+  expect(entry.newVersion).toStrictEqual('v4')
+})
+
+test('extracts docker deps with prefix and lowercase update', async () => {
+  const entry: DependabotEntry = getDependabotEntry(
+    PULL_REQUEST_LOWER_CASE_UPDATE_WITH_DOCKER_PREFIX
+  )
+
+  expect(entry.package).toStrictEqual('deps')
+  expect(entry.oldVersion).toStrictEqual('v2')
+  expect(entry.newVersion).toStrictEqual('v4')
 })
