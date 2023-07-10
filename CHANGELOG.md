@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `prettier` from 2.8.8 to 3.0.0 (#185)
+
 ## [3.4.0]
 ### Added
 - Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
