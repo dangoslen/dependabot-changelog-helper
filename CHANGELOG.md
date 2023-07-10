@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+## [3.4.0]
 ### Added
 - Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
 
@@ -12,15 +14,15 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `ts-jest` from 29.1.0 to 29.1.1 (#178)
 
 ## [3.3.0]
+### Fixed
+- Fixes support for sections with irregular entries or content.
+
 ### Dependencies
 - Bump `actions/checkout` from 3.5.2 to 3.5.3 (#171)
 - Bump `eslint` from 8.42.0 to 8.43.0 (#172)
 - Bump `eslint-plugin-jest` from 27.2.1 to 27.2.2 (#173)
 - Bump `@types/node` from 20.2.5 to 20.3.2 (#176)
 - Bump `typescript` from 5.1.3 to 5.1.6 (#175)
-
-### Fixed
-- Fixes support for sections with irregular entries or content.
 
 ## [3.2.0]
 ### Added
