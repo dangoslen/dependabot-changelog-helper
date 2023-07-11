@@ -84,7 +84,8 @@ function buildEntryLineForDuplicateCheck(
 
 function buildEntryLine(entryPrefix: string, entry: DependabotEntry): string {
   const lineStart = buildEntryLineForDuplicateCheck(entryPrefix, entry)
-  return `${lineStart} (#${entry.pullRequestNumber})`
+  const currentPullRequest = buildPullRequestLink(entry)
+  return `${lineStart} (${currentPullRequest})`
 }
 
 function buildEntryLineStart(
@@ -130,8 +131,7 @@ function updateEntry(
   const existingLine = result.contents[lineNumber]
   const existingPackage = existingLine.split(' to ')[0]
   const existingPullRequests = extractAssociatedPullRequests(existingLine)
-
-  const currentPullRequest = `#${entry.pullRequestNumber}`
+  const currentPullRequest = buildPullRequestLink(entry)
 
   // We want to avoid accidentally re-updating the changelog multiple times with the same PR number
   // If we see the current PR number is reflected in the context, we don't need to update
@@ -147,14 +147,24 @@ function updateEntry(
 }
 
 function extractAssociatedPullRequests(existingLine: string): string[] {
-  const groups = existingLine.split('(')
+  // Find the start of the PR list
+  const groups = existingLine.split(' (')
   if (groups.length < 2) {
     return []
   }
-  return groups[1]
-    .replace(')', '')
-    .split(',')
-    .map(s => s.trim())
+
+  // Remove the final `)` from the PR list
+  const prs = groups[1].slice(0, -1)
+
+  // Split by `,` - works for both full links and auto-link values
+  return prs.split(',').map(s => s.trim())
+}
+
+function buildPullRequestLink(entry: DependabotEntry): string {
+  const number = entry.pullRequestNumber
+  return entry.repository
+    ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
+    : `#${number}`
 }
 
 function writeEntry(

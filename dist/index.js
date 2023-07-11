@@ -74,7 +74,8 @@ function buildEntryLineForDuplicateCheck(entryPrefix, entry) {
 }
 function buildEntryLine(entryPrefix, entry) {
     const lineStart = buildEntryLineForDuplicateCheck(entryPrefix, entry);
-    return `${lineStart} (#${entry.pullRequestNumber})`;
+    const currentPullRequest = buildPullRequestLink(entry);
+    return `${lineStart} (${currentPullRequest})`;
 }
 function buildEntryLineStart(entryPrefix, entry) {
     return `- ${entryPrefix} \`${entry.package}\` from`;
@@ -102,7 +103,7 @@ function updateEntry(entry, changelogPath, result) {
     const existingLine = result.contents[lineNumber];
     const existingPackage = existingLine.split(' to ')[0];
     const existingPullRequests = extractAssociatedPullRequests(existingLine);
-    const currentPullRequest = `#${entry.pullRequestNumber}`;
+    const currentPullRequest = buildPullRequestLink(entry);
     // We want to avoid accidentally re-updating the changelog multiple times with the same PR number
     // If we see the current PR number is reflected in the context, we don't need to update
     if (existingPullRequests.includes(currentPullRequest)) {
@@ -113,14 +114,21 @@ function updateEntry(entry, changelogPath, result) {
     overwriteEntry(lineNumber, changelogPath, changelogEntry, result.contents);
 }
 function extractAssociatedPullRequests(existingLine) {
-    const groups = existingLine.split('(');
+    // Find the start of the PR list
+    const groups = existingLine.split(' (');
     if (groups.length < 2) {
         return [];
     }
-    return groups[1]
-        .replace(')', '')
-        .split(',')
-        .map(s => s.trim());
+    // Remove the final `)` from the PR list
+    const prs = groups[1].slice(0, -1);
+    // Split by `,` - works for both full links and auto-link values
+    return prs.split(',').map(s => s.trim());
+}
+function buildPullRequestLink(entry) {
+    const number = entry.pullRequestNumber;
+    return entry.repository
+        ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
+        : `#${number}`;
 }
 function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
     const length = contents.push('');
@@ -343,13 +351,16 @@ exports.getDependabotEntry = void 0;
  */
 const TITLE_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
 function getDependabotEntry(event) {
+    var _a;
     const pullRequestNumber = event.pull_request.number;
+    const repository = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.full_name;
     const titleResult = TITLE_REGEX.exec(event.pull_request.title);
     if (titleResult === null) {
         throw new Error('Unable to extract entry from pull request title!');
     }
     return {
         pullRequestNumber,
+        repository,
         package: titleResult[1],
         oldVersion: titleResult[2],
         newVersion: titleResult[3]

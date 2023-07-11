@@ -7,6 +7,7 @@ const fs = require('fs')
 
 const PACKAGE_ENTRY: DependabotEntry = {
   pullRequestNumber: 123,
+  repository: 'owner/repo',
   package: 'package',
   newVersion: 'v2',
   oldVersion: 'v1'
@@ -30,7 +31,7 @@ test('adds an entry to the changelog when section already exists with section', 
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_UNRELEASED = `# Changelog
@@ -49,7 +50,7 @@ test('adds an entry to the changelog when section exists under default unrelease
 ## [UNRELEASED]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED = `# Changelog
@@ -66,7 +67,7 @@ test('adds an entry to the changelog when section already exists, but no entry',
 
 ## [UNRELEASED]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_MISSING_DEPENDENCIES = `# Changelog
@@ -84,7 +85,7 @@ test('adds section and an entry to the changelog when version exists but section
 
 ## [UNRELEASED]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
@@ -108,7 +109,7 @@ test('adds an entry to the changelog - multiple versions', async () => {
 ## [UNRELEASED]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v1.0.0]
 ### Dependencies
@@ -177,7 +178,7 @@ test('updates an entry for an existing package in the same version', async () =>
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`
   )
 })
 
@@ -197,7 +198,7 @@ test('updates an entry with pull request context for an existing package in the 
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#100, #123)`
+- Bump \`package\` from v1 to v2 (#100, [#123](https://github.com/owner/repo/pull/123))`
   )
 })
 
@@ -219,7 +220,7 @@ test('updates version with new section and entry', async () => {
 ### Added
 ### Removed
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`
   )
 })
 
@@ -227,7 +228,7 @@ const CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v1.1 (#100, #101)
+- Bump \`package\` from v1 to v1.1 ([#100](https://github.com/owner/repo/pull/100), [#101](https://github.com/owner/repo/pull/101))
 
 ## [v0.9.0]
 ### Dependencies
@@ -243,7 +244,7 @@ test('does not update lines additional times', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#100, #101, #123)
+- Bump \`package\` from v1 to v2 ([#100](https://github.com/owner/repo/pull/100), [#101](https://github.com/owner/repo/pull/101), [#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 ### Dependencies
@@ -263,7 +264,7 @@ test('does not update lines additional times, even with multiple invocations', a
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#100, #101, #123)
+- Bump \`package\` from v1 to v2 ([#100](https://github.com/owner/repo/pull/100), [#101](https://github.com/owner/repo/pull/101), [#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 ### Dependencies
@@ -302,7 +303,7 @@ test('updates existing section when sections separated by blank lines', async ()
 
 ### Dependencies
 - Bump \`other-package\` from v2 to v3
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 
@@ -345,7 +346,7 @@ test('updates existing section when sections separated by blank lines contain ne
 
 ### Dependencies
 - Bump \`other-package\` from v2 to v3
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 
@@ -386,7 +387,7 @@ test('adds section when sections separated by blank lines', async () => {
 - Removed a feature
 
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 
@@ -431,7 +432,7 @@ test('adds section when sections separated by blank lines contain nested entries
 - Removed a feature
 
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
 
@@ -473,7 +474,7 @@ test('updates existing section when between other sections', async () => {
 
 ### Dependencies
 - Bump \`other-package\` from v2 to v3
-- Bump \`package\` from v1 to v2 (#123)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ### Removed
 - Removed a feature
@@ -501,7 +502,7 @@ test('adds an entry with a different prefix to the changelog when section alread
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Update \`package\` from v1 to v2 (#123)`)
+- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX = `# Changelog
@@ -519,7 +520,7 @@ test('keeps prefix on entry with a different prefix but is otherwise a duplicate
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX = `# Changelog
@@ -537,7 +538,7 @@ test('keeps prefix on entry with a different prefix', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 (#123)`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION = `# Changelog
@@ -564,7 +565,7 @@ test('add section and accounts for multi-line entry', async () => {
   across
   several lines
 ### Dependencies
-- Update \`package\` from v1 to v2 (#123)`)
+- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 const CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changelog
@@ -596,7 +597,7 @@ test('updates section with an entry and accounts for multi-line entry', async ()
 
 ### Dependencies
 - Update \`other-package\` from beta to alpha
-- Update \`package\` from v1 to v2 (#123)`)
+- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
 function mockReadStream(changelog: string) {
