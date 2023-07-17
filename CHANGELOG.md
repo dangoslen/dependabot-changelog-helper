@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `eslint` from 8.44.0 to 8.45.0 (#191)
+
 ## [3.4.0]
 ### Added
 - Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
