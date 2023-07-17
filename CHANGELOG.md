@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `@types/node` from 20.4.1 to 20.4.2 (#190)
+
 ## [3.4.0]
 ### Added
 - Adds support for `bump` and `update` in Dependabot pull request titles (addresses #181)
