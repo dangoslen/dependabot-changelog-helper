@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Changed
+- Pull Request links in the entry are now formatted as full Markdown links instead of relying on GitHub Auto-linking ([#189](https://github.com/dangoslen/dependabot-changelog-helper/pull/189))
 
 ## [3.4.0]
 ### Added
