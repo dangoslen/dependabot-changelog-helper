@@ -3,16 +3,14 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+## [3.5.0]
 ### Changed
 - Pull Request links in the entry are now formatted as full Markdown links instead of relying on GitHub Auto-linking ([#189](https://github.com/dangoslen/dependabot-changelog-helper/pull/189))
 
 ### Dependencies
 - Bump `jest` from 29.5.0 to 29.6.1 (#186)
-
-### Dependencies
 - Bump `@types/node` from 20.4.1 to 20.4.2 (#190)
-
-### Dependencies
 - Bump `eslint` from 8.44.0 to 8.45.0 (#191)
 
 ## [3.4.0]
