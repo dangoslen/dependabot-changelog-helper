@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `@types/jest` from 29.5.2 to 29.5.3 ([#196](https://github.com/dangoslen/dependabot-changelog-helper/pull/196))
+
 ## [3.5.0]
 ### Changed
 - Pull Request links in the entry are now formatted as full Markdown links instead of relying on GitHub Auto-linking ([#189](https://github.com/dangoslen/dependabot-changelog-helper/pull/189))
