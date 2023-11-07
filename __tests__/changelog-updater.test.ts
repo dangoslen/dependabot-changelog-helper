@@ -88,6 +88,20 @@ test('adds section and an entry to the changelog when version exists but section
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
 
+test('adds section and an entry to the changelog when version exists but section does not and sectionHeader not provided', async () => {
+  const readable = Readable.from([CHANGELOG_MISSING_DEPENDENCIES])
+  fs.createReadStream.mockReturnValue(readable)
+  fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDENCIES)
+
+  await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md', 'Bump', '')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [UNRELEASED]
+### Dependencies
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+})
+
 
 
 const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
