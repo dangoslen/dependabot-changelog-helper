@@ -104,3 +104,11 @@ This is a way to incrementally build a version over time and only release a vers
 | `Bump`       | The starting word of a dependency bump entry line. Currently only supports single world prefixes. |
 
 If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
+
+#### `sectionHeader`
+
+| Default        | Description                                       |
+| -------------- | ------------------------------------------------- |
+| `Dependencies` | The name of section to add Dependabot entries to. |
+
+If `sectionHeader` is not provided, the action will look for a section header matching the pattern `/^### [(Dependencies|DEPENDENCIES)]`.
