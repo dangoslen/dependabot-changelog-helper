@@ -214,8 +214,7 @@ async function parseChangelogForEntry(
   })
 
   const DEPENDENCY_SECTION_REGEX = new RegExp(
-    `^### (${sectionHeader}|DEPENDENCIES)`,
-    'i'
+    `^### (${sectionHeader}|Dependencies|DEPENDENCIES)`
   )
 
   let lineNumber = 0
