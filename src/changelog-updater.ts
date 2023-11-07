@@ -15,7 +15,6 @@ interface ParsedResult {
 const UNRELEASED_REGEX = new RegExp(
   /^## \[(unreleased|Unreleased|UNRELEASED)\]/
 )
-const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
 
@@ -23,9 +22,14 @@ export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
   changelogPath: fs.PathLike,
-  entryPrefix: string
+  entryPrefix: string,
+  sectionHeader: string
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
+  const DEPENDENCY_SECTION_REGEX = new RegExp(
+    `^### (${sectionHeader}|DEPENDENCIES)`,
+    'i'
+  )
 
   const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
   for (const regex of regexs) {
@@ -33,7 +37,8 @@ export async function updateChangelog(
       regex,
       entry,
       changelogPath,
-      entryPrefix
+      entryPrefix,
+      DEPENDENCY_SECTION_REGEX
     )
 
     // If we found the version, we have updated the changelog or we had a duplicate
@@ -49,13 +54,15 @@ async function searchAndUpdateVersion(
   versionRegex: RegExp,
   entry: DependabotEntry,
   changelogPath: fs.PathLike,
-  entryPrefix: string
+  entryPrefix: string,
+  dependencySectionRegex: RegExp,
 ): Promise<Boolean> {
   const result = await parseChangelogForEntry(
     versionRegex,
     entryPrefix,
     entry,
-    changelogPath
+    changelogPath,
+    dependencySectionRegex
   )
 
   // We could not find the desired version to update by the configuration of the action
@@ -199,7 +206,8 @@ async function parseChangelogForEntry(
   versionRegex: RegExp,
   entryPrefix: string,
   entry: DependabotEntry,
-  changelogPath: fs.PathLike
+  changelogPath: fs.PathLike,
+  dependencySectionRegex: RegExp
 ): Promise<ParsedResult> {
   const fileStream = readline.createInterface({
     input: fs.createReadStream(changelogPath),
@@ -250,7 +258,7 @@ async function parseChangelogForEntry(
         if (dependencySectionFound) {
           foundLastEntry = true
         } else {
-          dependencySectionFound = DEPENDENCY_SECTION_REGEX.test(line)
+          dependencySectionFound = dependencySectionRegex.test(line)
           lineToUpdate = lineNumber + 1
         }
       } else if (SECTION_ENTRY_REGEX.test(line)) {
