@@ -55,7 +55,7 @@ async function searchAndUpdateVersion(
   entry: DependabotEntry,
   changelogPath: fs.PathLike,
   entryPrefix: string,
-  dependencySectionRegex: RegExp,
+  dependencySectionRegex: RegExp
 ): Promise<Boolean> {
   const result = await parseChangelogForEntry(
     versionRegex,
