@@ -79,14 +79,16 @@ test('adds section and an entry to the changelog when version exists but section
   fs.createReadStream.mockReturnValue(readable)
   fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDENCIES)
 
-  await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
+  await updateChangelog(PACKAGE_ENTRY, 'UNRELEASED', './CHANGELOG.md', 'Bump', 'Changed')
 
   expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
-### Dependencies
+### Changed
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
+
+
 
 const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
 
@@ -599,6 +601,7 @@ test('updates section with an entry and accounts for multi-line entry', async ()
 - Update \`other-package\` from beta to alpha
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
 })
+
 
 function mockReadStream(changelog: string) {
   fs.createReadStream.mockImplementation((_: PathLike) => {
