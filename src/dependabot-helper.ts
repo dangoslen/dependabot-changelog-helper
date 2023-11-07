@@ -10,10 +10,17 @@ async function run(): Promise<void> {
     const label: string = core.getInput('activationLabel')
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
+    const sectionHeader: string = core.getInput('sectionHeader')
 
     if (label !== '' && pullRequestHasLabel(label)) {
       const entry: DependabotEntry = getDependabotEntry(github.context.payload)
-      await updateChangelog(entry, version, changelogPath, entryPrefix)
+      await updateChangelog(
+        entry,
+        version,
+        changelogPath,
+        entryPrefix,
+        sectionHeader
+      )
     }
   } catch (err) {
     if (err instanceof Error) {
