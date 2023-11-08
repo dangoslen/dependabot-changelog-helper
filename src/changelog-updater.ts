@@ -212,7 +212,7 @@ async function parseChangelogForEntry(
   })
 
   const DEPENDENCY_SECTION_REGEX = new RegExp(
-    `^### (${sectionHeader}|Dependencies|DEPENDENCIES)`
+    `^### (${sectionHeader}|${sectionHeader.toUpperCase()})`
   )
 
   let lineNumber = 0
