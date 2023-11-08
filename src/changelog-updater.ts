@@ -173,11 +173,19 @@ function writeEntry(
   changelogEntry: string,
   contents: string[]
 ): void {
-  const length = contents.push('')
+  // Push a copy of the last line to the end of the contents
+  // It will be overwritten when we re-write all the contents
+  const length = contents.push(contents[-1])
+
+  // Copy the contents from the last line up until the line of the entry we want to write
   for (let i = length - 1; i > lineNumber; i--) {
     contents[i] = contents[i - 1]
   }
+
+  // Write the entry
   contents[lineNumber] = changelogEntry
+
+  // Write the contents out, joining with EOL
   fs.writeFileSync(changelogPath, contents.join(EOL))
 }
 

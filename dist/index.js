@@ -131,11 +131,16 @@ function buildPullRequestLink(entry) {
         : `#${number}`;
 }
 function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
-    const length = contents.push('');
+    // Push a copy of the last line to the end of the contents
+    // It will be overwritten when we re-write all the contents
+    const length = contents.push(contents[-1]);
+    // Copy the contents from the last line up until the line of the entry we want to write
     for (let i = length - 1; i > lineNumber; i--) {
         contents[i] = contents[i - 1];
     }
+    // Write the entry
     contents[lineNumber] = changelogEntry;
+    // Write the contents out, joining with EOL
     fs_1.default.writeFileSync(changelogPath, contents.join(os_1.EOL));
 }
 function overwriteEntry(lineNumber, changelogPath, changelogEntry, contents) {
