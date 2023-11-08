@@ -114,9 +114,7 @@ function addNewEntry(
   let changelogEntry = buildEntryLine(prefix, entry)
   const lineNumber = result.lineToUpdate
   if (!result.dependencySectionFound) {
-    changelogEntry = `### ${
-      sectionHeader || 'Dependencies'
-    }${EOL}${changelogEntry}`
+    changelogEntry = `### ${sectionHeader}${EOL}${changelogEntry}`
 
     // Check if the line number is last.
     // If not, add a blank line between the last section and the next version
