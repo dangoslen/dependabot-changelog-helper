@@ -15,7 +15,6 @@ interface ParsedResult {
 const UNRELEASED_REGEX = new RegExp(
   /^## \[(unreleased|Unreleased|UNRELEASED)\]/
 )
-const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/)
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
 
@@ -23,7 +22,8 @@ export async function updateChangelog(
   entry: DependabotEntry,
   version: string,
   changelogPath: fs.PathLike,
-  entryPrefix: string
+  entryPrefix: string,
+  sectionHeader: string
 ): Promise<void> {
   const versionRegex: RegExp = buildVersionRegex(version)
 
@@ -33,7 +33,8 @@ export async function updateChangelog(
       regex,
       entry,
       changelogPath,
-      entryPrefix
+      entryPrefix,
+      sectionHeader
     )
 
     // If we found the version, we have updated the changelog or we had a duplicate
@@ -49,13 +50,15 @@ async function searchAndUpdateVersion(
   versionRegex: RegExp,
   entry: DependabotEntry,
   changelogPath: fs.PathLike,
-  entryPrefix: string
+  entryPrefix: string,
+  sectionHeader: string
 ): Promise<Boolean> {
   const result = await parseChangelogForEntry(
     versionRegex,
     entryPrefix,
     entry,
-    changelogPath
+    changelogPath,
+    sectionHeader
   )
 
   // We could not find the desired version to update by the configuration of the action
@@ -66,7 +69,7 @@ async function searchAndUpdateVersion(
   if (result.foundEntryToUpdate) {
     updateEntry(entry, changelogPath, result)
   } else if (!result.foundDuplicateEntry) {
-    addNewEntry(entryPrefix, entry, changelogPath, result)
+    addNewEntry(entryPrefix, entry, changelogPath, result, sectionHeader)
   }
 
   return true
@@ -103,14 +106,15 @@ function addNewEntry(
   prefix: string,
   entry: DependabotEntry,
   changelogPath: fs.PathLike,
-  result: ParsedResult
+  result: ParsedResult,
+  sectionHeader: string
 ): void {
   // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
   // sections exist
   let changelogEntry = buildEntryLine(prefix, entry)
   const lineNumber = result.lineToUpdate
   if (!result.dependencySectionFound) {
-    changelogEntry = `### Dependencies${EOL}${changelogEntry}`
+    changelogEntry = `### ${sectionHeader}${EOL}${changelogEntry}`
 
     // Check if the line number is last.
     // If not, add a blank line between the last section and the next version
@@ -199,12 +203,17 @@ async function parseChangelogForEntry(
   versionRegex: RegExp,
   entryPrefix: string,
   entry: DependabotEntry,
-  changelogPath: fs.PathLike
+  changelogPath: fs.PathLike,
+  sectionHeader: string
 ): Promise<ParsedResult> {
   const fileStream = readline.createInterface({
     input: fs.createReadStream(changelogPath),
     terminal: false
   })
+
+  const DEPENDENCY_SECTION_REGEX = new RegExp(
+    `^### (${sectionHeader}|${sectionHeader.toUpperCase()})`
+  )
 
   let lineNumber = 0
   let lineToUpdate = 0

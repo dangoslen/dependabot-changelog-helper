@@ -3,6 +3,8 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+### Added
+- Adds a new `sectionHeader` option. See the [README](./README.md#sectionheader) for more details.
 
 ### Dependencies
 - Bump `stefanzweifel/git-auto-commit-action` from 4 to 5 ([#198](https://github.com/dangoslen/dependabot-changelog-helper/pull/198))
