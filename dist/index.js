@@ -28,7 +28,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updateChangelog = void 0;
-const readline_1 = __importDefault(__nccwpck_require__(1058));
 const fs_1 = __importDefault(__nccwpck_require__(5747));
 const os_1 = __nccwpck_require__(2087);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
@@ -140,11 +139,6 @@ function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
     }
     // Write the entry
     contents[lineNumber] = changelogEntry;
-    // If the last line was empty, assume it is a trailing newline
-    // Append an additional newline to write the trailing newline
-    if (lastLine === '') {
-        contents.push('');
-    }
     // Write the contents out, joining with EOL
     fs_1.default.writeFileSync(changelogPath, contents.join(os_1.EOL));
 }
@@ -158,10 +152,7 @@ function buildVersionRegex(version) {
 function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath, sectionHeader) {
     var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
-        const fileStream = readline_1.default.createInterface({
-            input: fs_1.default.createReadStream(changelogPath),
-            terminal: false
-        });
+        const lines = fs_1.default.readFileSync(changelogPath, 'utf-8').split(os_1.EOL);
         const DEPENDENCY_SECTION_REGEX = new RegExp(`^### (${sectionHeader}|${sectionHeader.toUpperCase()})`);
         let lineNumber = 0;
         let lineToUpdate = 0;
@@ -175,8 +166,8 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath,
         const contents = [];
         try {
             // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
-            for (var _d = true, fileStream_1 = __asyncValues(fileStream), fileStream_1_1; fileStream_1_1 = yield fileStream_1.next(), _a = fileStream_1_1.done, !_a;) {
-                _c = fileStream_1_1.value;
+            for (var _d = true, lines_1 = __asyncValues(lines), lines_1_1; lines_1_1 = yield lines_1.next(), _a = lines_1_1.done, !_a;) {
+                _c = lines_1_1.value;
                 _d = false;
                 try {
                     const line = _c;
@@ -242,11 +233,15 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath,
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (!_d && !_a && (_b = fileStream_1.return)) yield _b.call(fileStream_1);
+                if (!_d && !_a && (_b = lines_1.return)) yield _b.call(lines_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
-        fileStream.close();
+        // If the last line is empty, it is due to a trailing newline
+        // Don't include it in the contents of the changelog
+        if (EMPTY_LINE_REGEX.test(contents[contents.length - 1])) {
+            lineNumber--;
+        }
         // If we are at the end of the file, and we never found the last entry of the dependencies,
         // it is because the last entry was the last line of the file
         lineToUpdate = lastLineCheck(lineToUpdate, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, versionFound);
@@ -260,9 +255,9 @@ function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath,
         };
     });
 }
-function lastLineCheck(lineToUpdate, fileLength, foundLastEntry, versionFound) {
+function lastLineCheck(lineToUpdate, contentLength, foundLastEntry, versionFound) {
     if (!foundLastEntry && versionFound) {
-        return fileLength;
+        return contentLength;
     }
     return lineToUpdate;
 }
@@ -9692,14 +9687,6 @@ module.exports = require("path");;
 
 "use strict";
 module.exports = require("punycode");;
-
-/***/ }),
-
-/***/ 1058:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("readline");;
 
 /***/ }),
 
