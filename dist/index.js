@@ -32,15 +32,14 @@ const readline_1 = __importDefault(__nccwpck_require__(1058));
 const fs_1 = __importDefault(__nccwpck_require__(5747));
 const os_1 = __nccwpck_require__(2087);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
-const DEPENDENCY_SECTION_REGEX = new RegExp(/^### (Dependencies|DEPENDENCIES)/);
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
 const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /);
-function updateChangelog(entry, version, changelogPath, entryPrefix) {
+function updateChangelog(entry, version, changelogPath, entryPrefix, sectionHeader) {
     return __awaiter(this, void 0, void 0, function* () {
         const versionRegex = buildVersionRegex(version);
         const regexs = [versionRegex, UNRELEASED_REGEX];
         for (const regex of regexs) {
-            const found = yield searchAndUpdateVersion(regex, entry, changelogPath, entryPrefix);
+            const found = yield searchAndUpdateVersion(regex, entry, changelogPath, entryPrefix, sectionHeader);
             // If we found the version, we have updated the changelog or we had a duplicate
             if (found) {
                 return;
@@ -50,9 +49,9 @@ function updateChangelog(entry, version, changelogPath, entryPrefix) {
     });
 }
 exports.updateChangelog = updateChangelog;
-function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix) {
+function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix, sectionHeader) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath);
+        const result = yield parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath, sectionHeader);
         // We could not find the desired version to update by the configuration of the action
         if (!result.versionFound) {
             return false;
@@ -61,7 +60,7 @@ function searchAndUpdateVersion(versionRegex, entry, changelogPath, entryPrefix)
             updateEntry(entry, changelogPath, result);
         }
         else if (!result.foundDuplicateEntry) {
-            addNewEntry(entryPrefix, entry, changelogPath, result);
+            addNewEntry(entryPrefix, entry, changelogPath, result, sectionHeader);
         }
         return true;
     });
@@ -83,13 +82,13 @@ function buildEntryLineStart(entryPrefix, entry) {
 function buildEntryLineStartRegex(entry) {
     return new RegExp(`- \\w+ \`${entry.package}\` from `);
 }
-function addNewEntry(prefix, entry, changelogPath, result) {
+function addNewEntry(prefix, entry, changelogPath, result, sectionHeader) {
     // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
     // sections exist
     let changelogEntry = buildEntryLine(prefix, entry);
     const lineNumber = result.lineToUpdate;
     if (!result.dependencySectionFound) {
-        changelogEntry = `### Dependencies${os_1.EOL}${changelogEntry}`;
+        changelogEntry = `### ${sectionHeader}${os_1.EOL}${changelogEntry}`;
         // Check if the line number is last.
         // If not, add a blank line between the last section and the next version
         if (lineNumber < result.contents.length - 1) {
@@ -150,13 +149,14 @@ function overwriteEntry(lineNumber, changelogPath, changelogEntry, contents) {
 function buildVersionRegex(version) {
     return new RegExp(`^## \\[${version}\\]`);
 }
-function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath) {
+function parseChangelogForEntry(versionRegex, entryPrefix, entry, changelogPath, sectionHeader) {
     var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const fileStream = readline_1.default.createInterface({
             input: fs_1.default.createReadStream(changelogPath),
             terminal: false
         });
+        const DEPENDENCY_SECTION_REGEX = new RegExp(`^### (${sectionHeader}|${sectionHeader.toUpperCase()})`);
         let lineNumber = 0;
         let lineToUpdate = 0;
         let versionFound = false;
@@ -313,9 +313,10 @@ function run() {
             const label = core.getInput('activationLabel');
             const changelogPath = core.getInput('changelogPath');
             const entryPrefix = core.getInput('entryPrefix');
+            const sectionHeader = core.getInput('sectionHeader');
             if (label !== '' && pullRequestHasLabel(label)) {
                 const entry = (0, entry_extractor_1.getDependabotEntry)(github.context.payload);
-                yield (0, changelog_updater_1.updateChangelog)(entry, version, changelogPath, entryPrefix);
+                yield (0, changelog_updater_1.updateChangelog)(entry, version, changelogPath, entryPrefix, sectionHeader);
             }
         }
         catch (err) {
