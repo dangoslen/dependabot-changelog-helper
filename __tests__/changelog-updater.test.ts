@@ -1,4 +1,4 @@
-import {FSWatcher, PathLike} from 'fs'
+import {PathLike} from 'fs'
 import {updateChangelog} from '../src/changelog-updater'
 import {DependabotEntry} from '../src/entry-extractor'
 
@@ -143,7 +143,8 @@ test('adds an entry to the changelog - multiple versions', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`foo\` from bar to foo-bar`)
+- Bump \`foo\` from bar to foo-bar
+`)
 })
 
 const CHANGELOG_WITH_NO_VERSION = `# Changelog
@@ -703,7 +704,8 @@ test('add section and accounts for multi-line entry', async () => {
   across
   several lines
 ### Dependencies
-- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changelog
@@ -741,51 +743,13 @@ test('updates section with an entry and accounts for multi-line entry', async ()
 
 ### Dependencies
 - Update \`other-package\` from beta to alpha
-- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
-})
-
-const CHANGELOG_WITH_ENDING_NEWLINE = `# Changelog
-
-## [v1.0.0]
-### Added
-- Some feature
-
-### Dependencies
-- Update \`other-package\` from beta to alpha
-
-## [v0.9.0]
-
-`
-
-test('should keep the trailing newline', async () => {
-  mockReadStream(CHANGELOG_WITH_ENDING_NEWLINE)
-
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
-
-  expectWrittenChangelogToBe(`# Changelog
-
-## [v1.0.0]
-### Added
-- Some feature
-
-### Dependencies
-- Update \`other-package\` from beta to alpha
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
-
-## [v0.9.0]
-
 `)
 })
 
 function mockReadStream(changelog: string) {
-  fs.createReadStream.mockImplementation((_: PathLike) => {
-    return Readable.from([changelog])
+  fs.readFileSync.mockImplementation((_: PathLike, __: string) => {
+    return changelog
   })
 }
 

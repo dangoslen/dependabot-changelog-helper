@@ -1,4 +1,3 @@
-import readline from 'readline'
 import fs from 'fs'
 import {EOL} from 'os'
 import {DependabotEntry} from './entry-extractor'
@@ -190,12 +189,6 @@ function writeEntry(
   // Write the entry
   contents[lineNumber] = changelogEntry
 
-  // If the last line was empty, assume it is a trailing newline
-  // Append an additional empty line to write the trailing newline
-  if (lastLine === '') {
-    contents.push('')
-  }
-
   // Write the contents out, joining with EOL
   fs.writeFileSync(changelogPath, contents.join(EOL))
 }
@@ -221,10 +214,7 @@ async function parseChangelogForEntry(
   changelogPath: fs.PathLike,
   sectionHeader: string
 ): Promise<ParsedResult> {
-  const fileStream = readline.createInterface({
-    input: fs.createReadStream(changelogPath),
-    terminal: false
-  })
+  const lines = fs.readFileSync(changelogPath, 'utf-8').split(EOL)
 
   const DEPENDENCY_SECTION_REGEX = new RegExp(
     `^### (${sectionHeader}|${sectionHeader.toUpperCase()})`
@@ -244,7 +234,7 @@ async function parseChangelogForEntry(
   const contents = []
 
   // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
-  for await (const line of fileStream) {
+  for await (const line of lines) {
     contents.push(line)
 
     if (
@@ -300,7 +290,11 @@ async function parseChangelogForEntry(
     lineNumber++
   }
 
-  fileStream.close()
+  // If the last line is empty, it is due to a trailing newline
+  // Don't include it in the contents of the changelog
+  if (EMPTY_LINE_REGEX.test(contents[contents.length - 1])) {
+    lineNumber--
+  }
 
   // If we are at the end of the file, and we never found the last entry of the dependencies,
   // it is because the last entry was the last line of the file
@@ -323,12 +317,12 @@ async function parseChangelogForEntry(
 
 function lastLineCheck(
   lineToUpdate: number,
-  fileLength: number,
+  contentLength: number,
   foundLastEntry: boolean,
   versionFound: boolean
 ): number {
   if (!foundLastEntry && versionFound) {
-    return fileLength
+    return contentLength
   }
   return lineToUpdate
 }
