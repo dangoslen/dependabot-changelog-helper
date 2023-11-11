@@ -779,6 +779,7 @@ test('should keep the trailing newline', async () => {
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
+
 `)
 })
 

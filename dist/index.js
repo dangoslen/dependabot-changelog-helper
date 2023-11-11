@@ -130,15 +130,21 @@ function buildPullRequestLink(entry) {
         : `#${number}`;
 }
 function writeEntry(lineNumber, changelogPath, changelogEntry, contents) {
-    // Push a copy of the last line to the end of the contents
+    // Push a copy of the last line to the end of the contents and include the line-ending
     // It will be overwritten when we re-write all the contents
-    const length = contents.push(contents[-1]);
+    const lastLine = contents[contents.length - 1];
+    const length = contents.push(lastLine);
     // Copy the contents from the last line up until the line of the entry we want to write
     for (let i = length - 1; i > lineNumber; i--) {
         contents[i] = contents[i - 1];
     }
     // Write the entry
     contents[lineNumber] = changelogEntry;
+    // If the last line was empty, assume it is a trailing newline
+    // Append an additional newline to write the trailing newline
+    if (lastLine === '') {
+        contents.push('');
+    }
     // Write the contents out, joining with EOL
     fs_1.default.writeFileSync(changelogPath, contents.join(os_1.EOL));
 }
