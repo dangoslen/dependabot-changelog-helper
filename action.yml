@@ -23,6 +23,11 @@ inputs:
       "The prefix word (after the hyphen) of the changelog entry, for example: '- [entryPrefix] `dependency` from v1.0 to v2.0'"
     required: true
     default: 'Bump'
+  sectionHeader:
+    description: |
+      "The section header to add the changelog entry under"
+    required: true
+    default: 'Dependencies'
 runs:
   using: 'node16'
   main: 'dist/index.js'

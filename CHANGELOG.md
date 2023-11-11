@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Fixed
 - Fixes reverting trailing newlines at end of the file [#199](https://github.com/dangoslen/dependabot-changelog-helper/issues/199)
 
+### Added
+- Adds a new `sectionHeader` option. See the [README](./README.md#sectionheader) for more details.
+
 ### Dependencies
 - Bump `stefanzweifel/git-auto-commit-action` from 4 to 5 ([#198](https://github.com/dangoslen/dependabot-changelog-helper/pull/198))
 
