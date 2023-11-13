@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
+
 ## [3.6.0]
 ### Fixed
 - Fixes reverting trailing newlines at end of the file [#199](https://github.com/dangoslen/dependabot-changelog-helper/issues/199)
