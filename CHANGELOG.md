@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `eslint-plugin-github` from 4.8.0 to 4.10.1 ([#210](https://github.com/dangoslen/dependabot-changelog-helper/pull/210))
+
 ## [3.6.0]
 ### Fixed
 - Fixes reverting trailing newlines at end of the file [#199](https://github.com/dangoslen/dependabot-changelog-helper/issues/199)
