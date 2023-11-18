@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Refactored
+- Refactors how a changelog gets updated to allow for multiple entries to be written in one invocation of the GitHub Action. This is prepatory work to allow for multi-package updates
+
 ## [3.6.0]
 ### Fixed
 - Fixes reverting trailing newlines at end of the file [#199](https://github.com/dangoslen/dependabot-changelog-helper/issues/199)

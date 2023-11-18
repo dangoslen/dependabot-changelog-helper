@@ -2,7 +2,7 @@ import {PathLike} from 'fs'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {DependabotEntry, getDependabotEntry} from './entry-extractor'
-import {updateChangelog} from './changelog-updater'
+import {ChangelogUpdater} from './changelog-updater'
 
 async function run(): Promise<void> {
   try {
@@ -12,15 +12,18 @@ async function run(): Promise<void> {
     const entryPrefix: string = core.getInput('entryPrefix')
     const sectionHeader: string = core.getInput('sectionHeader')
 
+    const updater = new ChangelogUpdater(
+      version,
+      changelogPath,
+      entryPrefix,
+      sectionHeader
+    )
+
     if (label !== '' && pullRequestHasLabel(label)) {
+      updater.readChangelog()
       const entry: DependabotEntry = getDependabotEntry(github.context.payload)
-      await updateChangelog(
-        entry,
-        version,
-        changelogPath,
-        entryPrefix,
-        sectionHeader
-      )
+      await updater.updateChangelog(entry)
+      await updater.writeChangelog()
     }
   } catch (err) {
     if (err instanceof Error) {

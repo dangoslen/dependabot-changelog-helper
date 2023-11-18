@@ -1,6 +1,6 @@
 import {PathLike} from 'fs'
-import {updateChangelog} from '../src/changelog-updater'
 import {DependabotEntry} from '../src/entry-extractor'
+import {ChangelogUpdater} from '../src/changelog-updater'
 
 const {Readable} = require('stream')
 const fs = require('fs')
@@ -24,13 +24,7 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES = `# Changelog
 test('adds an entry to the changelog when section already exists with section', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -49,13 +43,7 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_UNRELEASED = `# Changelog
 test('adds an entry to the changelog when section exists under default unreleased version', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_UNRELEASED)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'nope',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('nope', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -73,13 +61,7 @@ const CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED = `# Changelog
 test('adds an entry to the changelog when section already exists, but no entry', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -97,13 +79,7 @@ test('adds section and an entry to the changelog when version exists but section
   fs.createReadStream.mockReturnValue(readable)
   fs.readFileSync.mockReturnValue(CHANGELOG_MISSING_DEPENDENCIES)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'UNRELEASED',
-    './CHANGELOG.md',
-    'Bump',
-    'Changed'
-  )
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Changed')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -126,13 +102,7 @@ const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
 test('adds an entry to the changelog - multiple versions', async () => {
   mockReadStream(CHANGELOG_WITH_MULTIPLE_VERSIONS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'UNRELEASED',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -154,13 +124,7 @@ test('errors when there is no version section', async () => {
   mockReadStream(CHANGELOG_WITH_NO_VERSION)
 
   try {
-    await updateChangelog(
-      PACKAGE_ENTRY,
-      'v1.0.0',
-      './CHANGELOG.md',
-      'Bump',
-      'Dependencies'
-    )
+    await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
   } catch (err) {
     expect(err).not.toBeNull()
     expect(fs.writeFileSync).toBeCalledTimes(0)
@@ -176,13 +140,7 @@ const CHANGELOG_WITH_DUPLICATE_ENTRY = `# Changelog
 test('does not update the changelog on duplicate entry', async () => {
   mockReadStream(CHANGELOG_WITH_DUPLICATE_ENTRY)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expect(fs.writeFileSync).toBeCalledTimes(0)
 })
@@ -200,13 +158,7 @@ const CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE = `# Changelog
 test('does not update the changelog on duplicate entry when not the last item', async () => {
   mockReadStream(CHANGELOG_WITH_DUPLICATE_ENTRY_NOT_LAST_LINE)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expect(fs.writeFileSync).toBeCalledTimes(0)
 })
@@ -220,13 +172,7 @@ const CHANGELOG_WITH_ENTRY_TO_UPDATE = `# Changelog
 test('updates an entry for an existing package in the same version', async () => {
   mockReadStream(CHANGELOG_WITH_ENTRY_TO_UPDATE)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -246,13 +192,7 @@ const CHANGELOG_WITH_ENTRY_TO_UPDATE_WITH_PULL_REQUEST = `# Changelog
 test('updates an entry with pull request context for an existing package in the same version', async () => {
   mockReadStream(CHANGELOG_WITH_ENTRY_TO_UPDATE_WITH_PULL_REQUEST)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -272,13 +212,7 @@ const CHANGELOG_WITH_VERSION_MISSING_DEP_SECTION_BUT_HAS_OTHERS = `# Changelog
 test('updates version with new section and entry', async () => {
   mockReadStream(CHANGELOG_WITH_VERSION_MISSING_DEP_SECTION_BUT_HAS_OTHERS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -304,13 +238,7 @@ const CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES = `# Changelog
 test('does not update lines additional times', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -329,20 +257,8 @@ test('does not update lines additional times, even with multiple invocations', a
   mockReadStream(CHANGELOG_WITH_MULTI_VERSION_PACKAGE_UPDATES)
 
   // Run twice to make sure we only add the PR context once
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -376,13 +292,7 @@ const CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
 test('updates existing section when sections separated by blank lines', async () => {
   mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -424,13 +334,7 @@ test('updates existing section when sections separated by blank lines contain ne
     CHANGELOG_WITH_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES
   )
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -470,13 +374,7 @@ const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS = `# Changelog
 test('adds section when sections separated by blank lines', async () => {
   mockReadStream(CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -520,13 +418,7 @@ test('adds section when sections separated by blank lines contain nested entries
     CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_WITH_NESTED_ENTRIES
   )
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -571,13 +463,7 @@ const CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS = `# Changelog
 test('updates existing section when between other sections', async () => {
   mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Bump',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(
     `# Changelog
@@ -610,13 +496,7 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX = `# Changelog
 test('adds an entry with a different prefix to the changelog when section already exists with entry', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Update', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -635,13 +515,7 @@ const CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX = `# Changelog
 test('keeps prefix on entry with a different prefix but is otherwise a duplicate', async () => {
   mockReadStream(CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Update', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -659,13 +533,7 @@ const CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX = `# Changelog
 test('keeps prefix on entry with a different prefix', async () => {
   mockReadStream(CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -687,13 +555,7 @@ const CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION = `# Changelog
 test('add section and accounts for multi-line entry', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Update', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -724,13 +586,7 @@ const CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS = `# Changel
 test('updates section with an entry and accounts for multi-line entry', async () => {
   mockReadStream(CHANGELOG_WITH_MULTI_LINE_ENTRY_AND_DEPENDENCY_SECTION_EXISTS)
 
-  await updateChangelog(
-    PACKAGE_ENTRY,
-    'v1.0.0',
-    './CHANGELOG.md',
-    'Update',
-    'Dependencies'
-  )
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Update', 'Dependencies')
 
   expectWrittenChangelogToBe(`# Changelog
 
@@ -746,6 +602,23 @@ test('updates section with an entry and accounts for multi-line entry', async ()
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
+
+async function runUpdate(
+  version: string,
+  changelogPath: PathLike,
+  entryPrefix: string,
+  sectionHeader: string
+): Promise<void> {
+  const updater = new ChangelogUpdater(
+    version,
+    changelogPath,
+    entryPrefix,
+    sectionHeader
+  )
+  await updater.readChangelog()
+  await updater.updateChangelog(PACKAGE_ENTRY)
+  await updater.writeChangelog()
+}
 
 function mockReadStream(changelog: string) {
   fs.readFileSync.mockImplementation((_: PathLike, __: string) => {
