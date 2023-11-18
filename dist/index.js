@@ -32,6 +32,7 @@ class ChangelogUpdater {
         this.entryPrefix = entryPrefix;
         this.sectionHeader = sectionHeader;
         this.contents = [];
+        this.changed = false;
     }
     readChangelog() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,7 +42,9 @@ class ChangelogUpdater {
     writeChangelog() {
         return __awaiter(this, void 0, void 0, function* () {
             // Write the contents out, joining with EOL
-            fs_1.default.writeFileSync(this.changelogPath, this.contents.join(os_1.EOL));
+            if (this.changed) {
+                fs_1.default.writeFileSync(this.changelogPath, this.contents.join(os_1.EOL));
+            }
         });
     }
     updateChangelog(entry) {
@@ -120,6 +123,7 @@ class ChangelogUpdater {
         const pullRequests = [...existingPullRequests, currentPullRequest];
         const changelogEntry = `${existingPackage} to ${entry.newVersion} (${pullRequests.join(', ')})`;
         this.contents[lineNumber] = changelogEntry;
+        this.changed = true;
     }
     extractAssociatedPullRequests(existingLine) {
         // Find the start of the PR list
@@ -149,6 +153,7 @@ class ChangelogUpdater {
         }
         // Write the entry
         this.contents[lineNumber] = changelogEntry;
+        this.changed = true;
     }
     parseChangelogForEntry(versionRegex, entry) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -299,8 +304,9 @@ function run() {
             const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
             if (label !== '' && pullRequestHasLabel(label)) {
                 updater.readChangelog();
-                const entry = (0, entry_extractor_1.getDependabotEntry)(github.context.payload);
-                yield updater.updateChangelog(entry);
+                for (const entry of (0, entry_extractor_1.getDependabotEntries)(github.context.payload)) {
+                    yield updater.updateChangelog(entry);
+                }
                 yield updater.writeChangelog();
             }
         }
@@ -331,7 +337,7 @@ run();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDependabotEntry = void 0;
+exports.getDependabotEntries = void 0;
 /** Regex explanation
  *   --- Matches Bump, bump, Bumps, bumps, Update, update, Updates or update, without capturing it
  *  |     --- Matches any non-whitespace character; matching as a few as possible
@@ -341,7 +347,7 @@ exports.getDependabotEntry = void 0;
  *  |     |          |           |                |
  */
 const TITLE_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
-function getDependabotEntry(event) {
+function getDependabotEntries(event) {
     var _a;
     const pullRequestNumber = event.pull_request.number;
     const repository = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.full_name;
@@ -349,15 +355,16 @@ function getDependabotEntry(event) {
     if (titleResult === null) {
         throw new Error('Unable to extract entry from pull request title!');
     }
-    return {
+    const entry = {
         pullRequestNumber,
         repository,
         package: titleResult[1],
         oldVersion: titleResult[2],
         newVersion: titleResult[3]
     };
+    return [entry];
 }
-exports.getDependabotEntry = getDependabotEntry;
+exports.getDependabotEntries = getDependabotEntries;
 //# sourceMappingURL=entry-extractor.js.map
 
 /***/ }),
