@@ -20,7 +20,7 @@ export interface DependabotEntry {
   newVersion: string
 }
 
-export function getDependabotEntry(event: WebhookPayload): DependabotEntry {
+export function getDependabotEntries(event: WebhookPayload): DependabotEntry[] {
   const pullRequestNumber: number = event.pull_request!.number
   const repository: string | undefined = event.repository?.full_name
   const titleResult = TITLE_REGEX.exec(event.pull_request!.title)
@@ -28,11 +28,13 @@ export function getDependabotEntry(event: WebhookPayload): DependabotEntry {
     throw new Error('Unable to extract entry from pull request title!')
   }
 
-  return {
+  const entry = {
     pullRequestNumber,
     repository,
     package: titleResult[1],
     oldVersion: titleResult[2],
     newVersion: titleResult[3]
   }
+
+  return [entry]
 }

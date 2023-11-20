@@ -7,6 +7,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 - Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
 
+### Refactored
+- Refactors how a changelog gets updated to allow for multiple entries to be written in one invocation of the GitHub Action. This is preparatory work to allow for multi-package updates
+- Refactors `entry-extractor` to return an array of `DependabotEntry` values to update the changelog with. This is preparatory work to allow for multi-package updates
+
+
 ## [3.6.0]
 ### Fixed
 - Fixes reverting trailing newlines at end of the file [#199](https://github.com/dangoslen/dependabot-changelog-helper/issues/199)

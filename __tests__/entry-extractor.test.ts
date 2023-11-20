@@ -1,4 +1,4 @@
-import {DependabotEntry, getDependabotEntry} from '../src/entry-extractor'
+import {DependabotEntry, getDependabotEntries} from '../src/entry-extractor'
 
 const PULL_REQUEST_EVENT = {
   repository: {
@@ -83,8 +83,9 @@ const PULL_REQUEST_LOWER_CASE_UPDATE_WITH_DOCKER_PREFIX = {
 }
 
 test('extracts package and simple number verions', async () => {
-  const entry: DependabotEntry = getDependabotEntry(PULL_REQUEST_EVENT)
+  const entries = getDependabotEntries(PULL_REQUEST_EVENT)
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('package')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('6.0')
@@ -92,10 +93,9 @@ test('extracts package and simple number verions', async () => {
 })
 
 test('extracts package and -alpha -beta versions', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
-    PULL_REQUEST_EVENT_ALPHA_TO_BETA
-  )
+  const entries = getDependabotEntries(PULL_REQUEST_EVENT_ALPHA_TO_BETA)
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('package-with-dashes')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('6.0-alpha')
@@ -103,10 +103,9 @@ test('extracts package and -alpha -beta versions', async () => {
 })
 
 test('extracts package with odd package name', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
-    PULL_REQUEST_EVENT_ODD_PACKAGE_NIL_REPO
-  )
+  const entries = getDependabotEntries(PULL_REQUEST_EVENT_ODD_PACKAGE_NIL_REPO)
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('@package-with_odd_characters+')
   expect(entry.repository).toBeUndefined()
   expect(entry.oldVersion).toStrictEqual('6.0')
@@ -114,10 +113,11 @@ test('extracts package with odd package name', async () => {
 })
 
 test('extracts package with rust style requirement update', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
+  const entries = getDependabotEntries(
     PULL_REQUEST_EVENT_RUST_REQUIREMENT_UPDATE
   )
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('clap')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('~2')
@@ -125,10 +125,9 @@ test('extracts package with rust style requirement update', async () => {
 })
 
 test('extracts package with prefix and lowercase bump', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
-    PULL_REQUEST_LOWER_CASE_BUMP_WITH_PREFIX
-  )
+  const entries = getDependabotEntries(PULL_REQUEST_LOWER_CASE_BUMP_WITH_PREFIX)
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('package')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('v2')
@@ -136,10 +135,11 @@ test('extracts package with prefix and lowercase bump', async () => {
 })
 
 test('extracts docker deps with prefix and lowercase update', async () => {
-  const entry: DependabotEntry = getDependabotEntry(
+  const entries = getDependabotEntries(
     PULL_REQUEST_LOWER_CASE_UPDATE_WITH_DOCKER_PREFIX
   )
 
+  const entry = entries[0]
   expect(entry.package).toStrictEqual('deps')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('v2')
