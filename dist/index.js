@@ -346,25 +346,48 @@ exports.getDependabotEntries = void 0;
  *  |     |          |           |                --- Matches any non-whitespace character
  *  |     |          |           |                |
  */
-const TITLE_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+const ENTRY_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
 function getDependabotEntries(event) {
-    var _a;
+    var _a, _b;
     const pullRequestNumber = event.pull_request.number;
     const repository = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.full_name;
-    const titleResult = TITLE_REGEX.exec(event.pull_request.title);
-    if (titleResult === null) {
-        throw new Error('Unable to extract entry from pull request title!');
+    const titleResult = ENTRY_REGEX.exec(event.pull_request.title);
+    if (titleResult !== null) {
+        return [
+            {
+                pullRequestNumber,
+                repository,
+                package: titleResult[1],
+                oldVersion: titleResult[2],
+                newVersion: titleResult[3]
+            }
+        ];
     }
-    const entry = {
-        pullRequestNumber,
-        repository,
-        package: titleResult[1],
-        oldVersion: titleResult[2],
-        newVersion: titleResult[3]
-    };
-    return [entry];
+    const body = (_b = event.pull_request.body) !== null && _b !== void 0 ? _b : '';
+    const entries = getEntriesFromBody(pullRequestNumber, repository, body);
+    if (entries.length === 0) {
+        throw new Error('No dependabot entries! found');
+    }
+    return entries;
 }
 exports.getDependabotEntries = getDependabotEntries;
+function getEntriesFromBody(pullRequestNumber, repository, body) {
+    let description = body;
+    let match;
+    const entries = [];
+    while ((match = ENTRY_REGEX.exec(description)) !== null) {
+        entries.push({
+            pullRequestNumber,
+            repository,
+            package: match[1],
+            oldVersion: match[2],
+            newVersion: match[3]
+        });
+        // Search after the previous match
+        description = description.substring(match.index + match[0].length);
+    }
+    return entries;
+}
 //# sourceMappingURL=entry-extractor.js.map
 
 /***/ }),
