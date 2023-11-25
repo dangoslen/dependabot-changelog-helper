@@ -11,6 +11,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `jest` from 29.6.1 to 29.7.0 ([#211](https://github.com/dangoslen/dependabot-changelog-helper/pull/211))
 - Bump `@types/jest` from 29.5.2 to 29.5.8 ([#211](https://github.com/dangoslen/dependabot-changelog-helper/pull/211))
 - Bump `actions/checkout` from 3.5.3 to 4.1.1 ([#207](https://github.com/dangoslen/dependabot-changelog-helper/pull/207))
+- Bump `actions/setup-node` from 3 to 4 ([#206](https://github.com/dangoslen/dependabot-changelog-helper/pull/206))
 
 ### Refactored
 - Refactors how a changelog gets updated to allow for multiple entries to be written in one invocation of the GitHub Action. This is preparatory work to allow for multi-package updates
