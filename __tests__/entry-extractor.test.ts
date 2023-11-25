@@ -181,19 +181,19 @@ test('extracts mulitple entries from body', async () => {
   expect(entries).toHaveLength(3)
 
   let entry = entries[0]
-  expect(entry.package).toStrictEqual('`package`')
+  expect(entry.package).toStrictEqual('package')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('0.30.7')
   expect(entry.newVersion).toStrictEqual('0.32.6')
 
   entry = entries[1]
-  expect(entry.package).toStrictEqual('`another-package`')
+  expect(entry.package).toStrictEqual('another-package')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('4.25.7')
   expect(entry.newVersion).toStrictEqual('5.12.9')
 
   entry = entries[2]
-  expect(entry.package).toStrictEqual('`yet-another-package`')
+  expect(entry.package).toStrictEqual('yet-another-package')
   expect(entry.repository).toStrictEqual('owner/repo')
   expect(entry.oldVersion).toStrictEqual('2.24.0')
   expect(entry.newVersion).toStrictEqual('3.12.3')

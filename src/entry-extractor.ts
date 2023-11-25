@@ -57,7 +57,9 @@ function getEntriesFromBody(
     entries.push({
       pullRequestNumber,
       repository,
-      package: match[1],
+
+      // Remove redundant '`' characters on pacakges pulled from the body
+      package: match[1].replaceAll('`', ''),
       oldVersion: match[2],
       newVersion: match[3]
     })
