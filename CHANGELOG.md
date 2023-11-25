@@ -9,6 +9,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Dependencies
 - Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
+- Bump ``jest`` from 29.6.1 to 29.7.0 ([#211](https://github.com/dangoslen/dependabot-changelog-helper/pull/211))
+- Bump ``@types/jest`` from 29.5.2 to 29.5.8 ([#211](https://github.com/dangoslen/dependabot-changelog-helper/pull/211))
 
 ### Refactored
 - Refactors how a changelog gets updated to allow for multiple entries to be written in one invocation of the GitHub Action. This is preparatory work to allow for multi-package updates
