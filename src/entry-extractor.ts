@@ -8,7 +8,7 @@ import {WebhookPayload} from '@actions/github/lib/interfaces'
  *  |     |          |           |                --- Matches any non-whitespace character
  *  |     |          |           |                |
  */
-const TITLE_REGEX = new RegExp(
+const ENTRY_REGEX = new RegExp(
   /(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
 )
 
@@ -23,18 +23,47 @@ export interface DependabotEntry {
 export function getDependabotEntries(event: WebhookPayload): DependabotEntry[] {
   const pullRequestNumber: number = event.pull_request!.number
   const repository: string | undefined = event.repository?.full_name
-  const titleResult = TITLE_REGEX.exec(event.pull_request!.title)
-  if (titleResult === null) {
-    throw new Error('Unable to extract entry from pull request title!')
+  const titleResult = ENTRY_REGEX.exec(event.pull_request!.title)
+  if (titleResult !== null) {
+    return [
+      {
+        pullRequestNumber,
+        repository,
+        package: titleResult[1],
+        oldVersion: titleResult[2],
+        newVersion: titleResult[3]
+      }
+    ]
   }
 
-  const entry = {
-    pullRequestNumber,
-    repository,
-    package: titleResult[1],
-    oldVersion: titleResult[2],
-    newVersion: titleResult[3]
+  const body = event.pull_request!.body ?? ''
+  const entries = getEntriesFromBody(pullRequestNumber, repository, body)
+  if (entries.length === 0) {
+    throw new Error('No dependabot entries! found')
   }
 
-  return [entry]
+  return entries
+}
+
+function getEntriesFromBody(
+  pullRequestNumber: number,
+  repository: string | undefined,
+  body: string
+): DependabotEntry[] {
+  let description = body
+  let match
+  const entries: DependabotEntry[] = []
+  while ((match = ENTRY_REGEX.exec(description)) !== null) {
+    entries.push({
+      pullRequestNumber,
+      repository,
+      package: match[1],
+      oldVersion: match[2],
+      newVersion: match[3]
+    })
+
+    // Search after the previous match
+    description = description.substring(match.index + match[0].length)
+  }
+  return entries
 }
