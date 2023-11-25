@@ -6,15 +6,6 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -34,48 +25,40 @@ class ChangelogUpdater {
         this.contents = [];
         this.changed = false;
     }
-    readChangelog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.contents = fs_1.default.readFileSync(this.changelogPath, 'utf-8').split(os_1.EOL);
-        });
+    async readChangelog() {
+        this.contents = fs_1.default.readFileSync(this.changelogPath, 'utf-8').split(os_1.EOL);
     }
-    writeChangelog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Write the contents out, joining with EOL
-            if (this.changed) {
-                fs_1.default.writeFileSync(this.changelogPath, this.contents.join(os_1.EOL));
-            }
-        });
+    async writeChangelog() {
+        // Write the contents out, joining with EOL
+        if (this.changed) {
+            fs_1.default.writeFileSync(this.changelogPath, this.contents.join(os_1.EOL));
+        }
     }
-    updateChangelog(entry) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const versionRegex = new RegExp(`^## \\[${this.version}\\]`);
-            const regexs = [versionRegex, UNRELEASED_REGEX];
-            for (const regex of regexs) {
-                const found = yield this.searchAndUpdateVersion(regex, entry);
-                // If we found the version, we have updated the changelog or we had a duplicate
-                if (found) {
-                    return;
-                }
+    async updateChangelog(entry) {
+        const versionRegex = new RegExp(`^## \\[${this.version}\\]`);
+        const regexs = [versionRegex, UNRELEASED_REGEX];
+        for (const regex of regexs) {
+            const found = await this.searchAndUpdateVersion(regex, entry);
+            // If we found the version, we have updated the changelog or we had a duplicate
+            if (found) {
+                return;
             }
-            throw new Error(`Could not find version ${this.version} or the unreleased version`);
-        });
+        }
+        throw new Error(`Could not find version ${this.version} or the unreleased version`);
     }
-    searchAndUpdateVersion(versionRegex, entry) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.parseChangelogForEntry(versionRegex, entry);
-            // We could not find the desired version to update by the configuration of the action
-            if (!result.versionFound) {
-                return false;
-            }
-            if (result.foundEntryToUpdate) {
-                this.updateEntry(entry, result);
-            }
-            else if (!result.foundDuplicateEntry) {
-                this.addNewEntry(entry, result);
-            }
-            return true;
-        });
+    async searchAndUpdateVersion(versionRegex, entry) {
+        const result = await this.parseChangelogForEntry(versionRegex, entry);
+        // We could not find the desired version to update by the configuration of the action
+        if (!result.versionFound) {
+            return false;
+        }
+        if (result.foundEntryToUpdate) {
+            this.updateEntry(entry, result);
+        }
+        else if (!result.foundDuplicateEntry) {
+            this.addNewEntry(entry, result);
+        }
+        return true;
     }
     // We only want to check for duplicates based only on package and versions
     // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
@@ -155,89 +138,87 @@ class ChangelogUpdater {
         this.contents[lineNumber] = changelogEntry;
         this.changed = true;
     }
-    parseChangelogForEntry(versionRegex, entry) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const sectionRegex = new RegExp(`^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`);
-            let lineNumber = 0;
-            let lineToUpdate = 0;
-            let versionFound = false;
-            let dependencySectionFound = false;
-            let foundLastEntry = false;
-            let foundDuplicateEntry = false;
-            let foundEntryToUpdate = false;
-            const entryLine = this.buildEntryLineForDuplicateCheck(entry);
-            const entryLineStartRegex = this.buildEntryLineStartRegex(entry);
-            // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
-            for (const line of this.contents) {
-                if (foundLastEntry ||
-                    foundDuplicateEntry ||
-                    foundEntryToUpdate ||
-                    EMPTY_LINE_REGEX.test(line)) {
-                    lineNumber++;
-                    continue;
-                }
-                if (versionFound) {
-                    // If we are finding a new version after having found the right version
-                    if (line.startsWith('## ')) {
-                        // Then we have found the last entry regardless of if we found the dependency section
-                        foundLastEntry = true;
-                        // If we haven't found the dependency section, we need to set the line to update number
-                        if (!dependencySectionFound) {
-                            lineToUpdate = lineNumber;
-                        }
-                    }
-                    else if (line.startsWith('### ')) {
-                        // If we are finding a new section and we have found the right version
-                        // and we have found the dependency section, we are moving into a new section
-                        // Otherwise, see if this is the dependency section
-                        if (dependencySectionFound) {
-                            foundLastEntry = true;
-                        }
-                        else {
-                            dependencySectionFound = sectionRegex.test(line);
-                            lineToUpdate = lineNumber + 1;
-                        }
-                    }
-                    else if (SECTION_ENTRY_REGEX.test(line)) {
-                        if (line.startsWith(entryLine)) {
-                            // If we are finding a duplicate line, we have found duplicate entry and we will skip
-                            foundDuplicateEntry = true;
-                        }
-                        else if (entryLineStartRegex.test(line)) {
-                            // If we are finding the start to the entry, we have an entry to update and we will overwrite it
-                            foundEntryToUpdate = true;
-                            lineToUpdate = lineNumber;
-                        }
-                        else {
-                            // Assume we find the last line if we find an entry
-                            // We will append our new entry to end on the next line
-                            lineToUpdate = lineNumber + 1;
-                        }
-                    }
-                }
-                else if (versionRegex.test(line)) {
-                    // If we have not found the version, see if this is the version
-                    versionFound = true;
-                    lineToUpdate = lineNumber + 1;
-                }
+    async parseChangelogForEntry(versionRegex, entry) {
+        const sectionRegex = new RegExp(`^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`);
+        let lineNumber = 0;
+        let lineToUpdate = 0;
+        let versionFound = false;
+        let dependencySectionFound = false;
+        let foundLastEntry = false;
+        let foundDuplicateEntry = false;
+        let foundEntryToUpdate = false;
+        const entryLine = this.buildEntryLineForDuplicateCheck(entry);
+        const entryLineStartRegex = this.buildEntryLineStartRegex(entry);
+        // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
+        for (const line of this.contents) {
+            if (foundLastEntry ||
+                foundDuplicateEntry ||
+                foundEntryToUpdate ||
+                EMPTY_LINE_REGEX.test(line)) {
                 lineNumber++;
+                continue;
             }
-            // If the last line is empty, it is due to a trailing newline
-            // Don't include it in the contents of the changelog
-            if (EMPTY_LINE_REGEX.test(this.contents[this.contents.length - 1])) {
-                lineNumber--;
+            if (versionFound) {
+                // If we are finding a new version after having found the right version
+                if (line.startsWith('## ')) {
+                    // Then we have found the last entry regardless of if we found the dependency section
+                    foundLastEntry = true;
+                    // If we haven't found the dependency section, we need to set the line to update number
+                    if (!dependencySectionFound) {
+                        lineToUpdate = lineNumber;
+                    }
+                }
+                else if (line.startsWith('### ')) {
+                    // If we are finding a new section and we have found the right version
+                    // and we have found the dependency section, we are moving into a new section
+                    // Otherwise, see if this is the dependency section
+                    if (dependencySectionFound) {
+                        foundLastEntry = true;
+                    }
+                    else {
+                        dependencySectionFound = sectionRegex.test(line);
+                        lineToUpdate = lineNumber + 1;
+                    }
+                }
+                else if (SECTION_ENTRY_REGEX.test(line)) {
+                    if (line.startsWith(entryLine)) {
+                        // If we are finding a duplicate line, we have found duplicate entry and we will skip
+                        foundDuplicateEntry = true;
+                    }
+                    else if (entryLineStartRegex.test(line)) {
+                        // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+                        foundEntryToUpdate = true;
+                        lineToUpdate = lineNumber;
+                    }
+                    else {
+                        // Assume we find the last line if we find an entry
+                        // We will append our new entry to end on the next line
+                        lineToUpdate = lineNumber + 1;
+                    }
+                }
             }
-            // If we are at the end of the file, and we never found the last entry of the dependencies,
-            // it is because the last entry was the last line of the file
-            lineToUpdate = this.lastLineCheck(lineToUpdate, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, versionFound);
-            return {
-                foundDuplicateEntry,
-                foundEntryToUpdate,
-                lineToUpdate,
-                versionFound,
-                dependencySectionFound
-            };
-        });
+            else if (versionRegex.test(line)) {
+                // If we have not found the version, see if this is the version
+                versionFound = true;
+                lineToUpdate = lineNumber + 1;
+            }
+            lineNumber++;
+        }
+        // If the last line is empty, it is due to a trailing newline
+        // Don't include it in the contents of the changelog
+        if (EMPTY_LINE_REGEX.test(this.contents[this.contents.length - 1])) {
+            lineNumber--;
+        }
+        // If we are at the end of the file, and we never found the last entry of the dependencies,
+        // it is because the last entry was the last line of the file
+        lineToUpdate = this.lastLineCheck(lineToUpdate, lineNumber, foundLastEntry || foundDuplicateEntry || foundEntryToUpdate, versionFound);
+        return {
+            foundDuplicateEntry,
+            foundEntryToUpdate,
+            lineToUpdate,
+            versionFound,
+            dependencySectionFound
+        };
     }
     lastLineCheck(lineToUpdate, contentLength, foundLastEntry, versionFound) {
         if (!foundLastEntry && versionFound) {
@@ -279,46 +260,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const entry_extractor_1 = __nccwpck_require__(9789);
 const changelog_updater_1 = __nccwpck_require__(1587);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const version = core.getInput('version');
-            const label = core.getInput('activationLabel');
-            const changelogPath = core.getInput('changelogPath');
-            const entryPrefix = core.getInput('entryPrefix');
-            const sectionHeader = core.getInput('sectionHeader');
-            const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
-            if (label !== '' && pullRequestHasLabel(label)) {
-                updater.readChangelog();
-                for (const entry of (0, entry_extractor_1.getDependabotEntries)(github.context.payload)) {
-                    yield updater.updateChangelog(entry);
-                }
-                yield updater.writeChangelog();
+async function run() {
+    try {
+        const version = core.getInput('version');
+        const label = core.getInput('activationLabel');
+        const changelogPath = core.getInput('changelogPath');
+        const entryPrefix = core.getInput('entryPrefix');
+        const sectionHeader = core.getInput('sectionHeader');
+        const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+        if (label !== '' && pullRequestHasLabel(label)) {
+            updater.readChangelog();
+            for (const entry of (0, entry_extractor_1.getDependabotEntries)(github.context.payload)) {
+                await updater.updateChangelog(entry);
             }
+            await updater.writeChangelog();
         }
-        catch (err) {
-            if (err instanceof Error) {
-                core.setFailed(err.message);
-            }
-            else {
-                core.setFailed(`Unexpected error ${err}`);
-            }
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            core.setFailed(err.message);
         }
-    });
+        else {
+            core.setFailed(`Unexpected error ${err}`);
+        }
+    }
 }
 function pullRequestHasLabel(label) {
     return getPullRequestLabels().includes(label);
@@ -348,9 +318,8 @@ exports.getDependabotEntries = void 0;
  */
 const ENTRY_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
 function getDependabotEntries(event) {
-    var _a, _b;
     const pullRequestNumber = event.pull_request.number;
-    const repository = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.full_name;
+    const repository = event.repository?.full_name;
     const titleResult = ENTRY_REGEX.exec(event.pull_request.title);
     if (titleResult !== null) {
         return [
@@ -363,7 +332,7 @@ function getDependabotEntries(event) {
             }
         ];
     }
-    const body = (_b = event.pull_request.body) !== null && _b !== void 0 ? _b : '';
+    const body = event.pull_request.body ?? '';
     const entries = getEntriesFromBody(pullRequestNumber, repository, body);
     if (entries.length === 0) {
         throw new Error('No dependabot entries! found');
@@ -379,7 +348,8 @@ function getEntriesFromBody(pullRequestNumber, repository, body) {
         entries.push({
             pullRequestNumber,
             repository,
-            package: match[1],
+            // Remove redundant ``
+            package: match[1].replaceAll('`', ''),
             oldVersion: match[2],
             newVersion: match[3]
         });
