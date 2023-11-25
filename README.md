@@ -6,17 +6,20 @@
 
 ## Dependabot Changelog Helper
 
-This action helps you easily auto-update your changelog!
+This action helps you easily auto-update your changelog on Dependabot pull requests! No more manually updating a changelog for dependency upgrades.
 
 ### We all love Dependabot...
 
 But it can feel overwhelming and require additional work to update things like versions and changelogs.
 
-Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for an entry line for an updated package and either:
+Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for upgraded dependencies on a Dependabot pull request. 
 
-- Adds an entry if not found (including adding the `### Dependencies` and `## [<version>]` sections!)
-- Updates the entry if one has been found within the same version. 
-  - This includes update the upgraded version and the associated pull request numbers
+Highlights include:
+
+- Adds a changelog entry for every upgraded dependency (including adding appropriate `### Dependencies` and/or `## [<version>]` sections!)
+- Supports multi-package updates in a single pull request
+- Updates the entry if one has been found within the same version (one dependency upgrade line per version)
+- Includes link(s) to associated pull requests that upgraded the dependency
 
 ### Entry Format
 

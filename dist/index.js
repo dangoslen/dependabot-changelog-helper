@@ -348,7 +348,7 @@ function getEntriesFromBody(pullRequestNumber, repository, body) {
         entries.push({
             pullRequestNumber,
             repository,
-            // Remove redundant ``
+            // Remove redundant '`' characters on pacakges pulled from the body
             package: match[1].replaceAll('`', ''),
             oldVersion: match[2],
             newVersion: match[3]
