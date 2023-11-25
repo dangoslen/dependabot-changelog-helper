@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Added
+- Now supports GitHub grouped updates. Each upgrade dependency will form a new line under the configured [section](./README.md#sectionheader) of the relevant release.
+
 ### Dependencies
 - Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
 
