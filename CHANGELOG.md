@@ -5,7 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [3.7.0]
 
 ### Added
-- Now supports [Dependabot multi-package updates](changes_detected). Each dependency upgrade will form a new line under the configured [section](./README.md#sectionheader) as if the upgrade was from it's own pull request.
+- Now supports [Dependabot multi-package updates](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups). Each dependency upgrade will form a new line under the configured [section](./README.md#sectionheader) as if the upgrade was from it's own pull request.
 
 ### Dependencies
 - Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
