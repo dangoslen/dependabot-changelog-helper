@@ -2,9 +2,10 @@
 
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [UNRELEASED]
+## [3.7.0]
+
 ### Added
-- Now supports GitHub grouped updates. Each upgrade dependency will form a new line under the configured [section](./README.md#sectionheader) of the relevant release.
+- Now supports [Dependabot multi-package updates](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups). Each dependency upgrade will form a new line under the configured [section](./README.md#sectionheader) as if the upgrade was from it's own pull request.
 
 ### Dependencies
 - Bump `@actions/github` from 5.1.0 to 6.0.0 ([#209](https://github.com/dangoslen/dependabot-changelog-helper/pull/209))
@@ -16,8 +17,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `eslint-plugin-jest` from 27.2.2 to 27.6.0 ([#220](https://github.com/dangoslen/dependabot-changelog-helper/pull/220))
 
 ### Refactored
-- Refactors how a changelog gets updated to allow for multiple entries to be written in one invocation of the GitHub Action. This is preparatory work to allow for multi-package updates
-- Refactors `entry-extractor` to return an array of `DependabotEntry` values to update the changelog with. This is preparatory work to allow for multi-package updates
+- Refactored how a changelog gets updated to allow for multiple entries to be written in one invocation of the action. This is preparatory work to allow for multi-package updates
+- Refactored `entry-extractor` to return an array of `DependabotEntry` values to update the changelog with. This is preparatory work to allow for multi-package updates
 
 ## [3.6.0]
 ### Fixed
