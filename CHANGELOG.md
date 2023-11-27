@@ -12,6 +12,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `@types/jest` from 29.5.2 to 29.5.8 ([#211](https://github.com/dangoslen/dependabot-changelog-helper/pull/211))
 - Bump `actions/checkout` from 3.5.3 to 4.1.1 ([#207](https://github.com/dangoslen/dependabot-changelog-helper/pull/207))
 - Bump `actions/setup-node` from 3 to 4 ([#206](https://github.com/dangoslen/dependabot-changelog-helper/pull/206))
+- Bump `@vercel/ncc` from 0.36.1 to 0.38.1 ([#221](https://github.com/dangoslen/dependabot-changelog-helper/pull/221))
 - Bump `eslint-plugin-jest` from 27.2.2 to 27.6.0 ([#220](https://github.com/dangoslen/dependabot-changelog-helper/pull/220))
 
 ### Refactored
