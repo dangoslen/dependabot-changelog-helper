@@ -1,11 +1,11 @@
 import {PathLike} from 'fs'
-import {DependabotEntry} from '../src/entry-extractor'
+import {VersionEntry} from '../src/entries/entry-extractor'
 import {ChangelogUpdater} from '../src/changelog-updater'
 
 const {Readable} = require('stream')
 const fs = require('fs')
 
-const PACKAGE_ENTRY: DependabotEntry = {
+const PACKAGE_ENTRY: VersionEntry = {
   pullRequestNumber: 123,
   repository: 'owner/repo',
   package: 'package',

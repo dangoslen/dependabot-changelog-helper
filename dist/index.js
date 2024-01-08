@@ -263,7 +263,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const entry_extractor_1 = __nccwpck_require__(9789);
+const extractor_factory_1 = __nccwpck_require__(2800);
 const changelog_updater_1 = __nccwpck_require__(1587);
 async function run() {
     try {
@@ -272,10 +272,12 @@ async function run() {
         const changelogPath = core.getInput('changelogPath');
         const entryPrefix = core.getInput('entryPrefix');
         const sectionHeader = core.getInput('sectionHeader');
-        const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+        const payload = github.context.payload;
         if (label !== '' && pullRequestHasLabel(label)) {
+            const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+            const extractor = (0, extractor_factory_1.getExtractor)(payload);
             updater.readChangelog();
-            for (const entry of (0, entry_extractor_1.getDependabotEntries)(github.context.payload)) {
+            for (const entry of extractor.getEntries(payload)) {
                 await updater.updateChangelog(entry);
             }
             await updater.writeChangelog();
@@ -301,64 +303,85 @@ run();
 
 /***/ }),
 
-/***/ 9789:
+/***/ 878:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDependabotEntries = void 0;
-/** Regex explanation
- *   --- Matches Bump, bump, Bumps, bumps, Update, update, Updates or update, without capturing it
- *  |     --- Matches any non-whitespace character; matching as a few as possible
- *  |     |          --- Matches any non-whitespace character
- *  |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
- *  |     |          |           |                --- Matches any non-whitespace character
- *  |     |          |           |                |
- */
-const ENTRY_REGEX = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
-function getDependabotEntries(event) {
-    const pullRequestNumber = event.pull_request.number;
-    const repository = event.repository?.full_name;
-    const titleResult = ENTRY_REGEX.exec(event.pull_request.title);
-    if (titleResult !== null) {
-        return [
-            {
+exports.DependabotExtractor = void 0;
+class DependabotExtractor {
+    constructor() {
+        /** Regex explanation
+         *   --- Matches Bump, bump, Bumps, bumps, Update, update, Updates or update, without capturing it
+         *  |     --- Matches any non-whitespace character; matching as a few as possible
+         *  |     |          --- Matches any non-whitespace character
+         *  |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
+         *  |     |          |           |                --- Matches any non-whitespace character
+         *  |     |          |           |                |
+         */
+        this.regex = new RegExp(/(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+    }
+    getEntries(event) {
+        const pullRequestNumber = event.pull_request.number;
+        const repository = event.repository?.full_name;
+        const titleResult = this.regex.exec(event.pull_request.title);
+        if (titleResult !== null) {
+            return [
+                {
+                    pullRequestNumber,
+                    repository,
+                    package: titleResult[1],
+                    oldVersion: titleResult[2],
+                    newVersion: titleResult[3]
+                }
+            ];
+        }
+        const body = event.pull_request.body ?? '';
+        const entries = this.getEntriesFromBody(pullRequestNumber, repository, body);
+        if (entries.length === 0) {
+            throw new Error('No dependabot entries! found');
+        }
+        return entries;
+    }
+    getEntriesFromBody(pullRequestNumber, repository, body) {
+        let description = body;
+        let match;
+        const entries = [];
+        while ((match = this.regex.exec(description)) !== null) {
+            entries.push({
                 pullRequestNumber,
                 repository,
-                package: titleResult[1],
-                oldVersion: titleResult[2],
-                newVersion: titleResult[3]
-            }
-        ];
+                // Remove redundant '`' characters on packages pulled from the body
+                package: match[1].replaceAll('`', ''),
+                oldVersion: match[2],
+                newVersion: match[3]
+            });
+            // Search after the previous match
+            description = description.substring(match.index + match[0].length);
+        }
+        return entries;
     }
-    const body = event.pull_request.body ?? '';
-    const entries = getEntriesFromBody(pullRequestNumber, repository, body);
-    if (entries.length === 0) {
-        throw new Error('No dependabot entries! found');
-    }
-    return entries;
 }
-exports.getDependabotEntries = getDependabotEntries;
-function getEntriesFromBody(pullRequestNumber, repository, body) {
-    let description = body;
-    let match;
-    const entries = [];
-    while ((match = ENTRY_REGEX.exec(description)) !== null) {
-        entries.push({
-            pullRequestNumber,
-            repository,
-            // Remove redundant '`' characters on pacakges pulled from the body
-            package: match[1].replaceAll('`', ''),
-            oldVersion: match[2],
-            newVersion: match[3]
-        });
-        // Search after the previous match
-        description = description.substring(match.index + match[0].length);
-    }
-    return entries;
+exports.DependabotExtractor = DependabotExtractor;
+//# sourceMappingURL=dependabot-extractor.js.map
+
+/***/ }),
+
+/***/ 2800:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getExtractor = void 0;
+const dependabot_extractor_1 = __nccwpck_require__(878);
+// Determines which extractor to use based on the PR
+function getExtractor(_) {
+    return new dependabot_extractor_1.DependabotExtractor();
 }
-//# sourceMappingURL=entry-extractor.js.map
+exports.getExtractor = getExtractor;
+//# sourceMappingURL=extractor-factory.js.map
 
 /***/ }),
 
