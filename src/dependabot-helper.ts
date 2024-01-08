@@ -1,7 +1,7 @@
 import {PathLike} from 'fs'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {getDependabotEntries} from './entry-extractor'
+import {getExtractor} from './entries/extractor-factory'
 import {ChangelogUpdater} from './changelog-updater'
 
 async function run(): Promise<void> {
@@ -11,17 +11,19 @@ async function run(): Promise<void> {
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
     const sectionHeader: string = core.getInput('sectionHeader')
-
-    const updater = new ChangelogUpdater(
-      version,
-      changelogPath,
-      entryPrefix,
-      sectionHeader
-    )
+    const payload = github.context.payload
 
     if (label !== '' && pullRequestHasLabel(label)) {
+      const updater = new ChangelogUpdater(
+        version,
+        changelogPath,
+        entryPrefix,
+        sectionHeader
+      )
+      const extractor = getExtractor(payload)
+
       updater.readChangelog()
-      for (const entry of getDependabotEntries(github.context.payload)) {
+      for (const entry of extractor.getEntries(payload)) {
         await updater.updateChangelog(entry)
       }
       await updater.writeChangelog()

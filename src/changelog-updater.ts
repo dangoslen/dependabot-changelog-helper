@@ -1,6 +1,6 @@
 import fs from 'fs'
 import {EOL} from 'os'
-import {DependabotEntry} from './entry-extractor'
+import {VersionEntry} from './entries/entry-extractor'
 
 interface ParsedResult {
   foundDuplicateEntry: boolean
@@ -41,7 +41,7 @@ export class ChangelogUpdater {
     }
   }
 
-  async updateChangelog(entry: DependabotEntry): Promise<void> {
+  async updateChangelog(entry: VersionEntry): Promise<void> {
     const versionRegex = new RegExp(`^## \\[${this.version}\\]`)
 
     const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
@@ -61,7 +61,7 @@ export class ChangelogUpdater {
 
   private async searchAndUpdateVersion(
     versionRegex: RegExp,
-    entry: DependabotEntry
+    entry: VersionEntry
   ): Promise<Boolean> {
     const result = await this.parseChangelogForEntry(versionRegex, entry)
 
@@ -81,26 +81,26 @@ export class ChangelogUpdater {
 
   // We only want to check for duplicates based only on package and versions
   // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
-  private buildEntryLineForDuplicateCheck(entry: DependabotEntry): string {
+  private buildEntryLineForDuplicateCheck(entry: VersionEntry): string {
     const lineStart = this.buildEntryLineStart(entry)
     return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`
   }
 
-  private buildEntryLineStart(entry: DependabotEntry): string {
+  private buildEntryLineStart(entry: VersionEntry): string {
     return `- ${this.entryPrefix} \`${entry.package}\` from`
   }
 
-  private buildEntryLine(entry: DependabotEntry): string {
+  private buildEntryLine(entry: VersionEntry): string {
     const lineStart = this.buildEntryLineForDuplicateCheck(entry)
     const currentPullRequest = this.buildPullRequestLink(entry)
     return `${lineStart} (${currentPullRequest})`
   }
 
-  private buildEntryLineStartRegex(entry: DependabotEntry): RegExp {
+  private buildEntryLineStartRegex(entry: VersionEntry): RegExp {
     return new RegExp(`- \\w+ \`${entry.package}\` from `)
   }
 
-  private addNewEntry(entry: DependabotEntry, result: ParsedResult): void {
+  private addNewEntry(entry: VersionEntry, result: ParsedResult): void {
     // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
     // sections exist
     let changelogEntry = this.buildEntryLine(entry)
@@ -118,7 +118,7 @@ export class ChangelogUpdater {
     this.writeEntry(lineNumber, changelogEntry)
   }
 
-  private updateEntry(entry: DependabotEntry, result: ParsedResult): void {
+  private updateEntry(entry: VersionEntry, result: ParsedResult): void {
     const lineNumber = result.lineToUpdate
     const existingLine = this.contents[lineNumber]
     const existingPackage = existingLine.split(' to ')[0]
@@ -155,7 +155,7 @@ export class ChangelogUpdater {
     return prs.split(',').map(s => s.trim())
   }
 
-  private buildPullRequestLink(entry: DependabotEntry): string {
+  private buildPullRequestLink(entry: VersionEntry): string {
     const number = entry.pullRequestNumber
     return entry.repository
       ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
@@ -180,7 +180,7 @@ export class ChangelogUpdater {
 
   private async parseChangelogForEntry(
     versionRegex: RegExp,
-    entry: DependabotEntry
+    entry: VersionEntry
   ): Promise<ParsedResult> {
     const sectionRegex = new RegExp(
       `^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`
