@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Adds scaffolding for EntryExtractor to support different tools (Dependabot, Mend Renovate, etc).
 
+### Dependencies
+- Bump `@types/node` from 20.4.2 to 20.11.0 ([#232](https://github.com/dangoslen/dependabot-changelog-helper/pull/232))
+
 ## [3.7.0]
 
 ### Added
