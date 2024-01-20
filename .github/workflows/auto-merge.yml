@@ -28,10 +28,15 @@ jobs:
             echo "Pull request is not from a trusted source!"
             exit 1
           fi
-          
+
   automerge:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4.1.1
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          
       - uses: ./
         with:
           activationLabel: 'automerge'
@@ -45,4 +50,4 @@ jobs:
         name: automerge
         uses: "pascalgn/automerge-action@v0.16.2"
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.ACTION_TOKEN }}"
