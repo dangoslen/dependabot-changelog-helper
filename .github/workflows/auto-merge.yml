@@ -1,18 +1,5 @@
 name: automerge
 on:
-  pull_request:
-    types:
-      - labeled
-      - unlabeled
-      - synchronize
-      - opened
-      - edited
-      - ready_for_review
-      - reopened
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
   check_suite:
     types:
       - completed
@@ -32,20 +19,6 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
-        with: 
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          
-      - uses: ./
-        with:
-          activationLabel: 'automerge'
-
-      - id: auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Updated Changelog"
-
       - id: automerge
         name: automerge
         uses: "pascalgn/automerge-action@v0.16.2"
