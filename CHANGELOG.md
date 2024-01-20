@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Dependencies
 - Bump `@types/node` from 20.4.2 to 20.11.0 ([#232](https://github.com/dangoslen/dependabot-changelog-helper/pull/232))
+- Bump `@types/jest` from 29.5.10 to 29.5.11 ([#239](https://github.com/dangoslen/dependabot-changelog-helper/pull/239))
 
 ## [3.7.0]
 
