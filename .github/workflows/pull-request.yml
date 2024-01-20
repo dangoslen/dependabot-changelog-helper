@@ -38,8 +38,7 @@ jobs:
       - run: npm install
       - run: npm run all
 
-  # test action works running from the graph
-  enforce-changelog:
+  changelog:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
@@ -53,10 +52,15 @@ jobs:
           echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
           echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
 
+          - uses: actions/checkout@v4.1.1
+          with: 
+            ref: ${{ github.event.pull_request.head.ref }}
+            repository: ${{ github.event.pull_request.head.repo.full_name }}
+            
       - uses: ./
         with:
-          activationLabel: 'dependabot'
-
+          activationLabel: 'automerge'
+  
       - id: auto-commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -108,3 +112,22 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+  
+  auto-merge:
+    needs: [ changelog ]
+    runs-on: ubuntu-latest
+    steps:  
+      - uses: ./
+        with:
+          activationLabel: 'automerge'
+
+      - id: auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Updated Changelog"
+
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.ACTION_TOKEN }}"
