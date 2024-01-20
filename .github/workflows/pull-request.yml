@@ -38,8 +38,7 @@ jobs:
       - run: npm install
       - run: npm run all
 
-  # test action works running from the graph
-  enforce-changelog:
+  changelog:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
@@ -53,19 +52,9 @@ jobs:
           echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
           echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
 
-      - uses: ./
-        with:
-          activationLabel: 'dependabot'
-
-      - id: auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Updated Changelog"
-
       - id: changelog-enforcer
         # If changes were detected, it would include a changelog
         # Skip enforcing the changelog and wait for the next commit to trigger the workflow
-        if: steps.auto-commit.outputs.changes_detected == 'false'
         uses: dangoslen/changelog-enforcer@v3
         with:
           expectedLatestVersion: ${{ steps.read_version.outputs.version }}
@@ -108,3 +97,22 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+  
+  auto-merge:
+    needs: [ changelog ]
+    runs-on: ubuntu-latest
+    steps:  
+      - uses: ./
+        with:
+          activationLabel: 'automerge'
+
+      - id: auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Updated Changelog"
+
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.ACTION_TOKEN }}"

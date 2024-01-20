@@ -24,4 +24,5 @@ updates:
       - dependabot
       - dependencies
       - verified
+      - skip-changelog
     target-branch: 'main'

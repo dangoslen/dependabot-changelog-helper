@@ -1,0 +1,48 @@
+name: automerge
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  
+jobs:
+  # validates that the pull request is trusted
+  verify: 
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          VERIFIED_LABEL=${{ contains(github.event.pull_request.labels.*.name, 'verified') }}
+          if [[ ( $VERIFIED_LABEL == 'false' ) ]]; then
+            echo "Pull request is not from a trusted source!"
+            exit 1
+          fi
+          
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./
+        with:
+          activationLabel: 'automerge'
+
+      - id: auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Updated Changelog"
+
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
