@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Adds scaffolding for EntryExtractor to support different tools (Dependabot, Mend Renovate, etc).
 
+### Dependencies
+- Bump `prettier` from 2.8.8 to 3.2.4 ([#238](https://github.com/dangoslen/dependabot-changelog-helper/pull/238))
+
 ## [3.7.0]
 
 ### Added
