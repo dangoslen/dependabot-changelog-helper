@@ -94,6 +94,14 @@ This is a way to incrementally build a version over time and only release a vers
 
 #### `activationLabel`
 
+| Default  | Description                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------ |
+| `''`     | DEPRECATED! Please use the `acticationLabels` input below. The label to indicate that the action should run. |
+
+If both `activationLabel` and `activationLabels` inputs are provided, _all_ labels between the two inputs are required for the action to run.
+ 
+#### `activationLabels`
+
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
 | `dependabot` | The label to indicate that the action should run. |
