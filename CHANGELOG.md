@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Adds scaffolding for EntryExtractor to support different tools (Dependabot, Mend Renovate, etc).
 
+### Dependencies
+- Bump `eslint-plugin-jest` from 27.6.0 to 27.6.3 ([#236](https://github.com/dangoslen/dependabot-changelog-helper/pull/236))
+
 ## [3.7.0]
 
 ### Added
