@@ -265,15 +265,20 @@ const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const extractor_factory_1 = __nccwpck_require__(2800);
 const changelog_updater_1 = __nccwpck_require__(1587);
+const label_extractor_1 = __nccwpck_require__(80);
+const label_checker_1 = __nccwpck_require__(5257);
 async function run() {
     try {
         const version = core.getInput('version');
         const label = core.getInput('activationLabel');
+        const labelsString = core.getInput('activationLabels');
         const changelogPath = core.getInput('changelogPath');
         const entryPrefix = core.getInput('entryPrefix');
         const sectionHeader = core.getInput('sectionHeader');
         const payload = github.context.payload;
-        if (label !== '' && pullRequestHasLabel(label)) {
+        const labels = (0, label_extractor_1.parseLabels)(labelsString);
+        labels.push(label);
+        if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
             const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
             const extractor = (0, extractor_factory_1.getExtractor)(payload);
             updater.readChangelog();
@@ -291,12 +296,6 @@ async function run() {
             core.setFailed(`Unexpected error ${err}`);
         }
     }
-}
-function pullRequestHasLabel(label) {
-    return getPullRequestLabels().includes(label);
-}
-function getPullRequestLabels() {
-    return github.context.payload.pull_request.labels.map((l) => l.name);
 }
 run();
 //# sourceMappingURL=dependabot-helper.js.map
@@ -382,6 +381,58 @@ function getExtractor(_) {
 }
 exports.getExtractor = getExtractor;
 //# sourceMappingURL=extractor-factory.js.map
+
+/***/ }),
+
+/***/ 5257:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.pullRequestHasLabels = void 0;
+function pullRequestHasLabels(payload, labels) {
+    const prLabels = getPullRequestLabels(payload);
+    let found = true;
+    for (const activationLabel of labels) {
+        found = found && prLabels.includes(activationLabel);
+    }
+    return found;
+}
+exports.pullRequestHasLabels = pullRequestHasLabels;
+function getPullRequestLabels(payload) {
+    return payload.pull_request.labels.map((l) => l.name);
+}
+//# sourceMappingURL=label-checker.js.map
+
+/***/ }),
+
+/***/ 80:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseLabels = void 0;
+function parseLabels(labelsString) {
+    // Parses a list of labels. Each label can be of any length and will either end with a comma or be the end of the string.
+    // Matches words (\w), whitespace characters (\s), dashes (-), plus signs (+), questions marks (\?), semi-colons (;), brackets (\[\]), parenthesis (\(\)) and forward-slashes (\/)
+    // Each match may are may not have a trailing comma (,?). If one exists, it is removed before appending it to the list
+    const regex = new RegExp(/([\w\s-\/+\?;\[\]\(\)]+,?)/, 'g');
+    let labels = [];
+    let groups;
+    do {
+        groups = regex.exec(labelsString);
+        if (groups) {
+            // Removes the trailing comma and removes all whitespace
+            let label = groups[0].replace(",", "").trim();
+            labels.push(label);
+        }
+    } while (groups);
+    return labels;
+}
+exports.parseLabels = parseLabels;
+//# sourceMappingURL=label-extractor.js.map
 
 /***/ }),
 

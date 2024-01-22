@@ -4,7 +4,12 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
-- Adds scaffolding for EntryExtractor to support different tools (Dependabot, Mend Renovate, etc).
+### Added
+- Adds scaffolding for `EntryExtractor`` to support different tools (Dependabot, Mend Renovate, etc).
+- Adds a new `activationLabels` input to allow for more complex workflows. See [#233](https://github.com/dangoslen/dependabot-changelog-helper/issues/233) for more details as to why. This input will be removed in the next major release, which currently has a TBD release date. 
+
+### Deprecated
+- The `activationLabel` is now deprecated in favor of the `activationLabels` (see the `Added` section above). This input will be removed in the next major release, which currently has a TBD release date. 
 
 ### Dependencies
 - Bump `eslint-plugin-jest` from 27.6.0 to 27.6.3 ([#236](https://github.com/dangoslen/dependabot-changelog-helper/pull/236))

@@ -54,7 +54,7 @@ jobs:
             
       - uses: ./
         with:
-          activationLabel: 'automerge'
+          activationLabels: 'dependabot,automerge'
   
       - id: auto-commit
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -107,22 +107,3 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
-  
-  auto-merge:
-    needs: [ changelog ]
-    runs-on: ubuntu-latest
-    steps:  
-      - uses: ./
-        with:
-          activationLabel: 'automerge'
-
-      - id: auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Updated Changelog"
-
-      - id: automerge
-        name: automerge
-        uses: "pascalgn/automerge-action@v0.16.2"
-        env:
-          GITHUB_TOKEN: "${{ secrets.ACTION_TOKEN }}"

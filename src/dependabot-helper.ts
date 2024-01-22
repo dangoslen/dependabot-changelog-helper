@@ -3,17 +3,24 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {getExtractor} from './entries/extractor-factory'
 import {ChangelogUpdater} from './changelog-updater'
+import {parseLabels} from './label-extractor'
+import {WebhookPayload} from '@actions/github/lib/interfaces'
+import {pullRequestHasLabels} from './label-checker'
 
 async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
     const label: string = core.getInput('activationLabel')
+    const labelsString: string = core.getInput('activationLabels')
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
     const sectionHeader: string = core.getInput('sectionHeader')
     const payload = github.context.payload
 
-    if (label !== '' && pullRequestHasLabel(label)) {
+    const labels = parseLabels(labelsString)
+    labels.push(label)
+
+    if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
       const updater = new ChangelogUpdater(
         version,
         changelogPath,
@@ -35,16 +42,6 @@ async function run(): Promise<void> {
       core.setFailed(`Unexpected error ${err}`)
     }
   }
-}
-
-function pullRequestHasLabel(label: string): boolean {
-  return getPullRequestLabels().includes(label)
-}
-
-function getPullRequestLabels(): string[] {
-  return github.context.payload.pull_request!.labels.map(
-    (l: {name?: string}) => l.name
-  )
 }
 
 run()
