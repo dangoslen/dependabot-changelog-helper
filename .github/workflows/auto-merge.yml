@@ -1,21 +1,21 @@
 name: automerge
 on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - edited
+      - ready_for_review
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
   check_suite:
     types:
       - completed
-  
+    
 jobs:
-  # validates that the pull request is trusted
-  verify: 
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          VERIFIED_LABEL=${{ contains(github.event.pull_request.labels.*.name, 'verified') }}
-          if [[ ( $VERIFIED_LABEL == 'false' ) ]]; then
-            echo "Pull request is not from a trusted source!"
-            exit 1
-          fi
-
   automerge:
     runs-on: ubuntu-latest
     steps:
