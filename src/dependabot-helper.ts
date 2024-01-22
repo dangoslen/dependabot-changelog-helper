@@ -3,8 +3,9 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {getExtractor} from './entries/extractor-factory'
 import {ChangelogUpdater} from './changelog-updater'
-import { parseLabels } from './label-extractor'
-import { WebhookPayload } from '@actions/github/lib/interfaces'
+import {parseLabels} from './label-extractor'
+import {WebhookPayload} from '@actions/github/lib/interfaces'
+import {pullRequestHasLabels} from './label-checker'
 
 async function run(): Promise<void> {
   try {
@@ -19,7 +20,7 @@ async function run(): Promise<void> {
     const labels = parseLabels(labelsString)
     labels.push(label)
 
-    if (labels.length > 0 && pullRequestHasLabels(labels)) {
+    if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
       const updater = new ChangelogUpdater(
         version,
         changelogPath,
@@ -41,21 +42,6 @@ async function run(): Promise<void> {
       core.setFailed(`Unexpected error ${err}`)
     }
   }
-}
-
-function pullRequestHasLabels(labels: string[]): boolean {
-  const prLabels = getPullRequestLabels(payload)
-  let found = false
-  for (const activationLabel in labels) {
-    found = found && prLabels.includes(activationLabel)
-  } 
-  return found
-}
-
-function getPullRequestLabels(payload: WebhookPayload): string[] {
-  return payload.pull_request!.labels.map(
-    (l: {name?: string}) => l.name
-  )
 }
 
 run()
