@@ -21,7 +21,6 @@ jobs:
             exit 1
           fi
 
-  # unit tests
   unit-tests:
     needs: [ verify ]
     runs-on: ubuntu-latest
@@ -107,3 +106,13 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+
+  automerge:
+    needs: [ unit-tests, changelog ]
+    runs-on: ubuntu-latest
+    steps:
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.ACTION_TOKEN }}"
