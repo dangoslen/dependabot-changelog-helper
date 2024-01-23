@@ -10,13 +10,33 @@ interface ParsedResult {
   dependencySectionFound: boolean
 }
 
+export interface ChangelogUpdater {
+  readChangelog(): Promise<void>
+  updateChangelog(entry: VersionEntry): Promise<void>
+  writeChangelog(): Promise<void>
+}
+
 const UNRELEASED_REGEX = new RegExp(
   /^## \[(unreleased|Unreleased|UNRELEASED)\]/
 )
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
 const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
 
-export class ChangelogUpdater {
+export function newUpdater(
+  version: string,
+  changelogPath: fs.PathLike,
+  entryPrefix: string,
+  sectionHeader: string
+): ChangelogUpdater {
+  return new DefaultChangelogUpdater(
+    version,
+    changelogPath,
+    entryPrefix,
+    sectionHeader
+  )
+}
+
+export class DefaultChangelogUpdater implements ChangelogUpdater {
   private contents: string[]
   private changed: boolean
 

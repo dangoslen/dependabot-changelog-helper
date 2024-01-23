@@ -2,12 +2,11 @@ import {PathLike} from 'fs'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {getExtractor} from './entries/extractor-factory'
-import {ChangelogUpdater} from './changelog-updater'
+import {DefaultChangelogUpdater, newUpdater} from './changelog-updater'
 import {parseLabels} from './label-extractor'
-import {WebhookPayload} from '@actions/github/lib/interfaces'
 import {pullRequestHasLabels} from './label-checker'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
     const label: string = core.getInput('activationLabel')
@@ -18,10 +17,12 @@ async function run(): Promise<void> {
     const payload = github.context.payload
 
     const labels = parseLabels(labelsString)
-    labels.push(label)
+    if (label !== '' && !labels.includes(label)) {
+      labels.push(label)
+    }
 
     if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
-      const updater = new ChangelogUpdater(
+      const updater = newUpdater(
         version,
         changelogPath,
         entryPrefix,
