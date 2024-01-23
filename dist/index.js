@@ -10,13 +10,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ChangelogUpdater = void 0;
+exports.DefaultChangelogUpdater = exports.newUpdater = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const os_1 = __nccwpck_require__(2037);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
 const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /);
-class ChangelogUpdater {
+function newUpdater(version, changelogPath, entryPrefix, sectionHeader) {
+    return new DefaultChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+}
+exports.newUpdater = newUpdater;
+class DefaultChangelogUpdater {
     constructor(version, changelogPath, entryPrefix, sectionHeader) {
         this.version = version;
         this.changelogPath = changelogPath;
@@ -227,7 +231,7 @@ class ChangelogUpdater {
         return lineToUpdate;
     }
 }
-exports.ChangelogUpdater = ChangelogUpdater;
+exports.DefaultChangelogUpdater = DefaultChangelogUpdater;
 //# sourceMappingURL=changelog-updater.js.map
 
 /***/ }),
@@ -261,6 +265,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const extractor_factory_1 = __nccwpck_require__(2800);
@@ -277,9 +282,11 @@ async function run() {
         const sectionHeader = core.getInput('sectionHeader');
         const payload = github.context.payload;
         const labels = (0, label_extractor_1.parseLabels)(labelsString);
-        labels.push(label);
+        if (label !== '' && !labels.includes(label)) {
+            labels.push(label);
+        }
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
-            const updater = new changelog_updater_1.ChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+            const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader);
             const extractor = (0, extractor_factory_1.getExtractor)(payload);
             updater.readChangelog();
             for (const entry of extractor.getEntries(payload)) {
@@ -297,6 +304,7 @@ async function run() {
         }
     }
 }
+exports.run = run;
 run();
 //# sourceMappingURL=dependabot-helper.js.map
 
@@ -385,17 +393,44 @@ exports.getExtractor = getExtractor;
 /***/ }),
 
 /***/ 5257:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.pullRequestHasLabels = void 0;
+const core = __importStar(__nccwpck_require__(2186));
 function pullRequestHasLabels(payload, labels) {
     const prLabels = getPullRequestLabels(payload);
     let found = true;
     for (const activationLabel of labels) {
         found = found && prLabels.includes(activationLabel);
+        if (!found) {
+            core.info(`Label '${activationLabel}' not found in pull request labels`);
+        }
     }
     return found;
 }
@@ -425,7 +460,7 @@ function parseLabels(labelsString) {
         groups = regex.exec(labelsString);
         if (groups) {
             // Removes the trailing comma and removes all whitespace
-            let label = groups[0].replace(",", "").trim();
+            let label = groups[0].replace(',', '').trim();
             labels.push(label);
         }
     } while (groups);

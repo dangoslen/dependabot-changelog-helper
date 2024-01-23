@@ -1,6 +1,6 @@
 import {PathLike} from 'fs'
 import {VersionEntry} from '../src/entries/entry-extractor'
-import {ChangelogUpdater} from '../src/changelog-updater'
+import {DefaultChangelogUpdater} from '../src/changelog-updater'
 
 const {Readable} = require('stream')
 const fs = require('fs')
@@ -609,7 +609,7 @@ async function runUpdate(
   entryPrefix: string,
   sectionHeader: string
 ): Promise<void> {
-  const updater = new ChangelogUpdater(
+  const updater = new DefaultChangelogUpdater(
     version,
     changelogPath,
     entryPrefix,
