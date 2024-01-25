@@ -5,7 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [3.8.0]
 
 ### Added
-- Adds scaffolding for `EntryExtractor`` to support different tools (Dependabot, Mend Renovate, etc).
+- Adds scaffolding for `EntryExtractor` to support different tools (Dependabot, Mend Renovate, etc) in the future. See [#288](https://github.com/dangoslen/dependabot-changelog-helper/issues/228) for more details.
 - Adds a new `activationLabels` input to allow for more complex workflows. See [#233](https://github.com/dangoslen/dependabot-changelog-helper/issues/233) for more details as to why. This input will be removed in the next major release, which currently has a TBD release date. 
 
 ### Deprecated
