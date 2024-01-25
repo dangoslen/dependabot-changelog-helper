@@ -2,7 +2,7 @@
 
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [UNRELEASED]
+## [v3.8.0]
 
 ### Added
 - Adds scaffolding for `EntryExtractor`` to support different tools (Dependabot, Mend Renovate, etc).
