@@ -17,7 +17,9 @@ export async function run(): Promise<void> {
     const payload = github.context.payload
 
     if (label !== '' && label !== 'dependabot') {
-      core.warning('`activationLabel` is deprecated, use `activationLabels` instead')
+      core.warning(
+        '`activationLabel` is deprecated, use `activationLabels` instead'
+      )
     }
 
     const labels = parseLabels(labelsString)
