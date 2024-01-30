@@ -15,6 +15,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `eslint-plugin-jest` from 27.6.0 to 27.6.3 ([#236](https://github.com/dangoslen/dependabot-changelog-helper/pull/236))
 - Bump `@types/node` from 20.4.2 to 20.11.10 ([#232](https://github.com/dangoslen/dependabot-changelog-helper/pull/232), [#235](https://github.com/dangoslen/dependabot-changelog-helper/pull/235), [#245](https://github.com/dangoslen/dependabot-changelog-helper/pull/245))
 - Bump `@types/jest` from 29.5.10 to 29.5.11 ([#239](https://github.com/dangoslen/dependabot-changelog-helper/pull/239))
+- Bump `ts-jest` from 29.1.1 to 29.1.2 ([#246](https://github.com/dangoslen/dependabot-changelog-helper/pull/246))
 
 ## [3.7.0]
 
