@@ -16,6 +16,12 @@ export async function run(): Promise<void> {
     const sectionHeader: string = core.getInput('sectionHeader')
     const payload = github.context.payload
 
+    if (label !== '' && label !== 'dependabot') {
+      core.warning(
+        '`activationLabel` is deprecated, use `activationLabels` instead'
+      )
+    }
+
     const labels = parseLabels(labelsString)
     if (label !== '' && !labels.includes(label)) {
       labels.push(label)

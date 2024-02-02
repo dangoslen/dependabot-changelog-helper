@@ -48,7 +48,6 @@ jobs:
       - uses: dangoslen/dependabot-changelog-helper@v3
         with:
           version: ${{ needs.setup.outputs.version }}
-          activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
 
       # This step is required for committing the changes to your branch. 
@@ -96,7 +95,7 @@ This is a way to incrementally build a version over time and only release a vers
 
 | Default  | Description                                                                                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------ |
-| `''`     | DEPRECATED! Please use the `acticationLabels` input below. The label to indicate that the action should run. |
+| `dependabot`     | DEPRECATED! Please use the `acticationLabels` input below. The label to indicate that the action should run. |
 
 If both `activationLabel` and `activationLabels` inputs are provided, _all_ labels between the two inputs are required for the action to run.
  
@@ -104,7 +103,9 @@ If both `activationLabel` and `activationLabels` inputs are provided, _all_ labe
 
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
-| `dependabot` | The label to indicate that the action should run. |
+| `` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
+
+_Note: by default this is currently set to empty. In a future release, it will have the default of `dependabot` and replace the `activationLabel` input. 
 
 #### `entryPrefix`
 

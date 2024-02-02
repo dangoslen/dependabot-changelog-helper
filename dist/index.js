@@ -281,6 +281,9 @@ async function run() {
         const entryPrefix = core.getInput('entryPrefix');
         const sectionHeader = core.getInput('sectionHeader');
         const payload = github.context.payload;
+        if (label !== '' && label !== 'dependabot') {
+            core.warning('`activationLabel` is deprecated, use `activationLabels` instead');
+        }
         const labels = (0, label_extractor_1.parseLabels)(labelsString);
         if (label !== '' && !labels.includes(label)) {
             labels.push(label);
