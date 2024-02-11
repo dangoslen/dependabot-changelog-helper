@@ -4,6 +4,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [3.8.1]
+
+### Fixed
+- Fixes improper defaulting for deprecated `activationLabel` to `activationLabels` input
+
 ## [3.8.0]
 
 ### Added

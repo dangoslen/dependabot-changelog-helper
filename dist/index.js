@@ -268,10 +268,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const extractor_factory_1 = __nccwpck_require__(2800);
 const changelog_updater_1 = __nccwpck_require__(1587);
-const label_extractor_1 = __nccwpck_require__(80);
+const extractor_factory_1 = __nccwpck_require__(2800);
 const label_checker_1 = __nccwpck_require__(5257);
+const label_extractor_1 = __nccwpck_require__(80);
 async function run() {
     try {
         const version = core.getInput('version');
@@ -284,9 +284,11 @@ async function run() {
         if (label !== '' && label !== 'dependabot') {
             core.warning('`activationLabel` is deprecated, use `activationLabels` instead');
         }
-        const labels = (0, label_extractor_1.parseLabels)(labelsString);
-        if (label !== '' && !labels.includes(label)) {
-            labels.push(label);
+        // If the `activationLabels` input is not set, use the `activationLabel` input only
+        // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
+        let labels = (0, label_extractor_1.parseLabels)(labelsString);
+        if (labels.length === 0) {
+            labels = [label];
         }
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
             const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader);
@@ -457,14 +459,16 @@ function parseLabels(labelsString) {
     // Matches words (\w), whitespace characters (\s), dashes (-), plus signs (+), questions marks (\?), semi-colons (;), brackets (\[\]), parenthesis (\(\)) and forward-slashes (\/)
     // Each match may are may not have a trailing comma (,?). If one exists, it is removed before appending it to the list
     const regex = new RegExp(/([\w\s-\/+\?;\[\]\(\)]+,?)/, 'g');
-    let labels = [];
+    const labels = [];
     let groups;
     do {
         groups = regex.exec(labelsString);
         if (groups) {
             // Removes the trailing comma and removes all whitespace
-            let label = groups[0].replace(',', '').trim();
-            labels.push(label);
+            const label = groups[0].replace(',', '').trim();
+            if (label !== '') {
+                labels.push(label);
+            }
         }
     } while (groups);
     return labels;
