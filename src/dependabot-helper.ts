@@ -1,10 +1,10 @@
-import {PathLike} from 'fs'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import {PathLike} from 'fs'
+import {newUpdater} from './changelog-updater'
 import {getExtractor} from './entries/extractor-factory'
-import {DefaultChangelogUpdater, newUpdater} from './changelog-updater'
-import {parseLabels} from './label-extractor'
 import {pullRequestHasLabels} from './label-checker'
+import {parseLabels} from './label-extractor'
 
 export async function run(): Promise<void> {
   try {
@@ -22,9 +22,11 @@ export async function run(): Promise<void> {
       )
     }
 
-    const labels = parseLabels(labelsString)
-    if (label !== '' && !labels.includes(label)) {
-      labels.push(label)
+    // If the `activationLabels` input is not set, use the `activationLabel` input only
+    // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
+    let labels = parseLabels(labelsString)
+    if (labels.length === 0) {
+      labels = [label]
     }
 
     if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
