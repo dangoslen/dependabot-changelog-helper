@@ -33,7 +33,7 @@
     "make-coverage-badge": "^1.2.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.17",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^8.45.0",
