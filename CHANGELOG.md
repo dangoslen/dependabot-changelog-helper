@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `@types/node` from 20.11.10 to 20.11.17 ([#251](https://github.com/dangoslen/dependabot-changelog-helper/pull/251))
+
 ## [3.8.1]
 
 ### Fixed
