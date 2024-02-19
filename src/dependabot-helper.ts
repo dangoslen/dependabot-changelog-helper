@@ -14,6 +14,7 @@ export async function run(): Promise<void> {
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
     const sectionHeader: string = core.getInput('sectionHeader')
+    const sort: string = core.getInput('sort')
     const payload = github.context.payload
 
     if (label !== '' && label !== 'dependabot') {
@@ -34,7 +35,8 @@ export async function run(): Promise<void> {
         version,
         changelogPath,
         entryPrefix,
-        sectionHeader
+        sectionHeader,
+        sort
       )
       const extractor = getExtractor(payload)
 

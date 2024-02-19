@@ -33,13 +33,15 @@ export function newUpdater(
   version: string,
   changelogPath: fs.PathLike,
   entryPrefix: string,
-  sectionHeader: string
+  sectionHeader: string,
+  sort: string
 ): ChangelogUpdater {
   return new DefaultChangelogUpdater(
     version,
     changelogPath,
     entryPrefix,
-    sectionHeader
+    sectionHeader,
+    sort
   )
 }
 
@@ -51,7 +53,8 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     private readonly version: string,
     private readonly changelogPath: fs.PathLike,
     private readonly entryPrefix: string,
-    private readonly sectionHeader: string
+    private readonly sectionHeader: string,
+    private readonly sort: string
   ) {
     this.contents = []
     this.changed = false
@@ -142,7 +145,9 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     const lineNumbers = result.dependencyEntries.map(e => e.lineNumber)
     const dependencyStart = Math.min(...lineNumbers)
     const dependencyEnd = Math.max(...lineNumbers)
-    result.dependencyEntries.sort((a, b) => a.line.localeCompare(b.line))
+    if (this.sort.toLowerCase() === 'alpha') {
+      result.dependencyEntries.sort((a, b) => a.line.localeCompare(b.line))
+    }
 
     let j = 0
     for (let i = dependencyStart; i <= dependencyEnd; i++) {

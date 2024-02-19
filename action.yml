@@ -33,6 +33,11 @@ inputs:
       "The section header to add the changelog entry under"
     required: true
     default: 'Dependencies'
+  sort:
+    description: |
+      "How to sort dependency entries in the changelog. Possible values are: 'alpha', and 'none'"
+    required: true
+    default: 'none'
 runs:
   using: 'node16'
   main: 'dist/index.js'

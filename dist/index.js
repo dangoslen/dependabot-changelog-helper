@@ -16,16 +16,17 @@ const os_1 = __nccwpck_require__(2037);
 const UNRELEASED_REGEX = new RegExp(/^## \[(unreleased|Unreleased|UNRELEASED)\]/);
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/);
 const DEPENDENCY_ENTRY_REGEX = new RegExp(/^\s*- /);
-function newUpdater(version, changelogPath, entryPrefix, sectionHeader) {
-    return new DefaultChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader);
+function newUpdater(version, changelogPath, entryPrefix, sectionHeader, sort) {
+    return new DefaultChangelogUpdater(version, changelogPath, entryPrefix, sectionHeader, sort);
 }
 exports.newUpdater = newUpdater;
 class DefaultChangelogUpdater {
-    constructor(version, changelogPath, entryPrefix, sectionHeader) {
+    constructor(version, changelogPath, entryPrefix, sectionHeader, sort) {
         this.version = version;
         this.changelogPath = changelogPath;
         this.entryPrefix = entryPrefix;
         this.sectionHeader = sectionHeader;
+        this.sort = sort;
         this.contents = [];
         this.changed = false;
     }
@@ -82,8 +83,6 @@ class DefaultChangelogUpdater {
         return new RegExp(`- \\w+ \`${entry.package}\` from `);
     }
     addNewEntry(entry, result) {
-        // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
-        // sections exist
         let changelogEntry = this.buildEntryLine(entry);
         let lineNumber = result.lineToUpdate;
         if (!result.dependencySectionFound) {
@@ -91,12 +90,14 @@ class DefaultChangelogUpdater {
             lineNumber++;
         }
         this.writeLine(lineNumber, changelogEntry);
+        // Sort all of the dependencies
         result.dependencyEntries.push({ line: changelogEntry, lineNumber });
-        // Sort the values after adding the new entry
         const lineNumbers = result.dependencyEntries.map(e => e.lineNumber);
         const dependencyStart = Math.min(...lineNumbers);
         const dependencyEnd = Math.max(...lineNumbers);
-        result.dependencyEntries.sort((a, b) => a.line.localeCompare(b.line));
+        if (this.sort.toLowerCase() === 'alpha') {
+            result.dependencyEntries.sort((a, b) => a.line.localeCompare(b.line));
+        }
         let j = 0;
         for (let i = dependencyStart; i <= dependencyEnd; i++) {
             this.contents[i] = result.dependencyEntries[j].line;
@@ -196,7 +197,8 @@ class DefaultChangelogUpdater {
                         lineToUpdate = lineNumber + 1;
                     }
                 }
-                else if (dependencySectionFound && DEPENDENCY_ENTRY_REGEX.test(line)) {
+                else if (dependencySectionFound &&
+                    DEPENDENCY_ENTRY_REGEX.test(line)) {
                     // Push the entry into our list of existing entries
                     dependencyEntries.push({ line, lineNumber });
                     if (line.startsWith(entryLine)) {
@@ -204,7 +206,7 @@ class DefaultChangelogUpdater {
                         foundDuplicateEntry = true;
                     }
                     else if (entryLineStartRegex.test(line)) {
-                        // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+                        // If we are finding the start of the entry, we have an entry to update and we will overwrite it
                         foundEntryToUpdate = true;
                         lineToUpdate = lineNumber;
                     }
@@ -237,7 +239,7 @@ class DefaultChangelogUpdater {
             lineToUpdate,
             versionFound,
             dependencySectionFound,
-            dependencyEntries,
+            dependencyEntries
         };
     }
     lastLineCheck(lineToUpdate, contentLength, foundLastEntry, versionFound) {
@@ -296,6 +298,7 @@ async function run() {
         const changelogPath = core.getInput('changelogPath');
         const entryPrefix = core.getInput('entryPrefix');
         const sectionHeader = core.getInput('sectionHeader');
+        const sort = core.getInput('sort');
         const payload = github.context.payload;
         if (label !== '' && label !== 'dependabot') {
             core.warning('`activationLabel` is deprecated, use `activationLabels` instead');
@@ -307,7 +310,7 @@ async function run() {
             labels = [label];
         }
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
-            const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader);
+            const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader, sort);
             const extractor = (0, extractor_factory_1.getExtractor)(payload);
             updater.readChangelog();
             for (const entry of extractor.getEntries(payload)) {
