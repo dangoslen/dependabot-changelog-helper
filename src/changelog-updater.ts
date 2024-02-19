@@ -2,12 +2,19 @@ import fs from 'fs'
 import {EOL} from 'os'
 import {VersionEntry} from './entries/entry-extractor'
 
+interface Entry {
+  line: string
+  lineNumber: number
+}
+
 interface ParsedResult {
+  length: number
   foundDuplicateEntry: boolean
   foundEntryToUpdate: boolean
   lineToUpdate: number
   versionFound: boolean
   dependencySectionFound: boolean
+  dependencyEntries: Entry[]
 }
 
 export interface ChangelogUpdater {
@@ -20,7 +27,7 @@ const UNRELEASED_REGEX = new RegExp(
   /^## \[(unreleased|Unreleased|UNRELEASED)\]/
 )
 const EMPTY_LINE_REGEX = new RegExp(/^\s*$/)
-const SECTION_ENTRY_REGEX = new RegExp(/^\s*- /)
+const DEPENDENCY_ENTRY_REGEX = new RegExp(/^\s*- /)
 
 export function newUpdater(
   version: string,
@@ -121,21 +128,32 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   }
 
   private addNewEntry(entry: VersionEntry, result: ParsedResult): void {
-    // We build the entry string "backwards" so that we can only do one write, and base it on if the correct
-    // sections exist
     let changelogEntry = this.buildEntryLine(entry)
-    const lineNumber = result.lineToUpdate
+    let lineNumber = result.lineToUpdate
     if (!result.dependencySectionFound) {
-      changelogEntry = `### ${this.sectionHeader}${EOL}${changelogEntry}`
-
-      // Check if the line number is last.
-      // If not, add a blank line between the last section and the next version
-      if (lineNumber < this.contents.length - 1) {
-        changelogEntry = `${changelogEntry}${EOL}`
-      }
+      this.writeLine(lineNumber, `### ${this.sectionHeader}`)
+      lineNumber++
     }
 
-    this.writeEntry(lineNumber, changelogEntry)
+    this.writeLine(lineNumber, changelogEntry)
+
+    // Sort all of the dependencies
+    result.dependencyEntries.push({line: changelogEntry, lineNumber})
+    const lineNumbers = result.dependencyEntries.map(e => e.lineNumber)
+    const dependencyStart = Math.min(...lineNumbers)
+    const dependencyEnd = Math.max(...lineNumbers)
+    result.dependencyEntries.sort((a, b) => a.line.localeCompare(b.line))
+
+    let j = 0
+    for (let i = dependencyStart; i <= dependencyEnd; i++) {
+      this.contents[i] = result.dependencyEntries[j].line
+      j++
+    }
+
+    if (!result.dependencySectionFound && lineNumber < result.length) {
+      const lastLine = this.contents[lineNumber].replace(EOL, '')
+      this.contents[lineNumber] = `${lastLine}${EOL}`
+    }
   }
 
   private updateEntry(entry: VersionEntry, result: ParsedResult): void {
@@ -182,7 +200,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       : `#${number}`
   }
 
-  private writeEntry(lineNumber: number, changelogEntry: string): void {
+  private writeLine(lineNumber: number, line: string): void {
     // Push a copy of the last line to the end of the contents and include the line-ending
     // It will be overwritten when we re-write all the contents
     const lastLine = this.contents[this.contents.length - 1]
@@ -194,7 +212,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     }
 
     // Write the entry
-    this.contents[lineNumber] = changelogEntry
+    this.contents[lineNumber] = line
     this.changed = true
   }
 
@@ -216,6 +234,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
 
     const entryLine = this.buildEntryLineForDuplicateCheck(entry)
     const entryLineStartRegex = this.buildEntryLineStartRegex(entry)
+    const dependencyEntries: {line: string; lineNumber: number}[] = []
 
     // The module used to insert a line back to the CHANGELOG is 1-based offset instead of 0-based
     for (const line of this.contents) {
@@ -249,12 +268,18 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
             dependencySectionFound = sectionRegex.test(line)
             lineToUpdate = lineNumber + 1
           }
-        } else if (SECTION_ENTRY_REGEX.test(line)) {
+        } else if (
+          dependencySectionFound &&
+          DEPENDENCY_ENTRY_REGEX.test(line)
+        ) {
+          // Push the entry into our list of existing entries
+          dependencyEntries.push({line, lineNumber})
+
           if (line.startsWith(entryLine)) {
             // If we are finding a duplicate line, we have found duplicate entry and we will skip
             foundDuplicateEntry = true
           } else if (entryLineStartRegex.test(line)) {
-            // If we are finding the start to the entry, we have an entry to update and we will overwrite it
+            // If we are finding the start of the entry, we have an entry to update and we will overwrite it
             foundEntryToUpdate = true
             lineToUpdate = lineNumber
           } else {
@@ -288,11 +313,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     )
 
     return {
+      length: lineNumber,
       foundDuplicateEntry,
       foundEntryToUpdate,
       lineToUpdate,
       versionFound,
-      dependencySectionFound
+      dependencySectionFound,
+      dependencyEntries
     }
   }
 
