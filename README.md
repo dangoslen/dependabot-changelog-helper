@@ -122,3 +122,9 @@ If a previous entry was written with a different entry (`Bump` vs `Bumps`), the 
 | `Dependencies` | The name of section to add Dependabot entries to. |
 
 If `sectionHeader` is not provided, the action will look for a section header matching the pattern `/^### [(Dependencies|DEPENDENCIES)]`.
+
+#### `sort`
+
+| Default | Description                                               |
+| --------| --------------------------------------------------------- |
+| `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |

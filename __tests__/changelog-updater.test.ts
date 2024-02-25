@@ -15,6 +15,48 @@ const PACKAGE_ENTRY: VersionEntry = {
 
 jest.mock('fs')
 
+const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_GETS_SORTED = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`xyz\` from v1 to v2`
+
+test('adds an entry to the changelog and it gets sorted', async () => {
+  mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_GETS_SORTED)
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'alpha')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+- Bump \`xyz\` from v1 to v2`)
+})
+
+const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_NOT_SORTED = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`xyz\` from v1 to v2`
+
+test('adds an entry to the changelog and it does not get sorted', async () => {
+  mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_NOT_SORTED)
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`xyz\` from v1 to v2
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+})
+
 const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES = `# Changelog
 
 ## [v1.0.0]
@@ -607,13 +649,15 @@ async function runUpdate(
   version: string,
   changelogPath: PathLike,
   entryPrefix: string,
-  sectionHeader: string
+  sectionHeader: string,
+  sort: string = 'none'
 ): Promise<void> {
   const updater = new DefaultChangelogUpdater(
     version,
     changelogPath,
     entryPrefix,
-    sectionHeader
+    sectionHeader,
+    sort
   )
   await updater.readChangelog()
   await updater.updateChangelog(PACKAGE_ENTRY)
@@ -627,7 +671,7 @@ function mockReadStream(changelog: string) {
 }
 
 function expectWrittenChangelogToBe(changelog: string, calls = 1) {
-  expect(fs.writeFileSync).toBeCalledTimes(calls)
+  expect(fs.writeFileSync).toHaveBeenCalledTimes(calls)
   const params = fs.writeFileSync.mock.calls[0]
   expect(params[0]).toStrictEqual('./CHANGELOG.md')
   expect(params[1]).toStrictEqual(changelog)
