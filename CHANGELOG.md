@@ -8,7 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Adds the ability to sort dependency entries alphabetically upon adding a new entry. By default this is _not_ enabled, and must be added via the `sort` param using the value `alpha`. By default the sort style is `none`. Future `sort` values _may_ be added over time as such needs arise.
 
 ### Dependencies
-- Bump `@types/node` from 20.11.10 to 20.11.17 ([#251](https://github.com/dangoslen/dependabot-changelog-helper/pull/251))
+- Bump `@types/node` from 20.11.10 to 20.11.19 ([#251](https://github.com/dangoslen/dependabot-changelog-helper/pull/251), [#255](https://github.com/dangoslen/dependabot-changelog-helper/pull/255))
 - Bump `@types/jest` from 29.5.11 to 29.5.12 ([#247](https://github.com/dangoslen/dependabot-changelog-helper/pull/247))
 
 ## [3.8.1]
