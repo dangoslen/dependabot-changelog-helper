@@ -76,6 +76,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           comment_tag: failure
+          mode: recreate
           message: |
             Hey @${{ github.event.pull_request.user.login }}, the Changelog Enforcer failed. Can you take a look at the error below and correct it? Thanks!
 
@@ -104,6 +105,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           comment_tag: release-notes
+          mode: recreate
           message: |
             <details>
               <summary>Preview of Release Notes to be Created :ship:</summary>
