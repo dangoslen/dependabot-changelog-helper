@@ -70,12 +70,13 @@ jobs:
           expectedLatestVersion: ${{ steps.read_version.outputs.version }}
 
       - if: failure()
-        uses: unsplash/comment-on-pr@master
+        name: Comment About Failure
+        uses: thollander/actions-comment-pull-request@v2.5.0    
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          check_for_duplicate_msg: true
-          msg: |
+          comment_tag: failure
+          message: |
             Hey @${{ github.event.pull_request.user.login }}, the Changelog Enforcer failed. Can you take a look at the error below and correct it? Thanks!
 
             ```
@@ -103,7 +104,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           comment_tag: release-notes
-          msg: |
+          message: |
             <details>
               <summary>Preview of Release Notes to be Created :ship:</summary>
 
