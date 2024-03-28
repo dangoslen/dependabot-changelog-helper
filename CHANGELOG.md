@@ -2,11 +2,7 @@
 
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [3.9.1]
-
-### Test
-
-Tests new commentor
+## [UNRELEASED]
 
 ## [3.9.0]
 
