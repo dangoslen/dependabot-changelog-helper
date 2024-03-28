@@ -4,6 +4,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [3.9.0]
+
 ### Added 
 - Adds the ability to sort dependency entries alphabetically upon adding a new entry. By default this is _not_ enabled, and must be added via the `sort` param using the value `alpha`. By default the sort style is `none`. Future `sort` values _may_ be added over time as such needs arise.
 
