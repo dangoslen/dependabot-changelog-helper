@@ -4,7 +4,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [3.9.1]
 
-## Test
+### Test
 
 Tests new commentor
 
