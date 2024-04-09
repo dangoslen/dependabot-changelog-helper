@@ -111,7 +111,7 @@ _Note: by default this is currently set to empty. In a future release, it will h
 
 | Default      | Description                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------------- |
-| `Bump`       | The starting word of a dependency bump entry line. Currently only supports single world prefixes. |
+| `Bump`       | The starting word of a dependency bump entry line. Currently only supports single word prefixes. |
 
 If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
 
