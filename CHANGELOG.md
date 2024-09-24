@@ -4,6 +4,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Changed
+- Now runs on Node 20
+  - Creates `.nvmrc` to set the version
+  - Updates node version in `action.yml`
+
 ## [3.9.0]
 
 ### Added 
