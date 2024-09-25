@@ -39,7 +39,7 @@ inputs:
     required: true
     default: 'none'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   color: green
