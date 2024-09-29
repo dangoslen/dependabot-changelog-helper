@@ -2,7 +2,7 @@
 
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [UNRELEASED]
+## [3.10.0]
 
 ### Changed
 - Now runs on Node 20
