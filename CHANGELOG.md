@@ -2,6 +2,10 @@
 
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [UNRELEASED]
+### Changed
+- Fix Github Actions Annotations ([#285](https://github.com/dangoslen/changelog-enforcer/pull/285))
+
 ## [3.10.0]
 
 ### Changed
