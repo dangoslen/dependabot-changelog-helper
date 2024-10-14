@@ -71,7 +71,7 @@ jobs:
 
       - if: failure()
         name: Comment About Failure
-        uses: thollander/actions-comment-pull-request@v2.5.0    
+        uses: thollander/actions-comment-pull-request@v3.0.0    
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -100,7 +100,7 @@ jobs:
 
       - if: ${{ steps.check_release.outputs.missing == 'true' }}
         name: Preview Release Notes
-        uses: thollander/actions-comment-pull-request@v2.5.0    
+        uses: thollander/actions-comment-pull-request@v3.0.0    
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
