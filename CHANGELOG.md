@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Fix Github Actions Annotations ([#285](https://github.com/dangoslen/changelog-enforcer/pull/285))
 
+### Dependencies
+- Bump `ts-jest` from 29.1.2 to 29.2.5 ([#289](https://github.com/dangoslen/dependabot-changelog-helper/pull/289))
+
 ## [3.10.0]
 
 ### Changed
