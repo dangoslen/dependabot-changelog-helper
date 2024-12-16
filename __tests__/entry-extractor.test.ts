@@ -110,6 +110,27 @@ Updates \`yet-another-package\` from 2.24.0 to 3.12.3
   }
 }
 
+const PULL_REQUEST_WITH_COMMITS_IN_BODY = {
+  repository: {
+    full_name: 'owner/repo',
+    name: 'repo',
+    owner: {
+      login: 'login',
+      name: 'owner'
+    }
+  },
+  pull_request: {
+    number: 123,
+    title: 'bump package, another-packager, and another package',
+    body: `Updates \`package\` from 0.30.7 to 0.32.6
+
+Changelog
+Commits
+* Updates \`dep\` from a to b
+`
+  }
+}
+
 describe('the dependabot extractor', () => {
   let extractor: EntryExtractor
 
@@ -209,5 +230,17 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('2.24.0')
     expect(entry.newVersion).toStrictEqual('3.12.3')
+  })
+
+  test('extracts multiple entries from body', async () => {
+    const entries = extractor.getEntries(PULL_REQUEST_WITH_COMMITS_IN_BODY)
+
+    expect(entries).toHaveLength(1)
+
+    let entry = entries[0]
+    expect(entry.package).toStrictEqual('package')
+    expect(entry.repository).toStrictEqual('owner/repo')
+    expect(entry.oldVersion).toStrictEqual('0.30.7')
+    expect(entry.newVersion).toStrictEqual('0.32.6')
   })
 })
