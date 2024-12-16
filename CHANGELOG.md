@@ -6,6 +6,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Fix Github Actions Annotations ([#285](https://github.com/dangoslen/changelog-enforcer/pull/285))
 
+### Dependencies
+- Bump `@types/jest` from 29.5.12 to 29.5.14 ([#297](https://github.com/dangoslen/dependabot-changelog-helper/pull/297))
+
 ## [3.10.0]
 
 ### Changed
