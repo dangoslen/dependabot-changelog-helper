@@ -117,7 +117,7 @@ describe('the dependabot extractor', () => {
     extractor = new DependabotExtractor()
   })
 
-  test('extracts package and simple number verions', async () => {
+  test('extracts package and simple number versions', async () => {
     const entries = extractor.getEntries(PULL_REQUEST_EVENT)
 
     const entry = entries[0]
