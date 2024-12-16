@@ -14,7 +14,7 @@ But it can feel overwhelming and require additional work to update things like v
 
 Built around the [KeepAChangelog](https://keepachangelog.com/) format, this action looks for upgraded dependencies on a Dependabot pull request and adds them to your changelog. 
 
-- Handles adding the appropriate `### Dependencies` and/or `## [<version>]` sections if needed
+- Handles adding the appropriate `### Dependencies` and/or `## [<version>]` sections if needed (including `UNRELEASED`)
 - Supports multi-package updates in a single pull request
 - Updates the entry for a dependency if the dependency had been upgraded previously in the same version
 - Includes link(s) to associated pull requests that upgraded the dependency
@@ -22,6 +22,9 @@ Built around the [KeepAChangelog](https://keepachangelog.com/) format, this acti
 ### Usage
 
 #### Example Workflow
+
+The workflow example below will get you up-and-running for your Dependabot pull requests. This configuration will add entries
+to an `UNRELEASED` section of your `./CHANGELOG.md` and will run on any pull request labeled with `dependencies` (which is added by Dependabot as a default)
 
 ```yaml
 name: 'pull-request'
@@ -47,7 +50,7 @@ jobs:
 
       - uses: dangoslen/dependabot-changelog-helper@v3
         with:
-          version: ${{ needs.setup.outputs.version }}
+          activationLabels: dependencies
           changelogPath: './CHANGELOG.md'
 
       # This step is required for committing the changes to your branch. 
@@ -82,7 +85,7 @@ If the `version` is not found then an unreleased version - matching the pattern 
 Many changelogs default to keeping an released version at the top of the changelog.
 This is a way to incrementally build a version over time and only release a version once the right changes have been accounted for.
 
-> **Warning**
+> :warning: **Warning**
 > For the action to work you must have either set a `version` _or_ have an unreleased version in your changelog.
 
 #### `changeLogPath`
@@ -95,7 +98,7 @@ This is a way to incrementally build a version over time and only release a vers
 
 | Default  | Description                                                                                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------ |
-| `dependabot`     | DEPRECATED! Please use the `acticationLabels` input below. The label to indicate that the action should run. |
+| `dependabot`     | DEPRECATED! Please use the `activationLabels` input below. The label to indicate that the action should run. |
 
 If both `activationLabel` and `activationLabels` inputs are provided, _all_ labels between the two inputs are required for the action to run.
  
@@ -103,7 +106,7 @@ If both `activationLabel` and `activationLabels` inputs are provided, _all_ labe
 
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
-| `` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
+| `dependabot` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
 
 _Note: by default this is currently set to empty. In a future release, it will have the default of `dependabot` and replace the `activationLabel` input. 
 
