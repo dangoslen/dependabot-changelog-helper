@@ -106,9 +106,9 @@ If both `activationLabel` and `activationLabels` inputs are provided, _all_ labe
 
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
-| `dependabot` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
+| `''` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
 
-_Note: by default this is currently set to empty. In a future release, it will have the default of `dependabot` and replace the `activationLabel` input. 
+_Note: by default this is currently set to empty. In a future release (v4.0.0), it will have the default of `dependabot` and replace the `activationLabel` input._
 
 #### `entryPrefix`
 

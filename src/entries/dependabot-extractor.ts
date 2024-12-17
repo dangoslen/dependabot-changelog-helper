@@ -1,5 +1,6 @@
 import {WebhookPayload} from '@actions/github/lib/interfaces'
 import {EntryExtractor, VersionEntry} from './entry-extractor'
+import {EOL} from 'os'
 
 export class DependabotExtractor implements EntryExtractor {
   private regex: RegExp
@@ -48,8 +49,9 @@ export class DependabotExtractor implements EntryExtractor {
     repository: string | undefined,
     body: string
   ): VersionEntry[] {
-    // This is a bit i
-    const lines = body.split('\n')
+    // Instead of dealing with multiline strings, split the body into lines
+    // and check each line individually
+    const lines = body.split(EOL)
     const entries: VersionEntry[] = []
     for (const line of lines) {
       const match = this.regex.exec(line)
