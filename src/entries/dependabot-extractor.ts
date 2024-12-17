@@ -1,20 +1,21 @@
 import {WebhookPayload} from '@actions/github/lib/interfaces'
 import {EntryExtractor, VersionEntry} from './entry-extractor'
+import {EOL} from 'os'
 
 export class DependabotExtractor implements EntryExtractor {
   private regex: RegExp
 
   constructor() {
     /** Regex explanation
-     *   --- Matches Bump, bump, Bumps, bumps, Update, update, Updates or update, without capturing it
-     *  |     --- Matches any non-whitespace character; matching as a few as possible
-     *  |     |          --- Matches any non-whitespace character
-     *  |     |          |           --- Matches the text 'requirement ' or nothing, without capturing it
-     *  |     |          |           |                --- Matches any non-whitespace character
-     *  |     |          |           |                |
+     *   --- Start of the line must not be a '*' character which is used for markdown to denote a list
+     *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
+     *      |                           --- Matches any non-whitespace character; matching as a few as possible
+     *      |                           |          --- Matches any non-whitespace character as the package name
+     *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
+     *      |                           |          |                   |                 |
      */
     this.regex = new RegExp(
-      /(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
+      /^[^*]*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
     )
   }
 
@@ -48,10 +49,15 @@ export class DependabotExtractor implements EntryExtractor {
     repository: string | undefined,
     body: string
   ): VersionEntry[] {
-    let description = body
-    let match
+    // Instead of dealing with multiline strings, split the body into lines
+    // and check each line individually
+    const lines = body.split(EOL)
     const entries: VersionEntry[] = []
-    while ((match = this.regex.exec(description)) !== null) {
+    for (const line of lines) {
+      const match = this.regex.exec(line)
+      if (match === null) {
+        continue
+      }
       entries.push({
         pullRequestNumber,
         repository,
@@ -61,9 +67,6 @@ export class DependabotExtractor implements EntryExtractor {
         oldVersion: match[2],
         newVersion: match[3]
       })
-
-      // Search after the previous match
-      description = description.substring(match.index + match[0].length)
     }
     return entries
   }

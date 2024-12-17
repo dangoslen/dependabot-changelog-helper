@@ -3,8 +3,13 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
+
+### Fixed
+- Fixes accidentally parsing too many possible entries when reading multi-package updates ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278)). 
+
 ### Changed
 - Fix Github Actions Annotations ([#285](https://github.com/dangoslen/changelog-enforcer/pull/285))
+- Improves example in `README.md` based on feedback in ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278))
 
 ### Dependencies
 - Bump `@types/jest` from 29.5.12 to 29.5.14 ([#297](https://github.com/dangoslen/dependabot-changelog-helper/pull/297))
