@@ -12,8 +12,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Improves example in `README.md` based on feedback in ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278))
 
 ### Dependencies
-- Bump `@types/jest` from 29.5.12 to 29.5.14 ([#297](https://github.com/dangoslen/dependabot-changelog-helper/pull/297))
 - Bump `@actions/core` from 1.10.1 to 1.11.1 ([#299](https://github.com/dangoslen/dependabot-changelog-helper/pull/299))
+- Bump `@types/jest` from 29.5.12 to 29.5.14 ([#297](https://github.com/dangoslen/dependabot-changelog-helper/pull/297))
+- Bump `ts-jest` from 29.1.2 to 29.2.5 ([#289](https://github.com/dangoslen/dependabot-changelog-helper/pull/289))
 
 ## [3.10.0]
 
