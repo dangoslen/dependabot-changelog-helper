@@ -7,7 +7,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [3.11.0]
 
 ### Fixed
-- Fixes accidentally parsing too many possible entries when reading multi-package updates ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278)). 
+- Fixes parsing too many possible entries when reading multi-package updates ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278)). 
 
 ### Changed
 - Fix Github Actions Annotations ([#285](https://github.com/dangoslen/changelog-enforcer/pull/285))
@@ -16,6 +16,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 - Bump `@actions/core` from 1.10.1 to 1.11.1 ([#299](https://github.com/dangoslen/dependabot-changelog-helper/pull/299))
 - Bump `@types/jest` from 29.5.12 to 29.5.14 ([#297](https://github.com/dangoslen/dependabot-changelog-helper/pull/297))
+- Bump `eslint` from 8.45.0 to 8.57.0 ([#256](https://github.com/dangoslen/dependabot-changelog-helper/pull/256))
 - Bump `ts-jest` from 29.1.2 to 29.2.5 ([#289](https://github.com/dangoslen/dependabot-changelog-helper/pull/289))
 
 ## [3.10.0]
@@ -34,7 +35,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `@types/jest` from 29.5.11 to 29.5.12 ([#247](https://github.com/dangoslen/dependabot-changelog-helper/pull/247))
 - Bump `@types/node` from 20.11.10 to 20.11.20 ([#251](https://github.com/dangoslen/dependabot-changelog-helper/pull/251), [#255](https://github.com/dangoslen/dependabot-changelog-helper/pull/255), [#257](https://github.com/dangoslen/dependabot-changelog-helper/pull/257))
 - Bump `eslint-plugin-jest` from 27.6.3 to 27.9.0 ([#254](https://github.com/dangoslen/dependabot-changelog-helper/pull/254))
-- Bump `eslint` from 8.45.0 to 8.57.0 ([#256](https://github.com/dangoslen/dependabot-changelog-helper/pull/256))
 
 ## [3.8.1]
 
