@@ -4,6 +4,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [3.11.0]
+
 ### Fixed
 - Fixes accidentally parsing too many possible entries when reading multi-package updates ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278)). 
 
