@@ -7,7 +7,7 @@ export class DependabotExtractor implements EntryExtractor {
 
   constructor() {
     /** Regex explanation
-     *   --- Start of the line must not be a '*' character which is used for markdown to denote a list
+     *   --- Start of the line must not be a '<li>' HTML tag which is used to denote a list
      *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
      *      |                           --- Matches any non-whitespace character; matching as a few as possible
      *      |                           |          --- Matches any non-whitespace character as the package name
@@ -15,7 +15,8 @@ export class DependabotExtractor implements EntryExtractor {
      *      |                           |          |                   |                 |
      */
     this.regex = new RegExp(
-      /^[^*]*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
+      // eslint-disable-next-line no-useless-escape
+      /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
     )
   }
 
