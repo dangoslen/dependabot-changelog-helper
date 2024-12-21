@@ -4,6 +4,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [3.11.1]
+
+### Fixed
+- Corrects the regex introduced in [3.11.0](#3110) to correct reading too many entries
+
 ## [3.11.0]
 
 ### Fixed
