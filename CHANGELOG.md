@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+- Bump `prettier` from 2.8.8 to 3.4.2 ([#298](https://github.com/dangoslen/dependabot-changelog-helper/pull/298))
+
 ## [3.11.0]
 
 ### Fixed
