@@ -335,23 +335,26 @@ run();
 /***/ }),
 
 /***/ 878:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DependabotExtractor = void 0;
+const os_1 = __nccwpck_require__(2037);
 class DependabotExtractor {
     constructor() {
         /** Regex explanation
-         *   --- Start of the line must not be a '*' character which is used for markdown to denote a list
+         *   --- Start of the line must not be a '<li>' HTML tag which is used to denote a list
          *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
          *      |                           --- Matches any non-whitespace character; matching as a few as possible
          *      |                           |          --- Matches any non-whitespace character as the package name
          *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
          *      |                           |          |                   |                 |
          */
-        this.regex = new RegExp(/^[^*]*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+        this.regex = new RegExp(
+        // eslint-disable-next-line no-useless-escape
+        /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
     }
     getEntries(event) {
         const pullRequestNumber = event.pull_request.number;
@@ -376,8 +379,9 @@ class DependabotExtractor {
         return entries;
     }
     getEntriesFromBody(pullRequestNumber, repository, body) {
-        // This is a bit i
-        const lines = body.split('\n');
+        // Instead of dealing with multiline strings, split the body into lines
+        // and check each line individually
+        const lines = body.split(os_1.EOL);
         const entries = [];
         for (const line of lines) {
             const match = this.regex.exec(line);
