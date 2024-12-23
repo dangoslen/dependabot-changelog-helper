@@ -20,7 +20,8 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_GETS_SORTED = `# Changelog
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`xyz\` from v1 to v2`
+- Bump \`xyz\` from v1 to v2
+`
 
 test('adds an entry to the changelog and it gets sorted', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_GETS_SORTED)
@@ -33,7 +34,8 @@ test('adds an entry to the changelog and it gets sorted', async () => {
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
-- Bump \`xyz\` from v1 to v2`)
+- Bump \`xyz\` from v1 to v2
+`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_NOT_SORTED = `# Changelog
@@ -41,7 +43,8 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_NOT_SORTED = `# Changelog
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`xyz\` from v1 to v2`
+- Bump \`xyz\` from v1 to v2
+`
 
 test('adds an entry to the changelog and it does not get sorted', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_NOT_SORTED)
@@ -54,14 +57,16 @@ test('adds an entry to the changelog and it does not get sorted', async () => {
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
 - Bump \`xyz\` from v1 to v2
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`different-package\` from v1 to v2`
+- Bump \`different-package\` from v1 to v2
+`
 
 test('adds an entry to the changelog when section already exists with section', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES)
@@ -73,14 +78,16 @@ test('adds an entry to the changelog when section already exists with section', 
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_UNRELEASED = `# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
-- Bump \`different-package\` from v1 to v2`
+- Bump \`different-package\` from v1 to v2
+`
 
 test('adds an entry to the changelog when section exists under default unreleased version', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_UNRELEASED)
@@ -92,15 +99,17 @@ test('adds an entry to the changelog when section exists under default unrelease
 ## [UNRELEASED]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED = `# Changelog
 
 ## [UNRELEASED]
-### Dependencies`
+### Dependencies
+`
 
-test('adds an entry to the changelog when section already exists, but no entry', async () => {
+test('adds an entry to the changelog when section already exists but no entries doe', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED)
 
   await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
@@ -109,12 +118,14 @@ test('adds an entry to the changelog when section already exists, but no entry',
 
 ## [UNRELEASED]
 ### Dependencies
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_MISSING_DEPENDENCIES = `# Changelog
 
-## [UNRELEASED]`
+## [UNRELEASED]
+`
 
 test('adds section and an entry to the changelog when version exists but section does not', async () => {
   const readable = Readable.from([CHANGELOG_MISSING_DEPENDENCIES])
@@ -127,7 +138,8 @@ test('adds section and an entry to the changelog when version exists but section
 
 ## [UNRELEASED]
 ### Changed
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_MULTIPLE_VERSIONS = `# Changelog
@@ -500,7 +512,8 @@ const CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS = `# Changelog
 ## [v0.9.0]
 
 ### Dependencies
-- Bump \`package\` from alpha to v1`
+- Bump \`package\` from alpha to v1
+`
 
 test('updates existing section when between other sections', async () => {
   mockReadStream(CHANGELOG_WITH_EXISTING_SECTION_BETWEEN_OTHERS)
@@ -525,7 +538,8 @@ test('updates existing section when between other sections', async () => {
 ## [v0.9.0]
 
 ### Dependencies
-- Bump \`package\` from alpha to v1`
+- Bump \`package\` from alpha to v1
+`
   )
 })
 
@@ -533,7 +547,8 @@ const CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`different-package\` from v1 to v2`
+- Bump \`different-package\` from v1 to v2
+`
 
 test('adds an entry with a different prefix to the changelog when section already exists with entry', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_AND_ENTRIES_DIFFERENT_PREFIX)
@@ -545,14 +560,16 @@ test('adds an entry with a different prefix to the changelog when section alread
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
-- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2`
+- Bump \`package\` from v1 to v2
+`
 
 test('keeps prefix on entry with a different prefix but is otherwise a duplicate', async () => {
   mockReadStream(CHANGELOG_WITH_DUPLICATE_ENTRY_DIFFERENT_PREFIX)
@@ -563,14 +580,16 @@ test('keeps prefix on entry with a different prefix but is otherwise a duplicate
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX = `# Changelog
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v1.1`
+- Bump \`package\` from v1 to v1.1
+`
 
 test('keeps prefix on entry with a different prefix', async () => {
   mockReadStream(CHANGELOG_WITH_EXISTING_ENTRY_DIFFERENT_PREFIX)
@@ -581,7 +600,8 @@ test('keeps prefix on entry with a different prefix', async () => {
 
 ## [v1.0.0]
 ### Dependencies
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`)
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
 })
 
 const CHANGELOG_WITH_MULTI_LINE_ENTRY_NO_DEPENDENCY_SECTION = `# Changelog
@@ -645,12 +665,67 @@ test('updates section with an entry and accounts for multi-line entry', async ()
 `)
 })
 
+const CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_ADDS_MULTI_PACKAGE_UPDATE = `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Removed
+- Removed a feature
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1
+`
+
+test('adds section when sections separated by blank lines and adds multi package updates properly', async () => {
+  mockReadStream(
+    CHANGELOG_WITHOUT_EXISTING_SECTION_AND_SEPARATED_SECTIONS_ADDS_MULTI_PACKAGE_UPDATE
+  )
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: 'v1'
+    }
+  ])
+
+  expectWrittenChangelogToBe(
+    `# Changelog
+
+## [v1.0.0]
+
+### Added
+- Added a new feature
+
+### Removed
+- Removed a feature
+
+### Dependencies
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+- Bump \`other-package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+
+## [v0.9.0]
+
+### Dependencies
+- Bump \`package\` from alpha to v1
+`
+  )
+})
+
 async function runUpdate(
   version: string,
   changelogPath: PathLike,
   entryPrefix: string,
   sectionHeader: string,
-  sort: string = 'none'
+  sort: string = 'none',
+  additionalEntries: VersionEntry[] = []
 ): Promise<void> {
   const updater = new DefaultChangelogUpdater(
     version,
@@ -659,8 +734,10 @@ async function runUpdate(
     sectionHeader,
     sort
   )
+
+  const entries = [PACKAGE_ENTRY, ...additionalEntries]
   await updater.readChangelog()
-  await updater.updateChangelog(PACKAGE_ENTRY)
+  await updater.addEntries(entries)
   await updater.writeChangelog()
 }
 

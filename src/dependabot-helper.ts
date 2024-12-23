@@ -39,11 +39,9 @@ export async function run(): Promise<void> {
         sort
       )
       const extractor = getExtractor(payload)
-
+      const entries = extractor.getEntries(payload)
       updater.readChangelog()
-      for (const entry of extractor.getEntries(payload)) {
-        await updater.updateChangelog(entry)
-      }
+      await updater.addEntries(entries)
       await updater.writeChangelog()
     }
   } catch (err) {
