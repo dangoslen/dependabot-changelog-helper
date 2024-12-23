@@ -7,7 +7,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [3.11.1]
 
 ### Fixed
-- Corrects the regex introduced in [3.11.0](#3110) to correct reading too many entries
+- Corrects the regex introduced in [3.11.0](https://github.com/dangoslen/dependabot-changelog-helper/releases/tag/v3.11.0) to correct reading too many entries ([#278](https://github.com/dangoslen/dependabot-changelog-helper/issues/278))
+- Corrects adding a newline after the first entry in multi-package updates ([#308](https://github.com/dangoslen/dependabot-changelog-helper/issues/308))
 
 ## [3.11.0]
 

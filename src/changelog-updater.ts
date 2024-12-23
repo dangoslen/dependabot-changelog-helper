@@ -19,7 +19,7 @@ interface ParsedResult {
 
 export interface ChangelogUpdater {
   readChangelog(): Promise<void>
-  updateChangelog(entry: VersionEntry): Promise<void>
+  addEntries(entry: VersionEntry[]): Promise<void>
   writeChangelog(): Promise<void>
 }
 
@@ -48,6 +48,8 @@ export function newUpdater(
 export class DefaultChangelogUpdater implements ChangelogUpdater {
   private contents: string[]
   private changed: boolean
+  private sectionAdded: boolean
+  private dependencyLastLine: number
 
   constructor(
     private readonly version: string,
@@ -58,6 +60,8 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   ) {
     this.contents = []
     this.changed = false
+    this.sectionAdded = false
+    this.dependencyLastLine = 0
   }
 
   async readChangelog(): Promise<void> {
@@ -71,7 +75,27 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     }
   }
 
-  async updateChangelog(entry: VersionEntry): Promise<void> {
+  async addEntries(entries: VersionEntry[]): Promise<void> {
+    for (const entry of entries) {
+      await this.addEntry(entry)
+    }
+
+    if (this.sectionAdded) {
+      await this.maybeAddEmptyNewLine()
+    }
+  }
+
+  private async maybeAddEmptyNewLine(): Promise<void> {
+    const lastEntry = this.contents[this.dependencyLastLine]
+    if (this.dependencyLastLine === this.contents.length - 1) {
+      return
+    }
+    if (this.contents[this.dependencyLastLine + 1] !== '') {
+      this.contents[this.dependencyLastLine] = `${lastEntry}${EOL}`
+    }
+  }
+
+  private async addEntry(entry: VersionEntry): Promise<void> {
     const versionRegex = new RegExp(`^## \\[${this.version}\\]`)
 
     const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
@@ -131,10 +155,11 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   }
 
   private addNewEntry(entry: VersionEntry, result: ParsedResult): void {
-    let changelogEntry = this.buildEntryLine(entry)
+    const changelogEntry = this.buildEntryLine(entry)
     let lineNumber = result.lineToUpdate
     if (!result.dependencySectionFound) {
       this.writeLine(lineNumber, `### ${this.sectionHeader}`)
+      this.sectionAdded = true
       lineNumber++
     }
 
@@ -155,10 +180,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       j++
     }
 
-    if (!result.dependencySectionFound && lineNumber < result.length) {
-      const lastLine = this.contents[lineNumber].replace(EOL, '')
-      this.contents[lineNumber] = `${lastLine}${EOL}`
-    }
+    this.dependencyLastLine = dependencyEnd
   }
 
   private updateEntry(entry: VersionEntry, result: ParsedResult): void {

@@ -16,7 +16,7 @@ describe('run', () => {
 
     const mockUpdater = {
       readChangelog: jest.fn(),
-      updateChangelog: jest.fn(),
+      addEntries: jest.fn(),
       writeChangelog: jest.fn()
     }
 
@@ -46,13 +46,15 @@ describe('run', () => {
     run().then(() => {
       expect(mockUpdater.readChangelog).toHaveBeenCalled()
       expect(mockExtractor.getEntries).toHaveBeenCalled()
-      expect(mockUpdater.updateChangelog).toHaveBeenCalledWith({
-        pullRequestNumber: 123,
-        repository: 'repo',
-        package: 'package',
-        oldVersion: 'v2',
-        newVersion: 'v3'
-      })
+      expect(mockUpdater.addEntries).toHaveBeenCalledWith([
+        {
+          pullRequestNumber: 123,
+          repository: 'repo',
+          package: 'package',
+          oldVersion: 'v2',
+          newVersion: 'v3'
+        }
+      ])
       expect(mockUpdater.writeChangelog).toHaveBeenCalled()
       expect(core.setFailed).not.toHaveBeenCalled()
     })
@@ -63,7 +65,7 @@ describe('run', () => {
 
     const mockUpdater = {
       readChangelog: jest.fn(),
-      updateChangelog: jest.fn(),
+      addEntries: jest.fn(),
       writeChangelog: jest.fn()
     }
 
@@ -85,7 +87,7 @@ describe('run', () => {
     run().then(() => {
       expect(mockUpdater.readChangelog).not.toHaveBeenCalled()
       expect(mockExtractor.getEntries).not.toHaveBeenCalled()
-      expect(mockUpdater.updateChangelog).not.toHaveBeenCalled()
+      expect(mockUpdater.addEntries).not.toHaveBeenCalled()
       expect(mockUpdater.writeChangelog).not.toHaveBeenCalled()
       expect(core.setFailed).not.toHaveBeenCalled()
     })
@@ -96,7 +98,7 @@ describe('run', () => {
 
     const mockUpdater = {
       readChangelog: jest.fn(),
-      updateChangelog: jest.fn(),
+      addEntries: jest.fn(),
       writeChangelog: jest.fn()
     }
 
@@ -126,13 +128,15 @@ describe('run', () => {
     run().then(() => {
       expect(mockUpdater.readChangelog).toHaveBeenCalled()
       expect(mockExtractor.getEntries).toHaveBeenCalled()
-      expect(mockUpdater.updateChangelog).toHaveBeenCalledWith({
-        pullRequestNumber: 123,
-        repository: 'repo',
-        package: 'package',
-        oldVersion: 'v2',
-        newVersion: 'v3'
-      })
+      expect(mockUpdater.addEntries).toHaveBeenCalledWith([
+        {
+          pullRequestNumber: 123,
+          repository: 'repo',
+          package: 'package',
+          oldVersion: 'v2',
+          newVersion: 'v3'
+        }
+      ])
       expect(mockUpdater.writeChangelog).toHaveBeenCalled()
       expect(core.setFailed).not.toHaveBeenCalled()
     })
