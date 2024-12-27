@@ -660,7 +660,7 @@ async function runUpdate(
     sort
   )
   await updater.readChangelog()
-  await updater.updateChangelog(PACKAGE_ENTRY)
+  await updater.addEntries([PACKAGE_ENTRY])
   await updater.writeChangelog()
 }
 
