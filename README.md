@@ -2,7 +2,7 @@
     <img src="https://github.com/dangoslen/dependabot-changelog-helper/actions/workflows/pull-request.yml/badge.svg" alt="build" />
     <img src="https://img.shields.io/github/v/release/dangoslen/dependabot-changelog-helper?color=orange&label=Latest" alt="latest version" />
     <img src="./coverage/badge.svg" alt="coverage badge" />
-    <img src="https://img.shields.io/endpoint?url=https://dangoslen.github.io/dependabot-changelog-helper/dependabot-changelog-helper.json" alt="count of usage" />
+    <a href="https://github.com/search?q=dangoslen+dependabot-changelog-helper+path:.github/workflows+language:YAML&type=Code"><img src="https://img.shields.io/endpoint?url=https://dangoslen.github.io/dependabot-changelog-helper/dependabot-changelog-helper.json" alt="count of usage"></a>
 </p>
 
 ## Dependabot Changelog Helper
