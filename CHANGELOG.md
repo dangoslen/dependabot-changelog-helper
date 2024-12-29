@@ -8,6 +8,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Refactors the internal updater to more easily account for multiple entries and formatting ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/311))
 
+### Removed
+
+- Removes the deprecated `activationLabel`. All workflows should specify desired labels using the `activationLabels` input instead. The default label of `dependabot` is still kept.
+
 ## [3.11.1]
 
 ### Fixed

@@ -9,7 +9,6 @@ import {parseLabels} from './label-extractor'
 export async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
-    const label: string = core.getInput('activationLabel')
     const labelsString: string = core.getInput('activationLabels')
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
@@ -17,19 +16,8 @@ export async function run(): Promise<void> {
     const sort: string = core.getInput('sort')
     const payload = github.context.payload
 
-    if (label !== '' && label !== 'dependabot') {
-      core.warning(
-        '`activationLabel` is deprecated, use `activationLabels` instead'
-      )
-    }
-
-    // If the `activationLabels` input is not set, use the `activationLabel` input only
     // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
-    let labels = parseLabels(labelsString)
-    if (labels.length === 0) {
-      labels = [label]
-    }
-
+    const labels = parseLabels(labelsString)
     if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
       const updater = newUpdater(
         version,

@@ -13,11 +13,6 @@ inputs:
       "The path to the CHANGELOG file to add dependabot entries to"
     required: true
     default: './CHANGELOG.md'
-  activationLabel:
-    description: |
-      "DEPRECATED! Please use `activationLabels` instead. The label to indicate that the action should run"
-    required: true
-    default: ''
   activationLabels:
     description: |
       "The labels to activate/run this action. Labels are comma-separated. Each label must be present on the pull request for the action to run."
