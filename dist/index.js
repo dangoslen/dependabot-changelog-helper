@@ -29,6 +29,8 @@ class DefaultChangelogUpdater {
         this.sort = sort;
         this.contents = [];
         this.changed = false;
+        this.sectionAdded = false;
+        this.dependencyLastLine = 0;
     }
     async readChangelog() {
         this.contents = fs_1.default.readFileSync(this.changelogPath, 'utf-8').split(os_1.EOL);
@@ -39,7 +41,24 @@ class DefaultChangelogUpdater {
             fs_1.default.writeFileSync(this.changelogPath, this.contents.join(os_1.EOL));
         }
     }
-    async updateChangelog(entry) {
+    async addEntries(entries) {
+        for (const entry of entries) {
+            await this.addEntry(entry);
+        }
+        if (this.sectionAdded) {
+            await this.maybeAddEmptyNewLine();
+        }
+    }
+    async maybeAddEmptyNewLine() {
+        const lastEntry = this.contents[this.dependencyLastLine];
+        if (this.dependencyLastLine === this.contents.length - 1) {
+            return;
+        }
+        if (this.contents[this.dependencyLastLine + 1] !== '') {
+            this.contents[this.dependencyLastLine] = `${lastEntry}${os_1.EOL}`;
+        }
+    }
+    async addEntry(entry) {
         const versionRegex = new RegExp(`^## \\[${this.version}\\]`);
         const regexs = [versionRegex, UNRELEASED_REGEX];
         for (const regex of regexs) {
@@ -83,10 +102,11 @@ class DefaultChangelogUpdater {
         return new RegExp(`- \\w+ \`${entry.package}\` from `);
     }
     addNewEntry(entry, result) {
-        let changelogEntry = this.buildEntryLine(entry);
+        const changelogEntry = this.buildEntryLine(entry);
         let lineNumber = result.lineToUpdate;
         if (!result.dependencySectionFound) {
             this.writeLine(lineNumber, `### ${this.sectionHeader}`);
+            this.sectionAdded = true;
             lineNumber++;
         }
         this.writeLine(lineNumber, changelogEntry);
@@ -103,10 +123,7 @@ class DefaultChangelogUpdater {
             this.contents[i] = result.dependencyEntries[j].line;
             j++;
         }
-        if (!result.dependencySectionFound && lineNumber < result.length) {
-            const lastLine = this.contents[lineNumber].replace(os_1.EOL, '');
-            this.contents[lineNumber] = `${lastLine}${os_1.EOL}`;
-        }
+        this.dependencyLastLine = dependencyEnd;
     }
     updateEntry(entry, result) {
         const lineNumber = result.lineToUpdate;
@@ -312,10 +329,9 @@ async function run() {
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
             const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader, sort);
             const extractor = (0, extractor_factory_1.getExtractor)(payload);
+            const entries = extractor.getEntries(payload);
             updater.readChangelog();
-            for (const entry of extractor.getEntries(payload)) {
-                await updater.updateChangelog(entry);
-            }
+            await updater.addEntries(entries);
             await updater.writeChangelog();
         }
     }
@@ -335,23 +351,26 @@ run();
 /***/ }),
 
 /***/ 878:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DependabotExtractor = void 0;
+const os_1 = __nccwpck_require__(2037);
 class DependabotExtractor {
     constructor() {
         /** Regex explanation
-         *   --- Start of the line must not be a '*' character which is used for markdown to denote a list
+         *   --- Start of the line must not be a '<li>' HTML tag which is used to denote a list within the <summary> tag
          *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
          *      |                           --- Matches any non-whitespace character; matching as a few as possible
          *      |                           |          --- Matches any non-whitespace character as the package name
          *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
          *      |                           |          |                   |                 |
          */
-        this.regex = new RegExp(/^[^*]*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+        this.regex = new RegExp(
+        // eslint-disable-next-line no-useless-escape
+        /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
     }
     getEntries(event) {
         const pullRequestNumber = event.pull_request.number;
@@ -376,8 +395,9 @@ class DependabotExtractor {
         return entries;
     }
     getEntriesFromBody(pullRequestNumber, repository, body) {
-        // This is a bit i
-        const lines = body.split('\n');
+        // Instead of dealing with multiline strings, split the body into lines
+        // and check each line individually
+        const lines = body.split(os_1.EOL);
         const entries = [];
         for (const line of lines) {
             const match = this.regex.exec(line);

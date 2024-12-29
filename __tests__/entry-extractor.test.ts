@@ -126,7 +126,8 @@ const PULL_REQUEST_WITH_COMMITS_IN_BODY = {
 
 Changelog
 Commits
-* Updates \`dep\` from a to b
+<li>Updates \`dep\` from a to b</li>
+<li>Bumps \`dep\` from a to b</li>
 `
   }
 }
@@ -232,7 +233,7 @@ describe('the dependabot extractor', () => {
     expect(entry.newVersion).toStrictEqual('3.12.3')
   })
 
-  test('extracts multiple entries from body', async () => {
+  test('extracts multiple entries from body, skipping commits in a list', async () => {
     const entries = extractor.getEntries(PULL_REQUEST_WITH_COMMITS_IN_BODY)
 
     expect(entries).toHaveLength(1)
