@@ -2,6 +2,7 @@
     <img src="https://github.com/dangoslen/dependabot-changelog-helper/actions/workflows/pull-request.yml/badge.svg" alt="build" />
     <img src="https://img.shields.io/github/v/release/dangoslen/dependabot-changelog-helper?color=orange&label=Latest" alt="latest version" />
     <img src="./coverage/badge.svg" alt="coverage badge" />
+    <img src="https://img.shields.io/endpoint?url=https://dangoslen.github.io/dependabot-changelog-helper/action-name.json" alt="count of usage" />
 </p>
 
 ## Dependabot Changelog Helper
