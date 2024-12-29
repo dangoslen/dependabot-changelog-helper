@@ -287,22 +287,14 @@ const label_extractor_1 = __nccwpck_require__(80);
 async function run() {
     try {
         const version = core.getInput('version');
-        const label = core.getInput('activationLabel');
         const labelsString = core.getInput('activationLabels');
         const changelogPath = core.getInput('changelogPath');
         const entryPrefix = core.getInput('entryPrefix');
         const sectionHeader = core.getInput('sectionHeader');
         const sort = core.getInput('sort');
         const payload = github.context.payload;
-        if (label !== '' && label !== 'dependabot') {
-            core.warning('`activationLabel` is deprecated, use `activationLabels` instead');
-        }
-        // If the `activationLabels` input is not set, use the `activationLabel` input only
         // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
-        let labels = (0, label_extractor_1.parseLabels)(labelsString);
-        if (labels.length === 0) {
-            labels = [label];
-        }
+        const labels = (0, label_extractor_1.parseLabels)(labelsString);
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
             const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader, sort);
             const extractor = (0, extractor_factory_1.getExtractor)(payload);
