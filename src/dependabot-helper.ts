@@ -40,7 +40,6 @@ export async function run(): Promise<void> {
       )
       const extractor = getExtractor(payload)
       const entries = extractor.getEntries(payload)
-
       updater.readChangelog()
       await updater.addEntries(entries)
       await updater.writeChangelog()

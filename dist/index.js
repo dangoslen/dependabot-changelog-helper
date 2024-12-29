@@ -29,8 +29,8 @@ class DefaultChangelogUpdater {
         this.sort = sort;
         this.contents = [];
         this.changed = false;
-        this.foundSection = false;
-        this.foundVersion = false;
+        this.sectionFound = false;
+        this.versionFound = false;
         this.sectionStartLineNumber = 0;
         this.entries = [];
     }
@@ -42,8 +42,8 @@ class DefaultChangelogUpdater {
             const result = await this.extractEntries(regex);
             // Break at the first version found
             if (result.versionFound) {
-                this.foundVersion = true;
-                this.foundSection = result.sectionFound;
+                this.versionFound = true;
+                this.sectionFound = result.sectionFound;
                 this.sectionStartLineNumber = result.sectionStartLineNumber;
                 this.entries = result.dependencyEntries;
                 break;
@@ -66,9 +66,9 @@ class DefaultChangelogUpdater {
             const entry = this.entries[idx];
             // If the section was not found, we are at the beginning of a new version
             // So add an extra EOL after the entry line since it will be the only
-            if (idx === 0 && !this.foundSection) {
+            if (idx === 0 && !this.sectionFound) {
                 entry.line = `### ${this.sectionHeader}${os_1.EOL}${entry.line}`;
-                if (!this.foundVersion) {
+                if (!this.versionFound) {
                     entry.line = `## [${this.version}]${os_1.EOL}${entry.line}`;
                 }
             }
@@ -76,7 +76,7 @@ class DefaultChangelogUpdater {
             // add an extra EOL after the entry
             const offset = this.sectionStartLineNumber + idx;
             if (offset < this.contents.length - 1 &&
-                !this.foundSection &&
+                !this.sectionFound &&
                 this.contents[offset + 1].startsWith('## ')) {
                 entry.line = `${entry.line}${os_1.EOL}`;
             }
@@ -338,14 +338,16 @@ const os_1 = __nccwpck_require__(2037);
 class DependabotExtractor {
     constructor() {
         /** Regex explanation
-         *   --- Start of the line must not be a '*' character which is used for markdown to denote a list
+         *   --- Start of the line must not be a '<li>' HTML tag which is used to denote a list within the <summary> tag
          *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
          *      |                           --- Matches any non-whitespace character; matching as a few as possible
          *      |                           |          --- Matches any non-whitespace character as the package name
          *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
          *      |                           |          |                   |                 |
          */
-        this.regex = new RegExp(/^[^*]*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+        this.regex = new RegExp(
+        // eslint-disable-next-line no-useless-escape
+        /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
     }
     getEntries(event) {
         const pullRequestNumber = event.pull_request.number;
