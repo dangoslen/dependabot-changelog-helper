@@ -95,8 +95,6 @@ This is a way to incrementally build a version over time and only release a vers
 | ---------------- | ------------------------------------------------------------ |
 | `./CHANGELOG.md` | The path to the changelog file to add Dependabot entries to. |
 
-#### `activationLabel`
-
 | Default  | Description                                                                                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------ |
 | `dependabot`     | DEPRECATED! Please use the `activationLabels` input below. The label to indicate that the action should run. |
@@ -107,9 +105,7 @@ If both `activationLabel` and `activationLabels` inputs are provided, _all_ labe
 
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
-| `''` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
-
-_Note: by default this is currently set to empty. In a future release (v4.0.0), it will have the default of `dependabot` and replace the `activationLabel` input._
+| `dependabot` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
 
 #### `entryPrefix`
 
