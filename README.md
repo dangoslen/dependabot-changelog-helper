@@ -111,9 +111,9 @@ If both `activationLabel` and `activationLabels` inputs are provided, _all_ labe
 
 | Default      | Description                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------------- |
-| `Bump`       | The starting word of a dependency bump entry line. Currently only supports single word prefixes. |
+| `Bump`       | The starting word of a dependency bump entry line. Currently, it only supports single-word prefixes. |
 
-If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
+If a previous entry was written with a different entry (`Bump` vs. `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
 
 #### `sectionHeader`
 
@@ -127,4 +127,12 @@ If `sectionHeader` is not provided, the action will look for a section header ma
 
 | Default | Description                                               |
 | --------| --------------------------------------------------------- |
-| `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |
+| `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append-only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |
+
+## Alternatives
+
+This action aims to be intentionally minimal in its solution, only updating the changelog with dependencies and with as little change to the changelog as possible. 
+
+Other actions have a bit broader scope and/or solve the problem of keeping a changelog up-to-date in a slightly different way. If this action doesn't meet your needs, consider looking at one of the alternatives. If none match your needs, consider [opening an issue for discussion](https://github.com/dangoslen/dependabot-changelog-helper/issues/new)!
+
+* https://github.com/marketplace/actions/dependabot-changelog-writer
