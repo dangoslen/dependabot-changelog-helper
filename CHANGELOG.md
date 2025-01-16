@@ -7,6 +7,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 
 - Refactors the internal updater to more easily account for multiple entries and formatting ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/311))
+- ci: replace comment_tag with comment-tag ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/318))
 
 ### Removed
 
