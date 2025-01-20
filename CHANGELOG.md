@@ -13,6 +13,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Removes the deprecated `activationLabel`. All workflows should specify desired labels using the `activationLabels` input instead. The default label of `dependabot` is still kept.
 
+### Dependencies
+- Bump `ncipollo/release-action` from 1.14.0 to 1.15.0 ([#323](https://github.com/dangoslen/dependabot-changelog-helper/pull/323))
+
 ## [3.11.1]
 
 ### Fixed
