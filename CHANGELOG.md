@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Refactors the internal updater to more easily account for multiple entries and formatting ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/311))
 - ci: replace comment_tag with comment-tag ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/318))
+- Adds proper newlines around version and section headers ([#310](https://github.com/dangoslen/dependabot-changelog-helper/issues/310)). This will only add newlines if **adding** a new version and section. When adding a new entry, the newlines will not be added.
 
 ### Removed
 
