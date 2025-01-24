@@ -9,7 +9,7 @@
 
 Automatically update your changelog on Dependabot pull requests! No more manually updating a changelog for dependency upgrades. Just fast and easy dependency upgrades.
 
-### We all love Dependabot...
+### We all love dependency management tools...
 
 But it can feel overwhelming and require additional work to update things like versions and changelogs.
 
@@ -19,6 +19,7 @@ Built around the [KeepAChangelog](https://keepachangelog.com/) format, this acti
 - Supports multi-package updates in a single pull request
 - Updates the entry for a dependency if the dependency had been upgraded previously in the same version
 - Includes link(s) to associated pull requests that upgraded the dependency
+- Supports Dependabot and Renovate dependency updates
 
 ### Usage
 
@@ -53,7 +54,8 @@ jobs:
         with:
           activationLabels: dependencies
           changelogPath: './CHANGELOG.md'
-
+          dependencyTool: dependabot
+          
       # This step is required for committing the changes to your branch. 
       # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs 
       - uses: stefanzweifel/git-auto-commit-action@v4
@@ -128,6 +130,12 @@ If `sectionHeader` is not provided, the action will look for a section header ma
 | Default | Description                                               |
 | --------| --------------------------------------------------------- |
 | `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append-only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |
+
+#### `dependencyTool`
+
+| Default      | Description                                                        |
+| ------------| ------------------------------------------------------------------ |
+| `dependabot` | The dependency management tool being used. Supported values are `dependabot` and `renovate`. This determines how dependency information is extracted from pull requests. |
 
 ## Alternatives
 
