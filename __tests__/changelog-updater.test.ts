@@ -103,13 +103,48 @@ test('adds an entry to the changelog when section exists under default unrelease
 `)
 })
 
+const CHANGELOG_MISSING_VERSION = `# Changelog
+`
+
+test('adds an entry to the changelog adding the new version and section', async () => {
+  mockReadStream(CHANGELOG_MISSING_VERSION)
+
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [UNRELEASED]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
+const CHANGELOG_MISSING_VERSION_ONLY_HEADER = `# Changelog`
+
+test('adds an entry to the changelog adding the new version and section when the only line is the header', async () => {
+  mockReadStream(CHANGELOG_MISSING_VERSION_ONLY_HEADER)
+
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [UNRELEASED]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
 const CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED = `# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
 `
 
-test('adds an entry to the changelog when section already exists but no entries doe', async () => {
+test('adds an entry to the changelog when section already exists but no entries do', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED)
 
   await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
@@ -137,7 +172,9 @@ test('adds section and an entry to the changelog when version exists but section
   expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
+
 ### Changed
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
@@ -274,7 +311,9 @@ test('updates version with new section and entry', async () => {
 ## [v1.0.0]
 ### Added
 ### Removed
+
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`
   )
 })
@@ -442,6 +481,7 @@ test('adds section when sections separated by blank lines', async () => {
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
@@ -487,6 +527,7 @@ test('adds section when sections separated by blank lines contain nested entries
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
@@ -627,7 +668,9 @@ test('add section and accounts for multi-line entry', async () => {
   the goes
   across
   several lines
+
 ### Dependencies
+
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
@@ -708,6 +751,7 @@ test('adds section when sections separated by blank lines and adds multi package
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 - Bump \`other-package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 

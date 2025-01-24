@@ -102,31 +102,52 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
 
     for (let idx = 0; idx < this.entries.length; idx++) {
       const entry = this.entries[idx]
+      let line = entry.line
       // If the section was not found, we are at the beginning of a new version
       // So add an extra EOL after the entry line since it will be the only
       if (idx === 0 && !this.sectionFound) {
-        entry.line = `### ${this.sectionHeader}${EOL}${entry.line}`
+        line = `### ${this.sectionHeader}${EOL}${EOL}${line}`
         if (!this.versionFound) {
-          entry.line = `## [${this.version}]${EOL}${entry.line}`
+          line = `## [${this.version}]${EOL}${EOL}${line}`
         }
       }
 
+      const offset = this.sectionStartLineNumber + idx
       // If we are adding a section and we are adding the section before another version,
       // add an extra EOL after the entry
-      const offset = this.sectionStartLineNumber + idx
       if (
         offset < this.contents.length - 1 &&
         !this.sectionFound &&
         this.contents[offset + 1].startsWith('## ')
       ) {
-        entry.line = `${entry.line}${EOL}`
+        line = `${line}${EOL}`
       }
 
-      this.contents[offset] = entry.line
+      // If we are adding a section or version and the previous line is not empty,
+      // add an extra EOL before the entry
+      if (
+        offset > 0 &&
+        idx === 0 &&
+        this.contents[offset - 1] !== '' &&
+        (!this.versionFound || !this.sectionFound)
+      ) {
+        line = `${EOL}${line}`
+      }
+
+      this.contents[offset] = line
     }
   }
 
   async addEntries(entries: VersionEntry[]): Promise<void> {
+    // If we are adding the section at the beginning of the changelog,
+    // add an empty line before the section
+    if (this.sectionStartLineNumber === 0) {
+      this.sectionStartLineNumber = 1
+      if (this.contents.length <= 1) {
+        this.contents.push('')
+      }
+    }
+
     for (const entry of entries) {
       this.searchAndUpdateVersion(entry)
     }
@@ -309,17 +330,5 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       sectionFound,
       dependencyEntries
     }
-  }
-
-  private lastLineCheck(
-    sectionStartLineNumber: number,
-    contentLength: number,
-    foundLastEntry: boolean,
-    versionFound: boolean
-  ): number {
-    if (!foundLastEntry && versionFound) {
-      return contentLength
-    }
-    return sectionStartLineNumber
   }
 }
