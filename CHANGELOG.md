@@ -13,6 +13,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Removes the deprecated `activationLabel`. All workflows should specify desired labels using the `activationLabels` input instead. The default label of `dependabot` is still kept.
 
+### Dependencies
+- Bump `@types/node` from 20.12.12 to 22.10.7 ([#320](https://github.com/dangoslen/dependabot-changelog-helper/pull/320))
+
 ## [3.11.1]
 
 ### Fixed
