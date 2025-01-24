@@ -8,6 +8,11 @@ inputs:
       "The version to find in the CHANGELOG to add dependabot entries to"
     required: true
     default: "UNRELEASED"
+  dependencyTool:
+    description: |
+      "The tool used to manage dependencies. Possible values are: 'dependabot' and 'renovate'"
+    required: true
+    default: 'dependabot'
   changelogPath:
     description: |
       "The path to the CHANGELOG file to add dependabot entries to"

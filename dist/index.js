@@ -311,6 +311,7 @@ async function run() {
         const labelsString = core.getInput('activationLabels');
         const changelogPath = core.getInput('changelogPath');
         const entryPrefix = core.getInput('entryPrefix');
+        const dependencyTool = core.getInput('dependencyTool');
         const sectionHeader = core.getInput('sectionHeader');
         const sort = core.getInput('sort');
         const payload = github.context.payload;
@@ -318,9 +319,9 @@ async function run() {
         const labels = (0, label_extractor_1.parseLabels)(labelsString);
         if (labels.length > 0 && (0, label_checker_1.pullRequestHasLabels)(payload, labels)) {
             const updater = (0, changelog_updater_1.newUpdater)(version, changelogPath, entryPrefix, sectionHeader, sort);
-            const extractor = (0, extractor_factory_1.getExtractor)(payload);
+            const extractor = (0, extractor_factory_1.getExtractor)(payload, { dependencyTool });
             const entries = extractor.getEntries(payload);
-            updater.readChangelog();
+            await updater.readChangelog();
             await updater.addEntries(entries);
             await updater.writeChangelog();
         }
@@ -418,11 +419,77 @@ exports.DependabotExtractor = DependabotExtractor;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getExtractor = getExtractor;
 const dependabot_extractor_1 = __nccwpck_require__(878);
+const renovate_extractor_1 = __nccwpck_require__(1596);
 // Determines which extractor to use based on the PR
-function getExtractor(_) {
-    return new dependabot_extractor_1.DependabotExtractor();
+function getExtractor(event, config) {
+    if (config.dependencyTool === 'renovate') {
+        return new renovate_extractor_1.RenovateExtractor();
+    }
+    if (config.dependencyTool === 'dependabot') {
+        // Default to Dependabot extractor
+        return new dependabot_extractor_1.DependabotExtractor();
+    }
+    throw new Error('Unknown dependency tool');
 }
 //# sourceMappingURL=extractor-factory.js.map
+
+/***/ }),
+
+/***/ 1596:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RenovateExtractor = void 0;
+class RenovateExtractor {
+    constructor() {
+        this.linkRegex = new RegExp(/\[([^\]]+)\]\(([^)]+)\)/);
+    }
+    getEntries(event) {
+        const entries = [];
+        const body = event.pull_request?.body;
+        if (!body) {
+            return entries;
+        }
+        // Renovate uses a table format in its PR description
+        // Example:
+        // | Package | Changes |
+        // | --- | --- | --- |
+        // | [package-name](link.com) | [1.0.0 -> 2.0.0](link.com) |
+        const lines = body.split('\n');
+        let inDependencyTable = false;
+        for (const line of lines) {
+            if (line.startsWith('| Package | Changes |')) {
+                inDependencyTable = true;
+                continue;
+            }
+            if (inDependencyTable && line.startsWith('|')) {
+                const [_, pkg, changes, __] = line.split('|').map(s => s.trim());
+                if (pkg && changes) {
+                    const pkgName = this.linkRegex.exec(pkg)?.[1];
+                    const linkText = this.linkRegex.exec(changes)?.[1];
+                    const [oldVersion, newVersion] = (linkText?.split('->') ?? []).map(v => v.trim());
+                    if (pkgName && oldVersion && newVersion) {
+                        entries.push({
+                            pullRequestNumber: event.pull_request?.number || 0,
+                            repository: undefined,
+                            package: pkgName,
+                            oldVersion,
+                            newVersion
+                        });
+                    }
+                }
+            }
+            else if (inDependencyTable && !line.startsWith('|')) {
+                inDependencyTable = false;
+            }
+        }
+        return entries;
+    }
+}
+exports.RenovateExtractor = RenovateExtractor;
+//# sourceMappingURL=renovate-extractor.js.map
 
 /***/ }),
 
