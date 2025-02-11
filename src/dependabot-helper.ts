@@ -12,13 +12,18 @@ export async function run(): Promise<void> {
     const labelsString: string = core.getInput('activationLabels')
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
+    const dependencyTool: string = core.getInput('dependencyTool')
     const sectionHeader: string = core.getInput('sectionHeader')
     const sort: string = core.getInput('sort')
     const payload = github.context.payload
 
-    // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
+    // Parse the labels and push the dependency too as the label
+    // if no labels are provided
     const labels = parseLabels(labelsString)
-    if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
+    if (labels.length === 0) {
+      labels.push(dependencyTool)
+    }
+    if (pullRequestHasLabels(payload, labels)) {
       const updater = newUpdater(
         version,
         changelogPath,
@@ -26,9 +31,9 @@ export async function run(): Promise<void> {
         sectionHeader,
         sort
       )
-      const extractor = getExtractor(payload)
+      const extractor = getExtractor(payload, {dependencyTool})
       const entries = extractor.getEntries(payload)
-      updater.readChangelog()
+      await updater.readChangelog()
       await updater.addEntries(entries)
       await updater.writeChangelog()
     }
