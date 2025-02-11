@@ -17,9 +17,13 @@ export async function run(): Promise<void> {
     const sort: string = core.getInput('sort')
     const payload = github.context.payload
 
-    // If the `activationLabels` input is set, use it and ignore the `activationLabel` input
+    // Parse the labels and push the dependency too as the label
+    // if no labels are provided
     const labels = parseLabels(labelsString)
-    if (labels.length > 0 && pullRequestHasLabels(payload, labels)) {
+    if (labels.length === 0) {
+      labels.push(dependencyTool)
+    }
+    if (pullRequestHasLabels(payload, labels)) {
       const updater = newUpdater(
         version,
         changelogPath,

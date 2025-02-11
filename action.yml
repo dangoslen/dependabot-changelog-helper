@@ -22,7 +22,7 @@ inputs:
     description: |
       "The labels to activate/run this action. Labels are comma-separated. Each label must be present on the pull request for the action to run."
     required: true
-    default: 'dependabot'
+    default: ''
   entryPrefix:
     description: |
       "The prefix word (after the hyphen) of the changelog entry, for example: '- [entryPrefix] `dependency` from v1.0 to v2.0'"
