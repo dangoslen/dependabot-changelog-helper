@@ -14,6 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - ci: replace comment_tag with comment-tag ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/318))
 - Adds proper newlines around version and section headers ([#310](https://github.com/dangoslen/dependabot-changelog-helper/issues/310)). This will only add newlines if **adding** a new version and section. When adding a new entry, the newlines will not be added.
 - The `activationLabels` input is now based on the value of the `dependencyTool` by default. i.e., if you select `renovate` as the `dependencyTool` a `renovate` label will be searched for activation unless you supply a different value.
+- Properly add a new version above the last one, if not in the changelog. Useful, if you have other content in your changelog header.
 
 ### Removed
 
