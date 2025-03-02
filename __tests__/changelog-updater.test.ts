@@ -222,6 +222,40 @@ test('errors when there is no version section', async () => {
   }
 })
 
+const CHANGELOG_WITH_PREVIOUS_RELEASED_VERSION_AND_HEADER = `# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v0.9.0]
+### Dependencies
+- Bump \`package\` from alpha to v1`
+
+test('adds an entry to the changelog above the last released version', async () => {
+  mockReadStream(CHANGELOG_WITH_PREVIOUS_RELEASED_VERSION_AND_HEADER)
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v1.0.0]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+
+## [v0.9.0]
+### Dependencies
+- Bump \`package\` from alpha to v1`)
+})
+
 const CHANGELOG_WITH_DUPLICATE_ENTRY = `# Changelog
 
 ## [v1.0.0]
