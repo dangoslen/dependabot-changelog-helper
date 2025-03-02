@@ -8,6 +8,11 @@ inputs:
       "The version to find in the CHANGELOG to add dependabot entries to"
     required: true
     default: "UNRELEASED"
+  dependencyTool:
+    description: |
+      "The tool used to manage dependencies. Possible values are: 'dependabot' and 'renovate'"
+    required: true
+    default: 'dependabot'
   changelogPath:
     description: |
       "The path to the CHANGELOG file to add dependabot entries to"
@@ -17,7 +22,7 @@ inputs:
     description: |
       "The labels to activate/run this action. Labels are comma-separated. Each label must be present on the pull request for the action to run."
     required: true
-    default: 'dependabot'
+    default: ''
   entryPrefix:
     description: |
       "The prefix word (after the hyphen) of the changelog entry, for example: '- [entryPrefix] `dependency` from v1.0 to v2.0'"

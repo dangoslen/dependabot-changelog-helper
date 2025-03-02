@@ -83,6 +83,11 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
         break
       }
     }
+
+    if (!this.versionFound) {
+      this.sectionStartLineNumber =
+        this.getLastReleasedVersionSectionStartLineNumber()
+    }
   }
 
   async writeChangelog(): Promise<void> {
@@ -330,5 +335,19 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       sectionFound,
       dependencyEntries
     }
+  }
+
+  private getLastReleasedVersionSectionStartLineNumber(): number {
+    let lineNumber = 0
+    const releasedVersionRegex = new RegExp(`^## \\[v?\\d+`)
+
+    for (const line of this.contents) {
+      if (releasedVersionRegex.test(line)) {
+        return lineNumber
+      }
+      lineNumber++
+    }
+
+    return 0
   }
 }
