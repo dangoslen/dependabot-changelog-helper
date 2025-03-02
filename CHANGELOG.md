@@ -25,6 +25,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `@types/node` from 20.12.12 to 22.13.5 ([#320](https://github.com/dangoslen/dependabot-changelog-helper/pull/320), [#331](https://github.com/dangoslen/dependabot-changelog-helper/pull/331), [#338](https://github.com/dangoslen/dependabot-changelog-helper/pull/338))
 - Bump `ncipollo/release-action` from 1.14.0 to 1.15.0 ([#323](https://github.com/dangoslen/dependabot-changelog-helper/pull/323))
 - Bump `ts-jest` from 29.2.5 to 29.2.6 ([#340](https://github.com/dangoslen/dependabot-changelog-helper/pull/340))
+- Bump `typescript` from 5.7.2 to 5.7.3 ([#327](https://github.com/dangoslen/dependabot-changelog-helper/pull/327))
 
 ## [3.11.1]
 
