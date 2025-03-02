@@ -85,11 +85,8 @@ Below are the properties you can use for the Dependabot Changelog Helper.
 
 If the `version` is not found then an unreleased version - matching the pattern `/^## [(unreleased|Unreleased|UNRELEASED)]` - is used.
 
-Many changelogs default to keeping an released version at the top of the changelog.
+Many changelogs default to keeping an unreleased version at the top of the changelog.
 This is a way to incrementally build a version over time and only release a version once the right changes have been accounted for.
-
-> :warning: **Warning**
-> For the action to work you must have either set a `version` _or_ have an unreleased version in your changelog.
 
 #### `changeLogPath`
 

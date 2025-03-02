@@ -4,9 +4,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [4.0.0]
+
 ### Added
 
-- Now supports [Mend Renovate](https://www.mend.io/mend-renovate/)! Set the `dependencyTool` to `renovate` to use within your repositories. _:warning: in Alpha!_
+- Now supports [Mend Renovate](https://www.mend.io/mend-renovate/)! Set the `dependencyTool` to `renovate` to use within your repositories. _:warning: in alpha!_
 
 ### Changed
 
