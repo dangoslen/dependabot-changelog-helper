@@ -34,9 +34,7 @@ export function newUpdater(
   sort: string
 ): ChangelogUpdater {
   // Convert version to regex if it's wrapped in forward slashes
-  const versionPattern = version.match(/^\/(.+)\/$/)
-    ? new RegExp(version.slice(1, -1))
-    : new RegExp(`^## \\[${version}\\]`)
+  const versionPattern = createVersionRegex(version)
 
   return new DefaultChangelogUpdater(
     versionPattern,
@@ -47,6 +45,16 @@ export function newUpdater(
   )
 }
 
+function createVersionRegex(version: string | RegExp): RegExp {
+  if (typeof version === 'string') {
+    return version.match(/^\/(.+)\/$/)
+      ? new RegExp(version.slice(1, -1))
+      : new RegExp(`^## \\[${version}\\]`)
+  }
+
+  return version
+}
+
 export class DefaultChangelogUpdater implements ChangelogUpdater {
   private contents: string[]
   private entries: Entry[]
@@ -54,7 +62,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   private sectionFound: boolean
   private sectionStartLineNumber: number
   private changed: boolean
-  private versionPattern: RegExp
+  private version: RegExp
 
   constructor(
     version: RegExp | string,
@@ -69,15 +77,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.versionFound = false
     this.sectionStartLineNumber = 0
     this.entries = []
-    this.versionPattern = typeof version === 'string'
-      ? new RegExp(`^## \\[${version}\\]`)
-      : version
+    this.version = createVersionRegex(version)
   }
 
   async readChangelog(): Promise<void> {
     this.contents = fs.readFileSync(this.changelogPath, 'utf-8').split(EOL)
 
-    const regexs: RegExp[] = [this.versionPattern, UNRELEASED_REGEX]
+    const regexs: RegExp[] = [this.version, UNRELEASED_REGEX]
 
     for (const regex of regexs) {
       const result = await this.extractEntries(regex)
@@ -121,7 +127,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       if (idx === 0 && !this.sectionFound) {
         line = `### ${this.sectionHeader}${EOL}${EOL}${line}`
         if (!this.versionFound) {
-          const versionText = this.versionPattern.source
+          const versionText = this.version.source
             .replace(/^\^## \\\[/, '')
             .replace(/\\\]$/, '')
           line = `## [${versionText}]${EOL}${EOL}${line}`
@@ -272,7 +278,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.changed = true
   }
 
-  private async extractEntries(versionRegex: RegExp | string): Promise<ParsedResult> {
+  private async extractEntries(versionRegex: RegExp): Promise<ParsedResult> {
     const regex = typeof versionRegex === 'string'
       ? new RegExp(`^## \\[${versionRegex}\\]`)
       : versionRegex
