@@ -278,11 +278,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.changed = true
   }
 
-  private async extractEntries(versionRegex: RegExp): Promise<ParsedResult> {
-    const regex = typeof versionRegex === 'string'
-      ? new RegExp(`^## \\[${versionRegex}\\]`)
-      : versionRegex
-
+  private async extractEntries(regex: RegExp): Promise<ParsedResult> {
     const sectionRegex = new RegExp(
       `^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`
     )
