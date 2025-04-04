@@ -1,6 +1,7 @@
 import {PathLike} from 'fs'
 import {VersionEntry} from '../src/entries/entry-extractor'
 import {DefaultChangelogUpdater} from '../src/changelog-updater'
+import {newUpdater} from '../src/changelog-updater'
 
 const {Readable} = require('stream')
 const fs = require('fs')
@@ -795,6 +796,96 @@ test('adds section when sections separated by blank lines and adds multi package
 - Bump \`package\` from alpha to v1
 `
   )
+})
+
+describe('changelog-updater', () => {
+  describe('version regex patterns', () => {
+    const CHANGELOG_WITH_NOT_YET_RELEASED = `# Changelog
+
+## [v2.0.0] - NOT YET RELEASED
+### Dependencies
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v1.5.0]
+`
+
+    it('handles string version patterns wrapped in slashes', async () => {
+      mockReadStream(CHANGELOG_WITH_NOT_YET_RELEASED)
+
+      const updater = newUpdater(
+        '/- NOT YET RELEASED/',
+        './CHANGELOG.md',
+        'bump',
+        'Dependencies',
+        'alpha'
+      )
+
+      await updater.readChangelog()
+      await updater.addEntries([
+        {
+          package: 'new-package',
+          oldVersion: '1.0.0',
+          newVersion: '1.1.0',
+          pullRequestNumber: 456,
+          repository: undefined
+        }
+      ])
+      await updater.writeChangelog()
+
+      expectWrittenChangelogToBe(`# Changelog
+
+## [v2.0.0] - NOT YET RELEASED
+### Dependencies
+- bump \`new-package\` from 1.0.0 to 1.1.0 (#456)
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v1.5.0]
+`)
+    })
+
+    const CHANGELOG_WITH_RC_VERSION = `# Changelog
+
+## [v2.0.1-rc.1]
+### Dependencies
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v2.0.0]
+`
+
+    it('handles complex regex patterns in slashes', async () => {
+      mockReadStream(CHANGELOG_WITH_RC_VERSION)
+
+      const updater = newUpdater(
+        '/v2\\.0\\.\\d+(-rc\\.\\d+)?/',
+        './CHANGELOG.md',
+        'bump',
+        'Dependencies',
+        'alpha'
+      )
+
+      await updater.readChangelog()
+      await updater.addEntries([
+        {
+          package: 'new-package',
+          oldVersion: '1.0.0',
+          newVersion: '1.1.0',
+          pullRequestNumber: 456,
+          repository: undefined
+        }
+      ])
+      await updater.writeChangelog()
+
+      expectWrittenChangelogToBe(`# Changelog
+
+## [v2.0.1-rc.1]
+### Dependencies
+- bump \`new-package\` from 1.0.0 to 1.1.0 (#456)
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v2.0.0]
+`)
+    })
+  })
 })
 
 async function runUpdate(
