@@ -88,6 +88,8 @@ If the `version` is not found then an unreleased version - matching the pattern 
 Many changelogs default to keeping an unreleased version at the top of the changelog.
 This is a way to incrementally build a version over time and only release a version once the right changes have been accounted for.
 
+Provide a version with forward slashes to use a regex to match the version section. For example: `/^## \\[\d+\.\d+\.\d+\\] - Unreleased/` will match `## [1.2.3] - Unreleased` but not `## [1.3.0] - 2025-03-25`.
+
 #### `changeLogPath`
 
 | Default          | Description                                                  |

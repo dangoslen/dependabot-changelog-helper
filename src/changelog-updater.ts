@@ -33,13 +33,26 @@ export function newUpdater(
   sectionHeader: string,
   sort: string
 ): ChangelogUpdater {
+  // Convert version to regex if it's wrapped in forward slashes
+  const versionPattern = createVersionRegex(version)
+
   return new DefaultChangelogUpdater(
-    version,
+    versionPattern,
     changelogPath,
     entryPrefix,
     sectionHeader,
     sort
   )
+}
+
+function createVersionRegex(version: string | RegExp): RegExp {
+  if (typeof version === 'string') {
+    return version.match(/^\/(.+)\/$/)
+      ? new RegExp(version.slice(1, -1))
+      : new RegExp(`^## \\[${version}\\]`)
+  }
+
+  return version
 }
 
 export class DefaultChangelogUpdater implements ChangelogUpdater {
@@ -49,9 +62,10 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   private sectionFound: boolean
   private sectionStartLineNumber: number
   private changed: boolean
+  private version: RegExp
 
   constructor(
-    private readonly version: string,
+    version: RegExp | string,
     private readonly changelogPath: fs.PathLike,
     private readonly entryPrefix: string,
     private readonly sectionHeader: string,
@@ -63,13 +77,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.versionFound = false
     this.sectionStartLineNumber = 0
     this.entries = []
+    this.version = createVersionRegex(version)
   }
 
   async readChangelog(): Promise<void> {
     this.contents = fs.readFileSync(this.changelogPath, 'utf-8').split(EOL)
 
-    const versionRegex = new RegExp(`^## \\[${this.version}\\]`)
-    const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
+    const regexs: RegExp[] = [this.version, UNRELEASED_REGEX]
 
     for (const regex of regexs) {
       const result = await this.extractEntries(regex)
@@ -113,7 +127,10 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
       if (idx === 0 && !this.sectionFound) {
         line = `### ${this.sectionHeader}${EOL}${EOL}${line}`
         if (!this.versionFound) {
-          line = `## [${this.version}]${EOL}${EOL}${line}`
+          const versionText = this.version.source
+            .replace(/^\^## \\\[/, '')
+            .replace(/\\\]$/, '')
+          line = `## [${versionText}]${EOL}${EOL}${line}`
         }
       }
 
@@ -261,7 +278,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.changed = true
   }
 
-  private async extractEntries(versionRegex: RegExp): Promise<ParsedResult> {
+  private async extractEntries(regex: RegExp): Promise<ParsedResult> {
     const sectionRegex = new RegExp(
       `^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`
     )
@@ -310,7 +327,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
           // Push the entry into our list of existing entries
           dependencyEntries.push({line})
         }
-      } else if (versionRegex.test(line)) {
+      } else if (regex.test(line)) {
         // If we have not found the version, see if this is the version
         versionFound = true
       }
