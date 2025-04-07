@@ -8,6 +8,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Now supports regex for the `version` input. See the [README](./README.md#version) for more details.
 
+### Dependencies
+
+- Bump `@types/node` from 22.13.5 to 22.14.0 ([#358](https://github.com/dangoslen/dependabot-changelog-helper/pull/358))
+
 ## [4.0.0]
 
 ### Added
