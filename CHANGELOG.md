@@ -11,6 +11,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 
 - Bump `@types/node` from 22.13.5 to 22.14.0 ([#358](https://github.com/dangoslen/dependabot-changelog-helper/pull/358))
+- Bump `typescript` from 5.7.3 to 5.8.3 ([#359](https://github.com/dangoslen/dependabot-changelog-helper/pull/359))
 
 ## [4.0.0]
 
