@@ -95,12 +95,6 @@ Provide a version with forward slashes to use a regex to match the version secti
 | Default          | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
 | `./CHANGELOG.md` | The path to the changelog file to add Dependabot entries to. |
-
-| Default  | Description                                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------ |
-| `dependabot`     | DEPRECATED! Please use the `activationLabels` input below. The label to indicate that the action should run. |
-
-If both `activationLabel` and `activationLabels` inputs are provided, _all_ labels between the two inputs are required for the action to run.
  
 #### `activationLabels`
 

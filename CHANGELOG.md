@@ -4,6 +4,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [4.1.0]
+
 ### Changed
 
 - Now supports regex for the `version` input. See the [README](./README.md#version) for more details.
