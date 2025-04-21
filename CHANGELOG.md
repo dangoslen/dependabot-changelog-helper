@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+
+- Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
+
 ## [4.1.0]
 
 ### Changed
