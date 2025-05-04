@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+
+- Bump `ts-jest` from 29.2.6 to 29.3.2 ([#362](https://github.com/dangoslen/dependabot-changelog-helper/pull/362))
+
 ## [4.1.0]
 
 ### Changed
