@@ -5,11 +5,18 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [UNRELEASED]
 
 ### Dependencies
+
 - Bump `@types/node` from 22.14.0 to 22.15.2 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366))
 - Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
 - Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
 
+## [4.1.1]
+
+Correctly packages the [4.1.0](https://github.com/dangoslen/dependabot-changelog-helper/releases/tag/v4.1.0) release for distribution. If you use the `4.1` tag, this will be automatically updated for actions using `dependabot-changelog-helper@4.1`
+
 ## [4.1.0]
+
+This release was not properly package for distribution. If using the `4.1.0` version directly, upgrade to use the `4.1` tag or the `4.1.1` version directly to get the updates.
 
 ### Changed
 
