@@ -113,7 +113,15 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+      - if: ${{ steps.check_release.outputs.missing == 'true' }}
+        name: Package for release
+        run: npm run package 
 
+      - id: auto-commit-package
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Package Action"
+      
   automerge:
     needs: [ unit-tests, changelog ]
     runs-on: ubuntu-latest
