@@ -113,7 +113,41 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+  package:
+    needs: [ verify ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.ACTION_TOKEN }}
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: read_version
+        run: |
+          echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
+          echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
+    
+      - id: check_release
+        name: Check for Existing Release
+        run: |
+          TAG=$(git ls-remote --tags origin | grep ${{ steps.read_version.outputs.tag }} | cat )
+          MISSING=$([[ -z "$TAG" ]] && echo 'true' || echo 'false')
+          echo "missing=$MISSING" >> $GITHUB_OUTPUT
+
+      - if: ${{ steps.check_release.outputs.missing == 'true' }}
+        name: Package for release
+        run: npm run package 
+
+      - id: auto-commit-package
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Package Action"
+  
   automerge:
     needs: [ unit-tests, changelog ]
     runs-on: ubuntu-latest
