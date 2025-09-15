@@ -805,7 +805,7 @@ const CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = `# Changelog
 - Bump \`different-package\` from v1 to v2
 `
 
-test('adds multi package updates properly when a package misses the old version', async () => {
+test('adds multi package updates properly when entry for a package misses the old version', async () => {
   mockReadStream(
     CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
     )
@@ -836,9 +836,13 @@ const CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = 
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
 - Bump \`other-package\` to v1
+
+## [v0.0.9]
+### Dependencies
+- Bump \`package\` to v1
 `
 
-test('adds multi package updates properly when a package misses the old version', async () => {
+test('adds multi package updates properly when entry for an existing package misses the old version', async () => {
   mockReadStream(
     CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
     )
@@ -860,6 +864,10 @@ test('adds multi package updates properly when a package misses the old version'
 - Bump \`different-package\` from v1 to v2
 - Bump \`other-package\` to v2 ([#123](https://github.com/owner/repo/pull/123))
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+
+## [v0.0.9]
+### Dependencies
+- Bump \`package\` to v1
 `)
 })
 
@@ -868,10 +876,11 @@ const CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHO
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v0 to v1
 - Bump \`other-package\` from v0 to v1
 `
 
-test('adds multi package updates properly when a package misses the old version', async () => {
+test('adds multi package updates properly when entry for a package with old version misses the old version', async () => {
   mockReadStream(
     CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
     )
@@ -891,8 +900,8 @@ test('adds multi package updates properly when a package misses the old version'
 ## [v1.0.0]
 ### Dependencies
 - Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v0 to v2 ([#123](https://github.com/owner/repo/pull/123))
 - Bump \`other-package\` from v0 to v2 ([#123](https://github.com/owner/repo/pull/123))
-- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
 

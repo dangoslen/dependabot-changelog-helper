@@ -262,9 +262,9 @@ describe('the dependabot extractor', () => {
 
   test('extracts multiple entries from body, skipping commits in a list', async () => {
     const entries = extractor.getEntries(PULL_REQUEST_WITH_COMMITS_IN_BODY)
-    
+
     expect(entries).toHaveLength(1)
-    
+
     let entry = entries[0]
     expect(entry.package).toStrictEqual('package')
     expect(entry.repository).toStrictEqual('owner/repo')
