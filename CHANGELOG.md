@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Changed
+
+- `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it.
+
 ### Dependencies
 
 - Bump `@types/node` from 22.14.0 to 22.15.2 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366))
