@@ -113,4 +113,116 @@ describe('RenovateExtractor', () => {
       })
     )
   })
+
+  it('should extract single container dependency update without context', () => {
+    const payload = {
+      pull_request: {
+        body: `
+# Some PR description
+| Package | Type | Update | Change |
+| --- | --- | --- | --- |
+| [ghcr.io/renovatebot/renovate](https://renovatebot.com) | container | minor | \`41.100.0\` -> \`41.109.0\` |
+        `,
+        number: 123
+      }
+    } as WebhookPayload
+
+    const entries = extractor.getEntries(payload)
+    expect(entries).toHaveLength(1)
+    expect(entries[0]).toEqual(
+      expect.objectContaining({
+        package: 'ghcr.io/renovatebot/renovate',
+        oldVersion: '41.100.0',
+        newVersion: '41.109.0'
+      })
+    )
+  })
+
+  it('should extract multiple container dependency update without context', () => {
+    const payload = {
+      pull_request: {
+        body: `
+# Some PR description
+| Package | Type | Update | Change |
+| --- | --- | --- | --- |
+| [ghcr.io/renovatebot/renovate](https://renovatebot.com) | container | minor | \`41.100.0\` -> \`41.109.0\` |
+| [foo](https://example.com) | container | major | \`1.0.0\` -> \`2.0.0\` |
+        `,
+        number: 123
+      }
+    } as WebhookPayload
+
+    const entries = extractor.getEntries(payload)
+    expect(entries).toHaveLength(2)
+    expect(entries[0]).toEqual(
+      expect.objectContaining({
+        package: 'ghcr.io/renovatebot/renovate',
+        oldVersion: '41.100.0',
+        newVersion: '41.109.0'
+      })
+    )
+    expect(entries[1]).toEqual(
+      expect.objectContaining({
+        package: 'foo',
+        oldVersion: '1.0.0',
+        newVersion: '2.0.0'
+      })
+    )
+  })
+
+  it('should extract single container dependency update with context', () => {
+    const payload = {
+      pull_request: {
+        body: `
+# Some PR description
+| Package | Type | Update | Change |
+| --- | --- | --- | --- |
+| [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://github.com/renovatebot/renovate)) | container | minor | \`41.100.0\` -> \`41.109.0\` |
+        `,
+        number: 123
+      }
+    } as WebhookPayload
+
+    const entries = extractor.getEntries(payload)
+    expect(entries).toHaveLength(1)
+    expect(entries[0]).toEqual(
+      expect.objectContaining({
+        package: 'ghcr.io/renovatebot/renovate',
+        oldVersion: '41.100.0',
+        newVersion: '41.109.0'
+      })
+    )
+  })
+
+  it('should extract multiple container dependency update with context', () => {
+    const payload = {
+      pull_request: {
+        body: `
+# Some PR description
+| Package | Type | Update | Change |
+| --- | --- | --- | --- |
+| [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([context](example.com)) | container | minor | \`41.100.0\` -> \`41.109.0\` |
+| [foo](https://example.com) ([context](example.com)) | container | major | \`1.0.0\` -> \`2.0.0\` |
+        `,
+        number: 123
+      }
+    } as WebhookPayload
+
+    const entries = extractor.getEntries(payload)
+    expect(entries).toHaveLength(2)
+    expect(entries[0]).toEqual(
+      expect.objectContaining({
+        package: 'ghcr.io/renovatebot/renovate',
+        oldVersion: '41.100.0',
+        newVersion: '41.109.0'
+      })
+    )
+    expect(entries[1]).toEqual(
+      expect.objectContaining({
+        package: 'foo',
+        oldVersion: '1.0.0',
+        newVersion: '2.0.0'
+      })
+    )
+  })
 })

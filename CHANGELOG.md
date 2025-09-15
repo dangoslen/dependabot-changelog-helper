@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Fixed
+
+- Improved dependency extraction for Renovate PRs ([#402](https://github.com/dangoslen/dependabot-changelog-helper/pull/402))
+
 ### Dependencies
 
 - Bump `@types/node` from 22.14.0 to 22.15.2 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366))
