@@ -196,7 +196,9 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
   private buildEntryLineForDuplicateCheck(entry: VersionEntry): string {
     const lineStart = this.buildEntryLineStart(entry)
-    return `${lineStart}${entry.oldVersion ? ` from ${entry.oldVersion}` : ''} to ${entry.newVersion}`
+    return `${lineStart}${
+      entry.oldVersion ? ` from ${entry.oldVersion}` : ''
+    } to ${entry.newVersion}`
   }
 
   private buildEntryLineStart(entry: VersionEntry): string {
