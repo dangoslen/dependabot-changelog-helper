@@ -11,9 +11,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Dependencies
 - Bump `@types/node` from 22.14.0 to 22.15.2 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366))
 - Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
-- Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
 - Bump `ncipollo/release-action` from 1.16.0 to 1.20.0 ([#399](https://github.com/dangoslen/dependabot-changelog-helper/pull/399))
-- Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
 
 ## [4.1.1]
 
