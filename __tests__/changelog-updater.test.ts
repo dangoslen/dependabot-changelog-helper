@@ -806,21 +806,19 @@ const CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = `# Changelog
 `
 
 test('adds multi package updates properly when entry for a package misses the old version', async () => {
-  mockReadStream(
-    CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
-    )
+  mockReadStream(CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION)
 
-    await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
-      {
-        pullRequestNumber: 123,
-        repository: 'owner/repo',
-        package: 'other-package',
-        newVersion: 'v2',
-        oldVersion: undefined
-        }
-        ])
-        
-        expectWrittenChangelogToBe(`# Changelog
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: undefined
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
@@ -845,19 +843,19 @@ const CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = 
 test('adds multi package updates properly when entry for an existing package misses the old version', async () => {
   mockReadStream(
     CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
-    )
+  )
 
-    await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
-      {
-        pullRequestNumber: 123,
-        repository: 'owner/repo',
-        package: 'other-package',
-        newVersion: 'v2',
-        oldVersion: undefined
-        }
-        ])
-        
-        expectWrittenChangelogToBe(`# Changelog
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: undefined
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
@@ -883,19 +881,19 @@ const CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHO
 test('adds multi package updates properly when entry for a package with old version misses the old version', async () => {
   mockReadStream(
     CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
-    )
+  )
 
-    await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
-      {
-        pullRequestNumber: 123,
-        repository: 'owner/repo',
-        package: 'other-package',
-        newVersion: 'v2',
-        oldVersion: undefined
-        }
-        ])
-        
-        expectWrittenChangelogToBe(`# Changelog
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: undefined
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
 
 ## [v1.0.0]
 ### Dependencies
