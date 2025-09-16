@@ -9,6 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Improved dependency extraction for Renovate PRs ([#402](https://github.com/dangoslen/dependabot-changelog-helper/pull/402))
 
 ### Dependencies
+- Bump `@actions/github` from 6.0.0 to 6.0.1 ([#370](https://github.com/dangoslen/dependabot-changelog-helper/pull/370))
 - Bump `@types/node` from 22.14.0 to 24.4.0 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366), [#403](https://github.com/dangoslen/dependabot-changelog-helper/pull/403))
 - Bump `actions/checkout` from 4 to 5 ([#395](https://github.com/dangoslen/dependabot-changelog-helper/pull/395))
 - Bump `actions/setup-node` from 4 to 5 ([#398](https://github.com/dangoslen/dependabot-changelog-helper/pull/398))
