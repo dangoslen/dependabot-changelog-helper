@@ -14,6 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Bump `actions/setup-node` from 4 to 5 ([#398](https://github.com/dangoslen/dependabot-changelog-helper/pull/398))
 - Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
 - Bump `ncipollo/release-action` from 1.16.0 to 1.20.0 ([#399](https://github.com/dangoslen/dependabot-changelog-helper/pull/399))
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#385](https://github.com/dangoslen/dependabot-changelog-helper/pull/385))
 
 ## [4.1.1]
 
