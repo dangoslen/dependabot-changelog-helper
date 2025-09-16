@@ -11,7 +11,8 @@ export class DependabotExtractor implements EntryExtractor {
      *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
      *      |                           --- Matches any non-whitespace character; matching as a few as possible
      *      |                           |          --- Matches any non-whitespace character as the package name
-     *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
+     *      |                           |          |                   --- Matches any non-whitespace character as the old version (optional, "from" might not exist)
+     *      |                           |          |                   |                 --- Matches any non-whitespace character as the new version
      *      |                           |          |                   |                 |
      */
     this.regex = new RegExp(
