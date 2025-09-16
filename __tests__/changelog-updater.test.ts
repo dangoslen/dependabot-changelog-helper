@@ -851,7 +851,6 @@ test('adds multi package updates properly when entry for an existing package mis
       repository: 'owner/repo',
       package: 'other-package',
       newVersion: 'v2',
-      oldVersion: undefined
     }
   ])
 

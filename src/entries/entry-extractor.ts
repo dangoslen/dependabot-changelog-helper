@@ -4,7 +4,7 @@ export interface VersionEntry {
   pullRequestNumber: number
   repository: string | undefined
   package: string
-  oldVersion: string | undefined
+  oldVersion?: string
   newVersion: string
 }
 
