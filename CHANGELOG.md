@@ -8,11 +8,19 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it.
 
-### Dependencies
+### Fixed
 
-- Bump `@types/node` from 22.14.0 to 22.15.2 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366))
+- Improved dependency extraction for Renovate PRs ([#402](https://github.com/dangoslen/dependabot-changelog-helper/pull/402))
+
+### Dependencies
+- Bump `@actions/github` from 6.0.0 to 6.0.1 ([#370](https://github.com/dangoslen/dependabot-changelog-helper/pull/370))
+- Bump `@types/node` from 22.14.0 to 24.4.0 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366), [#403](https://github.com/dangoslen/dependabot-changelog-helper/pull/403))
+- Bump `actions/checkout` from 4 to 5 ([#395](https://github.com/dangoslen/dependabot-changelog-helper/pull/395))
+- Bump `actions/setup-node` from 4 to 5 ([#398](https://github.com/dangoslen/dependabot-changelog-helper/pull/398))
 - Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
-- Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
+- Bump `ncipollo/release-action` from 1.16.0 to 1.20.0 ([#399](https://github.com/dangoslen/dependabot-changelog-helper/pull/399))
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#385](https://github.com/dangoslen/dependabot-changelog-helper/pull/385))
+- Bump `ts-jest` from 29.2.6 to 29.3.2 ([#362](https://github.com/dangoslen/dependabot-changelog-helper/pull/362))
 
 ## [4.1.1]
 
