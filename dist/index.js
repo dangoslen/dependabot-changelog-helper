@@ -140,10 +140,10 @@ class DefaultChangelogUpdater {
     // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
     buildEntryLineForDuplicateCheck(entry) {
         const lineStart = this.buildEntryLineStart(entry);
-        return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`;
+        return `${lineStart}${entry.oldVersion ? ` from ${entry.oldVersion}` : ''} to ${entry.newVersion}`;
     }
     buildEntryLineStart(entry) {
-        return `- ${this.entryPrefix} \`${entry.package}\` from`;
+        return `- ${this.entryPrefix} \`${entry.package}\``;
     }
     buildEntryLine(entry) {
         const lineStart = this.buildEntryLineForDuplicateCheck(entry);
@@ -151,7 +151,7 @@ class DefaultChangelogUpdater {
         return `${lineStart} (${currentPullRequest})`;
     }
     buildEntryLineStartRegex(entry) {
-        return new RegExp(`- \\w+ \`${entry.package}\` from `);
+        return new RegExp(`- \\w+ \`${entry.package}\`(?: from )?`);
     }
     addNewEntry(entry) {
         this.writeLine(this.sectionStartLineNumber, '');
@@ -386,12 +386,13 @@ class DependabotExtractor {
          *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
          *      |                           --- Matches any non-whitespace character; matching as a few as possible
          *      |                           |          --- Matches any non-whitespace character as the package name
-         *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
+         *      |                           |          |                   --- Matches any non-whitespace character as the old version (optional, "from" might not exist)
+         *      |                           |          |                   |                 --- Matches any non-whitespace character as the new version
          *      |                           |          |                   |                 |
          */
         this.regex = new RegExp(
         // eslint-disable-next-line no-useless-escape
-        /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/);
+        /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?(?:from (\S*) )?to (\S*)/);
     }
     getEntries(event) {
         const pullRequestNumber = event.pull_request.number;
@@ -483,31 +484,44 @@ class RenovateExtractor {
         if (!body) {
             return entries;
         }
-        // Renovate uses a table format in its PR description
-        // Example:
+        // Renovate uses different table formats in its PR description
+        // Examples:
         // | Package | Changes |
         // | --- | --- | --- |
         // | [package-name](link.com) | [1.0.0 -> 2.0.0](link.com) |
+        //
+        // | Package | Type | Update | Change |
+        // | --- | --- | --- | --- |
+        // | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://github.com/renovatebot/renovate)) | container | minor | `41.100.0` -> `41.109.0` |
         const lines = body.split('\n');
         let inDependencyTable = false;
+        let packageColumn = -1;
+        let changeColumn = -1;
         for (const line of lines) {
-            if (line.startsWith('| Package | Changes |')) {
-                inDependencyTable = true;
+            if (line.includes('| Package |')) {
+                const columns = line
+                    .trim()
+                    .split('|')
+                    .map(s => s.trim());
+                packageColumn = columns.indexOf('Package');
+                changeColumn = columns.findIndex(v => v === 'Change' || v === 'Changes');
+                inDependencyTable = packageColumn !== -1 && changeColumn !== -1;
                 continue;
             }
             if (inDependencyTable && line.startsWith('|')) {
-                const [_, pkg, changes, __] = line.split('|').map(s => s.trim());
+                const columns = line.split('|').map(s => s.trim());
+                const pkg = columns[packageColumn];
+                const changes = columns[changeColumn];
                 if (pkg && changes) {
-                    const pkgName = this.linkRegex.exec(pkg)?.[1];
-                    const linkText = this.linkRegex.exec(changes)?.[1];
-                    const [oldVersion, newVersion] = (linkText?.split('->') ?? []).map(v => v.trim());
-                    if (pkgName && oldVersion && newVersion) {
+                    const pkgName = this.extractPkgName(pkg);
+                    const versions = this.extractVersion(changes);
+                    if (pkgName && versions) {
                         entries.push({
                             pullRequestNumber: event.pull_request?.number || 0,
                             repository: undefined,
                             package: pkgName,
-                            oldVersion,
-                            newVersion
+                            oldVersion: versions.oldVersion,
+                            newVersion: versions.newVersion
                         });
                     }
                 }
@@ -517,6 +531,20 @@ class RenovateExtractor {
             }
         }
         return entries;
+    }
+    extractPkgName(columnValue) {
+        return this.linkRegex.exec(columnValue)?.[1];
+    }
+    extractVersion(columnValue) {
+        // the version change can be either in plaintext or as a markdown link
+        // try to extract the value if it looks like a markdown link, else assume plaintext
+        const versions = this.linkRegex.exec(columnValue)?.[1] ?? columnValue;
+        const [oldVersion, newVersion] = versions
+            // the plaintext variant formats each version as `1.0.0` in backticks
+            .replaceAll('`', '')
+            .split('->')
+            .map(v => v.trim());
+        return oldVersion && newVersion ? { oldVersion, newVersion } : undefined;
     }
 }
 exports.RenovateExtractor = RenovateExtractor;

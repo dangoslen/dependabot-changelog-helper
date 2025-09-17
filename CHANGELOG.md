@@ -4,9 +4,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [4.2.0]
+
 ### Changed
 
-- `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it.
+- `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it. ([#404](https://github.com/dangoslen/dependabot-changelog-helper/pull/404))
 
 ### Fixed
 
