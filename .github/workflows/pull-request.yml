@@ -127,6 +127,8 @@ jobs:
         with:
           node-version: 20
 
+      - run: npm install
+
       - id: read_version
         run: |
           echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT

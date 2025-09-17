@@ -850,7 +850,7 @@ test('adds multi package updates properly when entry for an existing package mis
       pullRequestNumber: 123,
       repository: 'owner/repo',
       package: 'other-package',
-      newVersion: 'v2',
+      newVersion: 'v2'
     }
   ])
 

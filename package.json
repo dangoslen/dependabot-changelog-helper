@@ -1,6 +1,6 @@
 {
   "name": "dependabot-changelog-helper",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "private": false,
   "description": "A GitHub Action to auto-add dependabot changes to your changelog and increment version numbers",
   "main": "lib/dependabot-helper.js",
