@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Changed
+
+- `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it.
+
 ### Fixed
 
 - Improved dependency extraction for Renovate PRs ([#402](https://github.com/dangoslen/dependabot-changelog-helper/pull/402))

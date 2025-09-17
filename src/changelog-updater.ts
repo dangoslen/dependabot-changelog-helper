@@ -196,11 +196,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
   private buildEntryLineForDuplicateCheck(entry: VersionEntry): string {
     const lineStart = this.buildEntryLineStart(entry)
-    return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`
+    return `${lineStart}${
+      entry.oldVersion ? ` from ${entry.oldVersion}` : ''
+    } to ${entry.newVersion}`
   }
 
   private buildEntryLineStart(entry: VersionEntry): string {
-    return `- ${this.entryPrefix} \`${entry.package}\` from`
+    return `- ${this.entryPrefix} \`${entry.package}\``
   }
 
   private buildEntryLine(entry: VersionEntry): string {
@@ -210,7 +212,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   }
 
   private buildEntryLineStartRegex(entry: VersionEntry): RegExp {
-    return new RegExp(`- \\w+ \`${entry.package}\` from `)
+    return new RegExp(`- \\w+ \`${entry.package}\`(?: from )?`)
   }
 
   private addNewEntry(entry: VersionEntry): void {
