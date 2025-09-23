@@ -513,7 +513,7 @@ class RenovateExtractor {
                 const pkg = columns[packageColumn];
                 const changes = columns[changeColumn];
                 if (pkg && changes) {
-                    const pkgName = this.extractPkgName(pkg);
+                    const pkgName = this.tryExtractMarkdownLink(pkg);
                     const versions = this.extractVersion(changes);
                     if (pkgName && versions) {
                         entries.push({
@@ -532,13 +532,12 @@ class RenovateExtractor {
         }
         return entries;
     }
-    extractPkgName(columnValue) {
-        return this.linkRegex.exec(columnValue)?.[1];
+    // try to extract the value if it looks like a markdown link, else assume plaintext
+    tryExtractMarkdownLink(value) {
+        return this.linkRegex.exec(value)?.[1] ?? value;
     }
     extractVersion(columnValue) {
-        // the version change can be either in plaintext or as a markdown link
-        // try to extract the value if it looks like a markdown link, else assume plaintext
-        const versions = this.linkRegex.exec(columnValue)?.[1] ?? columnValue;
+        const versions = this.tryExtractMarkdownLink(columnValue);
         const [oldVersion, newVersion] = versions
             // the plaintext variant formats each version as `1.0.0` in backticks
             .replaceAll('`', '')
