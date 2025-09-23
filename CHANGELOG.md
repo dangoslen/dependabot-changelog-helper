@@ -4,6 +4,17 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [4.2.1]
+
+### Fixed
+
+- Extract package names that are not markdown links for Renovate PRs ([#406](https://github.com/dangoslen/dependabot-changelog-helper/pull/406))
+
+### Dependencies
+
+- Bump `dangoslen/dependabot-changelog-helper@releases/v4.1` from 4.1 to 4.2 ([#408](https://github.com/dangoslen/dependabot-changelog-helper/pull/408))
+- Bump `typescript` from 5.8.3 to 5.9.2 ([#411](https://github.com/dangoslen/dependabot-changelog-helper/pull/411))
+
 ## [4.2.0]
 
 ### Changed
