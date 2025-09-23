@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+
+- Bump `typescript` from 5.8.3 to 5.9.2 ([#411](https://github.com/dangoslen/dependabot-changelog-helper/pull/411))
+
 ### Fixed
 
 - Extract package names that are not markdown links for Renovate PRs ([#406](https://github.com/dangoslen/dependabot-changelog-helper/pull/406))
