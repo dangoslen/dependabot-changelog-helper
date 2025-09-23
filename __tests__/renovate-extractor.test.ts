@@ -225,4 +225,28 @@ describe('RenovateExtractor', () => {
       })
     )
   })
+
+  it('should extract plaintext package name', () => {
+    const payload = {
+      pull_request: {
+        body: `
+# Some PR description
+| Package | Update | Change |
+| --- | --- | --- |
+| foo/bar | patch | \`v0.7.3\` -> \`v0.7.4\` |
+        `,
+        number: 123
+      }
+    } as WebhookPayload
+
+    const entries = extractor.getEntries(payload)
+    expect(entries).toHaveLength(1)
+    expect(entries[0]).toEqual(
+      expect.objectContaining({
+        package: 'foo/bar',
+        oldVersion: 'v0.7.3',
+        newVersion: 'v0.7.4'
+      })
+    )
+  })
 })
