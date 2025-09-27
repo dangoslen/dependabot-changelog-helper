@@ -9,7 +9,7 @@
 
 Automatically update your changelog on Dependabot pull requests! No more manually updating a changelog for dependency upgrades. Just fast and easy dependency upgrades.
 
-### We all love Dependabot...
+### We all love dependency management tools...
 
 But it can feel overwhelming and require additional work to update things like versions and changelogs.
 
@@ -19,6 +19,7 @@ Built around the [KeepAChangelog](https://keepachangelog.com/) format, this acti
 - Supports multi-package updates in a single pull request
 - Updates the entry for a dependency if the dependency had been upgraded previously in the same version
 - Includes link(s) to associated pull requests that upgraded the dependency
+- Supports Dependabot and Renovate dependency updates
 
 ### Usage
 
@@ -53,7 +54,8 @@ jobs:
         with:
           activationLabels: dependencies
           changelogPath: './CHANGELOG.md'
-
+          dependencyTool: dependabot
+          
       # This step is required for committing the changes to your branch. 
       # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs 
       - uses: stefanzweifel/git-auto-commit-action@v4
@@ -83,41 +85,30 @@ Below are the properties you can use for the Dependabot Changelog Helper.
 
 If the `version` is not found then an unreleased version - matching the pattern `/^## [(unreleased|Unreleased|UNRELEASED)]` - is used.
 
-Many changelogs default to keeping an released version at the top of the changelog.
+Many changelogs default to keeping an unreleased version at the top of the changelog.
 This is a way to incrementally build a version over time and only release a version once the right changes have been accounted for.
 
-> :warning: **Warning**
-> For the action to work you must have either set a `version` _or_ have an unreleased version in your changelog.
+Provide a version with forward slashes to use a regex to match the version section. For example: `/^## \\[\d+\.\d+\.\d+\\] - Unreleased/` will match `## [1.2.3] - Unreleased` but not `## [1.3.0] - 2025-03-25`.
 
 #### `changeLogPath`
 
 | Default          | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
 | `./CHANGELOG.md` | The path to the changelog file to add Dependabot entries to. |
-
-#### `activationLabel`
-
-| Default  | Description                                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------ |
-| `dependabot`     | DEPRECATED! Please use the `activationLabels` input below. The label to indicate that the action should run. |
-
-If both `activationLabel` and `activationLabels` inputs are provided, _all_ labels between the two inputs are required for the action to run.
  
 #### `activationLabels`
 
 | Default      | Description                                       |
 | ------------ | ------------------------------------------------- |
-| `''` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
-
-_Note: by default this is currently set to empty. In a future release (v4.0.0), it will have the default of `dependabot` and replace the `activationLabel` input._
+| `dependabot` | The labels to indicate that the action should run. All of the labels must be present in order for the action to run. |
 
 #### `entryPrefix`
 
 | Default      | Description                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------------- |
-| `Bump`       | The starting word of a dependency bump entry line. Currently only supports single word prefixes. |
+| `Bump`       | The starting word of a dependency bump entry line. Currently, it only supports single-word prefixes. |
 
-If a previous entry was written with a different entry (`Bump` vs `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
+If a previous entry was written with a different entry (`Bump` vs. `Bumps`), the entry will still get updated for updates within the same version as long as the prefix is a single word. 
 
 #### `sectionHeader`
 
@@ -131,4 +122,18 @@ If `sectionHeader` is not provided, the action will look for a section header ma
 
 | Default | Description                                               |
 | --------| --------------------------------------------------------- |
-| `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |
+| `none`  | Whether to apply any sorting to added entries. Current values include `none` (no sorting, append-only) and `alpha` (sorts entries based on the alphabetical ordering of the package name) |
+
+#### `dependencyTool`
+
+| Default      | Description                                                        |
+| ------------| ------------------------------------------------------------------ |
+| `dependabot` | The dependency management tool being used. Supported values are `dependabot` and `renovate`. This determines how dependency information is extracted from pull requests. |
+
+## Alternatives
+
+This action aims to be intentionally minimal in its solution, only updating the changelog with dependencies and with as little change to the changelog as possible. 
+
+Other actions have a bit broader scope and/or solve the problem of keeping a changelog up-to-date in a slightly different way. If this action doesn't meet your needs, consider looking at one of the alternatives. If none match your needs, consider [opening an issue for discussion](https://github.com/dangoslen/dependabot-changelog-helper/issues/new)!
+
+* https://github.com/marketplace/actions/dependabot-changelog-writer

@@ -4,9 +4,78 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## [4.2.1]
+
+### Fixed
+
+- Extract package names that are not markdown links for Renovate PRs ([#406](https://github.com/dangoslen/dependabot-changelog-helper/pull/406))
+
+### Dependencies
+
+- Bump `dangoslen/dependabot-changelog-helper@releases/v4.1` from 4.1 to 4.2 ([#408](https://github.com/dangoslen/dependabot-changelog-helper/pull/408))
+- Bump `typescript` from 5.8.3 to 5.9.2 ([#411](https://github.com/dangoslen/dependabot-changelog-helper/pull/411))
+
+## [4.2.0]
+
+### Changed
+
+- `from <oldVersion>` is now optional in the PR body. If not found, the entry will be added without it. ([#404](https://github.com/dangoslen/dependabot-changelog-helper/pull/404))
+
+### Fixed
+
+- Improved dependency extraction for Renovate PRs ([#402](https://github.com/dangoslen/dependabot-changelog-helper/pull/402))
+
+### Dependencies
+- Bump `@actions/github` from 6.0.0 to 6.0.1 ([#370](https://github.com/dangoslen/dependabot-changelog-helper/pull/370))
+- Bump `@types/node` from 22.14.0 to 24.4.0 ([#366](https://github.com/dangoslen/dependabot-changelog-helper/pull/366), [#403](https://github.com/dangoslen/dependabot-changelog-helper/pull/403))
+- Bump `actions/checkout` from 4 to 5 ([#395](https://github.com/dangoslen/dependabot-changelog-helper/pull/395))
+- Bump `actions/setup-node` from 4 to 5 ([#398](https://github.com/dangoslen/dependabot-changelog-helper/pull/398))
+- Bump `dangoslen/dependabot-changelog-helper@releases/v4.0` from 4.0 to 4.1 ([#361](https://github.com/dangoslen/dependabot-changelog-helper/pull/361))
+- Bump `ncipollo/release-action` from 1.16.0 to 1.20.0 ([#399](https://github.com/dangoslen/dependabot-changelog-helper/pull/399))
+- Bump `stefanzweifel/git-auto-commit-action` from 5 to 6 ([#385](https://github.com/dangoslen/dependabot-changelog-helper/pull/385))
+- Bump `ts-jest` from 29.2.6 to 29.3.2 ([#362](https://github.com/dangoslen/dependabot-changelog-helper/pull/362))
+
+## [4.1.1]
+
+Correctly packages the [4.1.0](https://github.com/dangoslen/dependabot-changelog-helper/releases/tag/v4.1.0) release for distribution. If you use the `4.1` tag, this will be automatically updated for actions using `dependabot-changelog-helper@4.1`
+
+## [4.1.0]
+
+This release was not properly package for distribution. If using the `4.1.0` version directly, upgrade to use the `4.1` tag or the `4.1.1` version directly to get the updates.
+
+### Changed
+
+- Now supports regex for the `version` input. See the [README](./README.md#version) for more details.
+
+### Dependencies
+
+- Bump `@types/node` from 22.13.5 to 22.14.0 ([#358](https://github.com/dangoslen/dependabot-changelog-helper/pull/358))
+- Bump `typescript` from 5.7.3 to 5.8.3 ([#359](https://github.com/dangoslen/dependabot-changelog-helper/pull/359))
+
+## [4.0.0]
+
+### Added
+
+- Now supports [Mend Renovate](https://www.mend.io/mend-renovate/)! Set the `dependencyTool` to `renovate` to use within your repositories. _:warning: in alpha!_
+
 ### Changed
 
 - Refactors the internal updater to more easily account for multiple entries and formatting ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/311))
+- ci: replace comment_tag with comment-tag ([#311](https://github.com/dangoslen/dependabot-changelog-helper/issues/318))
+- Adds proper newlines around version and section headers ([#310](https://github.com/dangoslen/dependabot-changelog-helper/issues/310)). This will only add newlines if **adding** a new version and section. When adding a new entry, the newlines will not be added.
+- The `activationLabels` input is now based on the value of the `dependencyTool` by default. i.e., if you select `renovate` as the `dependencyTool` a `renovate` label will be searched for activation unless you supply a different value.
+- Properly add a new version above the last one, if not in the changelog. Useful, if you have other content in your changelog header.
+
+### Removed
+
+- Removes the deprecated `activationLabel`. All workflows should specify desired labels using the `activationLabels` input instead. The default label of `dependabot` is still kept.
+
+### Dependencies
+
+- Bump `@types/node` from 20.12.12 to 22.13.5 ([#320](https://github.com/dangoslen/dependabot-changelog-helper/pull/320), [#331](https://github.com/dangoslen/dependabot-changelog-helper/pull/331), [#338](https://github.com/dangoslen/dependabot-changelog-helper/pull/338))
+- Bump `ncipollo/release-action` from 1.14.0 to 1.15.0 ([#323](https://github.com/dangoslen/dependabot-changelog-helper/pull/323))
+- Bump `ts-jest` from 29.2.5 to 29.2.6 ([#340](https://github.com/dangoslen/dependabot-changelog-helper/pull/340))
+- Bump `typescript` from 5.7.2 to 5.7.3 ([#327](https://github.com/dangoslen/dependabot-changelog-helper/pull/327))
 
 ## [3.11.1]
 

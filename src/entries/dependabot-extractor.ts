@@ -11,12 +11,13 @@ export class DependabotExtractor implements EntryExtractor {
      *      --- Matches [Bump, bump, Bumps, bumps, Update, update, Updates or update], without capturing it
      *      |                           --- Matches any non-whitespace character; matching as a few as possible
      *      |                           |          --- Matches any non-whitespace character as the package name
-     *      |                           |          |                   --- Matches any non-whitespace character as the version numbers
+     *      |                           |          |                   --- Matches any non-whitespace character as the old version (optional, "from" might not exist)
+     *      |                           |          |                   |                 --- Matches any non-whitespace character as the new version
      *      |                           |          |                   |                 |
      */
     this.regex = new RegExp(
       // eslint-disable-next-line no-useless-escape
-      /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?from (\S*) to (\S*)/
+      /^(?!<li\>).*(?:(?:U|u)pdate|(?:B|b)ump)s? (\S+?) (?:requirement )?(?:from (\S*) )?to (\S*)/
     )
   }
 

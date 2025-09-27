@@ -1,6 +1,7 @@
 import {PathLike} from 'fs'
 import {VersionEntry} from '../src/entries/entry-extractor'
 import {DefaultChangelogUpdater} from '../src/changelog-updater'
+import {newUpdater} from '../src/changelog-updater'
 
 const {Readable} = require('stream')
 const fs = require('fs')
@@ -103,13 +104,48 @@ test('adds an entry to the changelog when section exists under default unrelease
 `)
 })
 
+const CHANGELOG_MISSING_VERSION = `# Changelog
+`
+
+test('adds an entry to the changelog adding the new version and section', async () => {
+  mockReadStream(CHANGELOG_MISSING_VERSION)
+
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [UNRELEASED]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
+const CHANGELOG_MISSING_VERSION_ONLY_HEADER = `# Changelog`
+
+test('adds an entry to the changelog adding the new version and section when the only line is the header', async () => {
+  mockReadStream(CHANGELOG_MISSING_VERSION_ONLY_HEADER)
+
+  await runUpdate('UNRELEASED', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [UNRELEASED]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
 const CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED = `# Changelog
 
 ## [UNRELEASED]
 ### Dependencies
 `
 
-test('adds an entry to the changelog when section already exists but no entries doe', async () => {
+test('adds an entry to the changelog when section already exists but no entries do', async () => {
   mockReadStream(CHANGELOG_WITH_PROPER_SECTIONS_UNRELEASED)
 
   await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
@@ -137,7 +173,9 @@ test('adds section and an entry to the changelog when version exists but section
   expectWrittenChangelogToBe(`# Changelog
 
 ## [UNRELEASED]
+
 ### Changed
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
@@ -183,6 +221,40 @@ test('errors when there is no version section', async () => {
     expect(err).not.toBeNull()
     expect(fs.writeFileSync).toBeCalledTimes(0)
   }
+})
+
+const CHANGELOG_WITH_PREVIOUS_RELEASED_VERSION_AND_HEADER = `# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v0.9.0]
+### Dependencies
+- Bump \`package\` from alpha to v1`
+
+test('adds an entry to the changelog above the last released version', async () => {
+  mockReadStream(CHANGELOG_WITH_PREVIOUS_RELEASED_VERSION_AND_HEADER)
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies')
+
+  expectWrittenChangelogToBe(`# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v1.0.0]
+
+### Dependencies
+
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+
+## [v0.9.0]
+### Dependencies
+- Bump \`package\` from alpha to v1`)
 })
 
 const CHANGELOG_WITH_DUPLICATE_ENTRY = `# Changelog
@@ -274,7 +346,9 @@ test('updates version with new section and entry', async () => {
 ## [v1.0.0]
 ### Added
 ### Removed
+
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))`
   )
 })
@@ -442,6 +516,7 @@ test('adds section when sections separated by blank lines', async () => {
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
@@ -487,6 +562,7 @@ test('adds section when sections separated by blank lines contain nested entries
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
 ## [v0.9.0]
@@ -627,7 +703,9 @@ test('add section and accounts for multi-line entry', async () => {
   the goes
   across
   several lines
+
 ### Dependencies
+
 - Update \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 `)
 })
@@ -708,6 +786,7 @@ test('adds section when sections separated by blank lines and adds multi package
 - Removed a feature
 
 ### Dependencies
+
 - Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 - Bump \`other-package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
 
@@ -717,6 +796,200 @@ test('adds section when sections separated by blank lines and adds multi package
 - Bump \`package\` from alpha to v1
 `
   )
+})
+
+const CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+`
+
+test('adds multi package updates properly when entry for a package misses the old version', async () => {
+  mockReadStream(CHANGELOG_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION)
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: undefined
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+- Bump \`other-package\` to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
+const CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`other-package\` to v1
+
+## [v0.0.9]
+### Dependencies
+- Bump \`package\` to v1
+`
+
+test('adds multi package updates properly when entry for an existing package misses the old version', async () => {
+  mockReadStream(
+    CHANGELOG_EXISTING_PACKAGE_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
+  )
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2'
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`other-package\` to v2 ([#123](https://github.com/owner/repo/pull/123))
+- Bump \`package\` from v1 to v2 ([#123](https://github.com/owner/repo/pull/123))
+
+## [v0.0.9]
+### Dependencies
+- Bump \`package\` to v1
+`)
+})
+
+const CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION = `# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v0 to v1
+- Bump \`other-package\` from v0 to v1
+`
+
+test('adds multi package updates properly when entry for a package with old version misses the old version', async () => {
+  mockReadStream(
+    CHANGELOG_EXISTING_PACKAGE_WITH_OLD_VERSION_ADDS_MULTIPACKAGE_UPDATE_WITHOUT_OLD_VERSION
+  )
+
+  await runUpdate('v1.0.0', './CHANGELOG.md', 'Bump', 'Dependencies', 'none', [
+    {
+      pullRequestNumber: 123,
+      repository: 'owner/repo',
+      package: 'other-package',
+      newVersion: 'v2',
+      oldVersion: undefined
+    }
+  ])
+
+  expectWrittenChangelogToBe(`# Changelog
+
+## [v1.0.0]
+### Dependencies
+- Bump \`different-package\` from v1 to v2
+- Bump \`package\` from v0 to v2 ([#123](https://github.com/owner/repo/pull/123))
+- Bump \`other-package\` from v0 to v2 ([#123](https://github.com/owner/repo/pull/123))
+`)
+})
+
+describe('changelog-updater', () => {
+  describe('version regex patterns', () => {
+    const CHANGELOG_WITH_NOT_YET_RELEASED = `# Changelog
+
+## [v2.0.0] - NOT YET RELEASED
+### Dependencies
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v1.5.0]
+`
+
+    it('handles string version patterns wrapped in slashes', async () => {
+      mockReadStream(CHANGELOG_WITH_NOT_YET_RELEASED)
+
+      const updater = newUpdater(
+        '/- NOT YET RELEASED/',
+        './CHANGELOG.md',
+        'bump',
+        'Dependencies',
+        'alpha'
+      )
+
+      await updater.readChangelog()
+      await updater.addEntries([
+        {
+          package: 'new-package',
+          oldVersion: '1.0.0',
+          newVersion: '1.1.0',
+          pullRequestNumber: 456,
+          repository: undefined
+        }
+      ])
+      await updater.writeChangelog()
+
+      expectWrittenChangelogToBe(`# Changelog
+
+## [v2.0.0] - NOT YET RELEASED
+### Dependencies
+- bump \`new-package\` from 1.0.0 to 1.1.0 (#456)
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v1.5.0]
+`)
+    })
+
+    const CHANGELOG_WITH_RC_VERSION = `# Changelog
+
+## [v2.0.1-rc.1]
+### Dependencies
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v2.0.0]
+`
+
+    it('handles complex regex patterns in slashes', async () => {
+      mockReadStream(CHANGELOG_WITH_RC_VERSION)
+
+      const updater = newUpdater(
+        '/v2\\.0\\.\\d+(-rc\\.\\d+)?/',
+        './CHANGELOG.md',
+        'bump',
+        'Dependencies',
+        'alpha'
+      )
+
+      await updater.readChangelog()
+      await updater.addEntries([
+        {
+          package: 'new-package',
+          oldVersion: '1.0.0',
+          newVersion: '1.1.0',
+          pullRequestNumber: 456,
+          repository: undefined
+        }
+      ])
+      await updater.writeChangelog()
+
+      expectWrittenChangelogToBe(`# Changelog
+
+## [v2.0.1-rc.1]
+### Dependencies
+- bump \`new-package\` from 1.0.0 to 1.1.0 (#456)
+- bump \`package-a\` from 1.0.0 to 2.0.0 (#123)
+
+## [v2.0.0]
+`)
+    })
+  })
 })
 
 async function runUpdate(

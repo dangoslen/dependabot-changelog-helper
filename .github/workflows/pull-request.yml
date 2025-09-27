@@ -25,12 +25,12 @@ jobs:
     needs: [ verify ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5
         with: 
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
 
@@ -40,7 +40,7 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5
         with: 
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -51,13 +51,13 @@ jobs:
           echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
           echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
             
-      - uses: dangoslen/dependabot-changelog-helper@releases/v3.11
+      - uses: dangoslen/dependabot-changelog-helper@releases/v4.2
         with:
           activationLabels: 'dependabot,automerge'
           sort: 'alpha'
   
       - id: auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "Updated Changelog"
 
@@ -75,7 +75,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          comment_tag: changelog-failure
+          comment-tag: changelog-failure
           mode: upsert
           message: |
             Hey @${{ github.event.pull_request.user.login }}, the Changelog Enforcer failed. Can you take a look at the error below and correct it? Thanks!
@@ -104,7 +104,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          comment_tag: release-notes
+          comment-tag: release-notes
           mode: upsert
           message: |
             <details>
@@ -113,7 +113,43 @@ jobs:
               ${{ steps.changelog_reader.outputs.changes }}
 
             </details>
+  package:
+    needs: [ verify ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: 
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.ACTION_TOKEN }}
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - id: read_version
+        run: |
+          echo "version=$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
+          echo "tag=v$(jq -r ".version" package.json)" >> $GITHUB_OUTPUT
+    
+      - id: check_release
+        name: Check for Existing Release
+        run: |
+          TAG=$(git ls-remote --tags origin | grep ${{ steps.read_version.outputs.tag }} | cat )
+          MISSING=$([[ -z "$TAG" ]] && echo 'true' || echo 'false')
+          echo "missing=$MISSING" >> $GITHUB_OUTPUT
+
+      - if: ${{ steps.check_release.outputs.missing == 'true' }}
+        name: Package for release
+        run: npm run package 
+
+      - id: auto-commit-package
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "Package Action"
+  
   automerge:
     needs: [ unit-tests, changelog ]
     runs-on: ubuntu-latest

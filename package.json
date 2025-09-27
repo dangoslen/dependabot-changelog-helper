@@ -1,6 +1,6 @@
 {
   "name": "dependabot-changelog-helper",
-  "version": "3.11.1",
+  "version": "4.2.1",
   "private": false,
   "description": "A GitHub Action to auto-add dependabot changes to your changelog and increment version numbers",
   "main": "lib/dependabot-helper.js",
@@ -29,13 +29,13 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.0",
+    "@actions/github": "^6.0.1",
     "make-coverage-badge": "^1.2.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.12.12",
-    "@vercel/ncc": "^0.38.1",
+    "@types/node": "^24.4.0",
+    "@vercel/ncc": "^0.38.3",
     "eslint": "^8.57.0",
     "eslint-plugin-github": "^4.8.0",
     "eslint-plugin-jest": "^27.9.0",
@@ -43,7 +43,7 @@
     "jest-circus": "^29.4.3",
     "js-yaml": "^4.0.0",
     "prettier": "2.8.8",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2"
+    "ts-jest": "^29.4.2",
+    "typescript": "^5.9.2"
   }
 }

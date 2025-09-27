@@ -33,13 +33,26 @@ export function newUpdater(
   sectionHeader: string,
   sort: string
 ): ChangelogUpdater {
+  // Convert version to regex if it's wrapped in forward slashes
+  const versionPattern = createVersionRegex(version)
+
   return new DefaultChangelogUpdater(
-    version,
+    versionPattern,
     changelogPath,
     entryPrefix,
     sectionHeader,
     sort
   )
+}
+
+function createVersionRegex(version: string | RegExp): RegExp {
+  if (typeof version === 'string') {
+    return version.match(/^\/(.+)\/$/)
+      ? new RegExp(version.slice(1, -1))
+      : new RegExp(`^## \\[${version}\\]`)
+  }
+
+  return version
 }
 
 export class DefaultChangelogUpdater implements ChangelogUpdater {
@@ -49,9 +62,10 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   private sectionFound: boolean
   private sectionStartLineNumber: number
   private changed: boolean
+  private version: RegExp
 
   constructor(
-    private readonly version: string,
+    version: RegExp | string,
     private readonly changelogPath: fs.PathLike,
     private readonly entryPrefix: string,
     private readonly sectionHeader: string,
@@ -63,13 +77,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.versionFound = false
     this.sectionStartLineNumber = 0
     this.entries = []
+    this.version = createVersionRegex(version)
   }
 
   async readChangelog(): Promise<void> {
     this.contents = fs.readFileSync(this.changelogPath, 'utf-8').split(EOL)
 
-    const versionRegex = new RegExp(`^## \\[${this.version}\\]`)
-    const regexs: RegExp[] = [versionRegex, UNRELEASED_REGEX]
+    const regexs: RegExp[] = [this.version, UNRELEASED_REGEX]
 
     for (const regex of regexs) {
       const result = await this.extractEntries(regex)
@@ -82,6 +96,11 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
         this.entries = result.dependencyEntries
         break
       }
+    }
+
+    if (!this.versionFound) {
+      this.sectionStartLineNumber =
+        this.getLastReleasedVersionSectionStartLineNumber()
     }
   }
 
@@ -102,31 +121,55 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
 
     for (let idx = 0; idx < this.entries.length; idx++) {
       const entry = this.entries[idx]
+      let line = entry.line
       // If the section was not found, we are at the beginning of a new version
       // So add an extra EOL after the entry line since it will be the only
       if (idx === 0 && !this.sectionFound) {
-        entry.line = `### ${this.sectionHeader}${EOL}${entry.line}`
+        line = `### ${this.sectionHeader}${EOL}${EOL}${line}`
         if (!this.versionFound) {
-          entry.line = `## [${this.version}]${EOL}${entry.line}`
+          const versionText = this.version.source
+            .replace(/^\^## \\\[/, '')
+            .replace(/\\\]$/, '')
+          line = `## [${versionText}]${EOL}${EOL}${line}`
         }
       }
 
+      const offset = this.sectionStartLineNumber + idx
       // If we are adding a section and we are adding the section before another version,
       // add an extra EOL after the entry
-      const offset = this.sectionStartLineNumber + idx
       if (
         offset < this.contents.length - 1 &&
         !this.sectionFound &&
         this.contents[offset + 1].startsWith('## ')
       ) {
-        entry.line = `${entry.line}${EOL}`
+        line = `${line}${EOL}`
       }
 
-      this.contents[offset] = entry.line
+      // If we are adding a section or version and the previous line is not empty,
+      // add an extra EOL before the entry
+      if (
+        offset > 0 &&
+        idx === 0 &&
+        this.contents[offset - 1] !== '' &&
+        (!this.versionFound || !this.sectionFound)
+      ) {
+        line = `${EOL}${line}`
+      }
+
+      this.contents[offset] = line
     }
   }
 
   async addEntries(entries: VersionEntry[]): Promise<void> {
+    // If we are adding the section at the beginning of the changelog,
+    // add an empty line before the section
+    if (this.sectionStartLineNumber === 0) {
+      this.sectionStartLineNumber = 1
+      if (this.contents.length <= 1) {
+        this.contents.push('')
+      }
+    }
+
     for (const entry of entries) {
       this.searchAndUpdateVersion(entry)
     }
@@ -153,11 +196,13 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   // We omit PR context - (#pr) - because we can't know which PR merged the previous bump
   private buildEntryLineForDuplicateCheck(entry: VersionEntry): string {
     const lineStart = this.buildEntryLineStart(entry)
-    return `${lineStart} ${entry.oldVersion} to ${entry.newVersion}`
+    return `${lineStart}${
+      entry.oldVersion ? ` from ${entry.oldVersion}` : ''
+    } to ${entry.newVersion}`
   }
 
   private buildEntryLineStart(entry: VersionEntry): string {
-    return `- ${this.entryPrefix} \`${entry.package}\` from`
+    return `- ${this.entryPrefix} \`${entry.package}\``
   }
 
   private buildEntryLine(entry: VersionEntry): string {
@@ -167,7 +212,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
   }
 
   private buildEntryLineStartRegex(entry: VersionEntry): RegExp {
-    return new RegExp(`- \\w+ \`${entry.package}\` from `)
+    return new RegExp(`- \\w+ \`${entry.package}\`(?: from )?`)
   }
 
   private addNewEntry(entry: VersionEntry): void {
@@ -235,7 +280,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     this.changed = true
   }
 
-  private async extractEntries(versionRegex: RegExp): Promise<ParsedResult> {
+  private async extractEntries(regex: RegExp): Promise<ParsedResult> {
     const sectionRegex = new RegExp(
       `^### (${this.sectionHeader}|${this.sectionHeader.toUpperCase()})`
     )
@@ -284,7 +329,7 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
           // Push the entry into our list of existing entries
           dependencyEntries.push({line})
         }
-      } else if (versionRegex.test(line)) {
+      } else if (regex.test(line)) {
         // If we have not found the version, see if this is the version
         versionFound = true
       }
@@ -311,15 +356,17 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     }
   }
 
-  private lastLineCheck(
-    sectionStartLineNumber: number,
-    contentLength: number,
-    foundLastEntry: boolean,
-    versionFound: boolean
-  ): number {
-    if (!foundLastEntry && versionFound) {
-      return contentLength
+  private getLastReleasedVersionSectionStartLineNumber(): number {
+    let lineNumber = 0
+    const releasedVersionRegex = new RegExp(`^## \\[v?\\d+`)
+
+    for (const line of this.contents) {
+      if (releasedVersionRegex.test(line)) {
+        return lineNumber
+      }
+      lineNumber++
     }
-    return sectionStartLineNumber
+
+    return 0
   }
 }
