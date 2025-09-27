@@ -38,6 +38,14 @@ inputs:
       "How to sort dependency entries in the changelog. Possible values are: 'alpha', and 'none'"
     required: true
     default: 'none'
+  pullRequestLinkFormat:
+    description: |
+      "The format to use for the pull request link. 
+      - Use `{{number}}` as a placeholder for the PR number 
+      - Use `{{repository}}` for the repo name. 
+      For example: `https://github.com/owner/repo/pull/123` would be `https://github.com/{{repository}}/pull/{{number}} (the default value)"`
+    required: true
+    default: 'https://github.com/{{repository}}/pull/{{number}}'
 runs:
   using: 'node20'
   main: 'dist/index.js'
