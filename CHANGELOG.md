@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+## Added
+
+- Adds a new option of `pullRequestLinkFormat` that allows for configuring a custom format for the Markdown links in entries. See the [option details in the README](./README.md#pullrequestlinkformat) (#)[].
+
 ## [4.2.1]
 
 ### Fixed

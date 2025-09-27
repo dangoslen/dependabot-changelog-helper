@@ -130,6 +130,12 @@ If `sectionHeader` is not provided, the action will look for a section header ma
 | ------------| ------------------------------------------------------------------ |
 | `dependabot` | The dependency management tool being used. Supported values are `dependabot` and `renovate`. This determines how dependency information is extracted from pull requests. |
 
+### `pullRequestLinkFormat`
+
+| Default      | Description                                                        |
+| ------------| ------------------------------------------------------------------ |
+| `https://github.com/{{repository}}/pull/{{number}}` | A format for the created link to the pull request that created the update to the CHANGELOG. Uses the `{{repository}}` literal and the `{{number}}` literal for substitution of the hosting repository and the number of the pull request. This is likely only needed for users of this Action on other platforms other than GitHub |
+
 ## Alternatives
 
 This action aims to be intentionally minimal in its solution, only updating the changelog with dependencies and with as little change to the changelog as possible. 
