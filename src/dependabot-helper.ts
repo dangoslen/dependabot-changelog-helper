@@ -9,12 +9,13 @@ import {parseLabels} from './label-extractor'
 export async function run(): Promise<void> {
   try {
     const version: string = core.getInput('version')
+    const dependencyTool: string = core.getInput('dependencyTool')
     const labelsString: string = core.getInput('activationLabels')
     const changelogPath: PathLike = core.getInput('changelogPath')
     const entryPrefix: string = core.getInput('entryPrefix')
-    const dependencyTool: string = core.getInput('dependencyTool')
     const sectionHeader: string = core.getInput('sectionHeader')
     const sort: string = core.getInput('sort')
+    const pullRequestLinkFormat: string = core.getInput('pullRequestLinkFormat')
     const payload = github.context.payload
 
     // Parse the labels and push the dependency too as the label
@@ -29,7 +30,8 @@ export async function run(): Promise<void> {
         changelogPath,
         entryPrefix,
         sectionHeader,
-        sort
+        sort,
+        pullRequestLinkFormat
       )
       const extractor = getExtractor(payload, {dependencyTool})
       const entries = extractor.getEntries(payload)

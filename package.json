@@ -30,6 +30,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
+    "handlebars": "^4.7.8",
     "make-coverage-badge": "^1.2.0"
   },
   "devDependencies": {

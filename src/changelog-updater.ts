@@ -1,6 +1,8 @@
 import fs from 'fs'
 import {EOL} from 'os'
+import Handlebars from 'handlebars'
 import {VersionEntry} from './entries/entry-extractor'
+
 
 interface Entry {
   line: string
@@ -31,7 +33,8 @@ export function newUpdater(
   changelogPath: fs.PathLike,
   entryPrefix: string,
   sectionHeader: string,
-  sort: string
+  sort: string,
+  pullRequestLinkFormat: string
 ): ChangelogUpdater {
   // Convert version to regex if it's wrapped in forward slashes
   const versionPattern = createVersionRegex(version)
@@ -41,7 +44,8 @@ export function newUpdater(
     changelogPath,
     entryPrefix,
     sectionHeader,
-    sort
+    sort,
+    pullRequestLinkFormat
   )
 }
 
@@ -69,7 +73,8 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
     private readonly changelogPath: fs.PathLike,
     private readonly entryPrefix: string,
     private readonly sectionHeader: string,
-    private readonly sort: string
+    private readonly sort: string,
+    private readonly pullRequestLinkFormat: string
   ) {
     this.contents = []
     this.changed = false
@@ -259,9 +264,12 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
 
   private buildPullRequestLink(entry: VersionEntry): string {
     const number = entry.pullRequestNumber
-    return entry.repository
-      ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
-      : `#${number}`
+    const template = Handlebars.compile(this.pullRequestLinkFormat)
+    if (!entry.repository) {
+      return `#${number}`
+    }
+    const link = template({repository: entry.repository, number})
+    return `[#${number}](${link})`
   }
 
   private writeLine(lineNumber: number, line: string): void {

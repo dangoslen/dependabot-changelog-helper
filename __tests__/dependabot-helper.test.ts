@@ -34,10 +34,13 @@ describe('run', () => {
 
     mockGetInput
       .mockReturnValueOnce('1.0.0') // version
+      .mockReturnValueOnce('dependabot') // dependencyTool
       .mockReturnValueOnce('dependabot-helper') // activationLabels
       .mockReturnValueOnce('/path/to/changelog.md') // changelogPath
       .mockReturnValueOnce('Bump') // entryPrefix
       .mockReturnValueOnce('Dependencies') // sectionHeader
+      .mockReturnValueOnce('none') // sort
+      .mockReturnValueOnce('https://test.com/{{repository}}/pull/{{number}}') // pullRequestLinkFormat
 
     jest.spyOn(factory, 'getExtractor').mockReturnValue(mockExtractor)
     jest.spyOn(updater, 'newUpdater').mockReturnValue(mockUpdater)
@@ -74,10 +77,13 @@ describe('run', () => {
 
     mockGetInput
       .mockReturnValueOnce('1.0.0') // version
+      .mockReturnValueOnce('dependabot') // dependencyTool
       .mockReturnValueOnce('dependabot-helper,missing') // activationLabels
       .mockReturnValueOnce('/path/to/changelog.md') // changelogPath
       .mockReturnValueOnce('Bump') // entryPrefix
       .mockReturnValueOnce('Dependencies') // sectionHeader
+      .mockReturnValueOnce('none') // sort
+      .mockReturnValueOnce('https://test.com/{{repository}}/pull/{{number}}') // pullRequestLinkFormat
 
     jest.spyOn(factory, 'getExtractor').mockReturnValue(mockExtractor)
     jest.spyOn(updater, 'newUpdater').mockReturnValue(mockUpdater)
