@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Changed
+
+- Now uses the `pull_request.html_url` to generate the PR link vs. the `repository` and a static domain. This is useful for repositories running on Gitea (or possibly other providers that support GitHub Actions) ([#419](https://github.com/dangoslen/dependabot-changelog-helper/pull/419)).
+
 ## [4.2.1]
 
 ### Fixed
