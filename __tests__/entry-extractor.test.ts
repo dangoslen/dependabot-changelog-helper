@@ -1,6 +1,8 @@
 import {DependabotExtractor} from '../src/entries/dependabot-extractor'
 import {EntryExtractor} from '../src/entries/entry-extractor'
 
+const HTML_URL = 'https://github.com/owner/repo/pull/123'
+
 const PULL_REQUEST_EVENT = {
   repository: {
     full_name: 'owner/repo',
@@ -12,14 +14,16 @@ const PULL_REQUEST_EVENT = {
   },
   pull_request: {
     number: 123,
-    title: 'Bumps package from 6.0 to 7.0'
+    title: 'Bumps package from 6.0 to 7.0',
+    html_url: HTML_URL
   }
 }
 
 const PULL_REQUEST_EVENT_ODD_PACKAGE_NIL_REPO = {
   pull_request: {
     number: 123,
-    title: 'Bumps @package-with_odd_characters+ from 6.0 to 7.0'
+    title: 'Bumps @package-with_odd_characters+ from 6.0 to 7.0',
+    html_url: HTML_URL
   }
 }
 
@@ -34,7 +38,8 @@ const PULL_REQUEST_EVENT_ALPHA_TO_BETA = {
   },
   pull_request: {
     number: 123,
-    title: 'Bumps package-with-dashes from 6.0-alpha to 6.0-beta'
+    title: 'Bumps package-with-dashes from 6.0-alpha to 6.0-beta',
+    html_url: HTML_URL
   }
 }
 
@@ -49,7 +54,8 @@ const PULL_REQUEST_EVENT_RUST_REQUIREMENT_UPDATE = {
   },
   pull_request: {
     number: 123,
-    title: 'Update clap requirement from ~2 to ~4'
+    title: 'Update clap requirement from ~2 to ~4',
+    html_url: HTML_URL
   }
 }
 
@@ -64,7 +70,8 @@ const PULL_REQUEST_LOWER_CASE_BUMP_WITH_PREFIX = {
   },
   pull_request: {
     number: 123,
-    title: 'a prefix: bump package from v2 to v4'
+    title: 'a prefix: bump package from v2 to v4',
+    html_url: HTML_URL
   }
 }
 
@@ -79,7 +86,8 @@ const PULL_REQUEST_LOWER_CASE_UPDATE_WITH_DOCKER_PREFIX = {
   },
   pull_request: {
     number: 123,
-    title: '[docker]: update deps from v2 to v4'
+    title: '[docker]: update deps from v2 to v4',
+    html_url: HTML_URL
   }
 }
 
@@ -94,6 +102,7 @@ const PULL_REQUEST_WITH_MULTIPLE_ENTRIES_IN_BODY = {
   },
   pull_request: {
     number: 123,
+    html_url: HTML_URL,
     title: 'bump package, another-packager, and another package',
     body: `Updates \`package\` from 0.30.7 to 0.32.6
 
@@ -121,6 +130,7 @@ const PULL_REQUEST_WITH_COMMITS_IN_BODY = {
   },
   pull_request: {
     number: 123,
+    html_url: HTML_URL,
     title: 'bump package, another-packager, and another package',
     body: `Updates \`package\` from 0.30.7 to 0.32.6
 
@@ -143,6 +153,7 @@ const PULL_REQUEST_MULTIPLE_ENTRIES_WITHOUT_OLD_VERSION_IN_BODY = {
   },
   pull_request: {
     number: 123,
+    html_url: HTML_URL,
     title: 'bump package, another-packager, and another package',
     body: `Updates \`package\` to 0.32.6
 
@@ -174,6 +185,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('6.0')
     expect(entry.newVersion).toStrictEqual('7.0')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts package and -alpha -beta versions', async () => {
@@ -184,6 +196,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('6.0-alpha')
     expect(entry.newVersion).toStrictEqual('6.0-beta')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts package with odd package name', async () => {
@@ -196,6 +209,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toBeUndefined()
     expect(entry.oldVersion).toStrictEqual('6.0')
     expect(entry.newVersion).toStrictEqual('7.0')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts package with rust style requirement update', async () => {
@@ -208,6 +222,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('~2')
     expect(entry.newVersion).toStrictEqual('~4')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts package with prefix and lowercase bump', async () => {
@@ -220,6 +235,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('v2')
     expect(entry.newVersion).toStrictEqual('v4')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts docker deps with prefix and lowercase update', async () => {
@@ -232,6 +248,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('v2')
     expect(entry.newVersion).toStrictEqual('v4')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts multiple entries from body', async () => {
@@ -246,18 +263,21 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('0.30.7')
     expect(entry.newVersion).toStrictEqual('0.32.6')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
 
     entry = entries[1]
     expect(entry.package).toStrictEqual('another-package')
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('4.25.7')
     expect(entry.newVersion).toStrictEqual('5.12.9')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
 
     entry = entries[2]
     expect(entry.package).toStrictEqual('yet-another-package')
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('2.24.0')
     expect(entry.newVersion).toStrictEqual('3.12.3')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts multiple entries from body, skipping commits in a list', async () => {
@@ -270,6 +290,7 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('0.30.7')
     expect(entry.newVersion).toStrictEqual('0.32.6')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 
   test('extracts multiple entries from body, old version not provided', async () => {
@@ -284,17 +305,20 @@ describe('the dependabot extractor', () => {
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toBeUndefined()
     expect(entry.newVersion).toStrictEqual('0.32.6')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
 
     entry = entries[1]
     expect(entry.package).toStrictEqual('another-package')
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toBeUndefined()
     expect(entry.newVersion).toStrictEqual('5.12.9')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
 
     entry = entries[2]
     expect(entry.package).toStrictEqual('yet-another-package')
     expect(entry.repository).toStrictEqual('owner/repo')
     expect(entry.oldVersion).toStrictEqual('2.24.0')
     expect(entry.newVersion).toStrictEqual('3.12.3')
+    expect(entry.pullRequestUrl).toStrictEqual(HTML_URL)
   })
 })
