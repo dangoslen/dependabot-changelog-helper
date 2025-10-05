@@ -259,6 +259,10 @@ export class DefaultChangelogUpdater implements ChangelogUpdater {
 
   private buildPullRequestLink(entry: VersionEntry): string {
     const number = entry.pullRequestNumber
+    // If we have a URL, use that
+    if (entry.pullRequestUrl) {
+      return `[#${number}](${entry.pullRequestUrl})`
+    }
     return entry.repository
       ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
       : `#${number}`
