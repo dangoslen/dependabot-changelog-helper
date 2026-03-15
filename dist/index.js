@@ -186,6 +186,10 @@ class DefaultChangelogUpdater {
     }
     buildPullRequestLink(entry) {
         const number = entry.pullRequestNumber;
+        // If we have a URL, use that
+        if (entry.pullRequestUrl) {
+            return `[#${number}](${entry.pullRequestUrl})`;
+        }
         return entry.repository
             ? `[#${number}](https://github.com/${entry.repository}/pull/${number})`
             : `#${number}`;
@@ -396,12 +400,14 @@ class DependabotExtractor {
     }
     getEntries(event) {
         const pullRequestNumber = event.pull_request.number;
+        const pullRequestUrl = event.pull_request.html_url;
         const repository = event.repository?.full_name;
         const titleResult = this.regex.exec(event.pull_request.title);
         if (titleResult !== null) {
             return [
                 {
                     pullRequestNumber,
+                    pullRequestUrl,
                     repository,
                     package: titleResult[1],
                     oldVersion: titleResult[2],
@@ -410,13 +416,13 @@ class DependabotExtractor {
             ];
         }
         const body = event.pull_request.body ?? '';
-        const entries = this.getEntriesFromBody(pullRequestNumber, repository, body);
+        const entries = this.getEntriesFromBody(pullRequestNumber, pullRequestUrl, repository, body);
         if (entries.length === 0) {
             throw new Error('No dependabot entries! found');
         }
         return entries;
     }
-    getEntriesFromBody(pullRequestNumber, repository, body) {
+    getEntriesFromBody(pullRequestNumber, pullRequestUrl, repository, body) {
         // Instead of dealing with multiline strings, split the body into lines
         // and check each line individually
         const lines = body.split(os_1.EOL);
@@ -426,13 +432,17 @@ class DependabotExtractor {
             if (match === null) {
                 continue;
             }
+            // Remove backticks from the package name
+            const pckge = match[1].replaceAll('`', '');
+            const oldVersion = match[2];
+            const newVersion = match[3];
             entries.push({
                 pullRequestNumber,
+                pullRequestUrl,
                 repository,
-                // Remove redundant '`' characters on packages pulled from the body
-                package: match[1].replaceAll('`', ''),
-                oldVersion: match[2],
-                newVersion: match[3]
+                package: pckge,
+                oldVersion,
+                newVersion
             });
         }
         return entries;
@@ -518,6 +528,7 @@ class RenovateExtractor {
                     if (pkgName && versions) {
                         entries.push({
                             pullRequestNumber: event.pull_request?.number || 0,
+                            pullRequestUrl: event.pull_request?.html_url,
                             repository: undefined,
                             package: pkgName,
                             oldVersion: versions.oldVersion,

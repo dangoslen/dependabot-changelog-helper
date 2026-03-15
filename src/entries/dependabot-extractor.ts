@@ -23,12 +23,14 @@ export class DependabotExtractor implements EntryExtractor {
 
   getEntries(event: WebhookPayload): VersionEntry[] {
     const pullRequestNumber: number = event.pull_request!.number
+    const pullRequestUrl = event.pull_request!.html_url
     const repository: string | undefined = event.repository?.full_name
     const titleResult = this.regex.exec(event.pull_request!.title)
     if (titleResult !== null) {
       return [
         {
           pullRequestNumber,
+          pullRequestUrl,
           repository,
           package: titleResult[1],
           oldVersion: titleResult[2],
@@ -38,7 +40,12 @@ export class DependabotExtractor implements EntryExtractor {
     }
 
     const body = event.pull_request!.body ?? ''
-    const entries = this.getEntriesFromBody(pullRequestNumber, repository, body)
+    const entries = this.getEntriesFromBody(
+      pullRequestNumber,
+      pullRequestUrl,
+      repository,
+      body
+    )
     if (entries.length === 0) {
       throw new Error('No dependabot entries! found')
     }
@@ -48,6 +55,7 @@ export class DependabotExtractor implements EntryExtractor {
 
   getEntriesFromBody(
     pullRequestNumber: number,
+    pullRequestUrl: string | undefined,
     repository: string | undefined,
     body: string
   ): VersionEntry[] {
@@ -60,14 +68,18 @@ export class DependabotExtractor implements EntryExtractor {
       if (match === null) {
         continue
       }
+
+      // Remove backticks from the package name
+      const pckge = match[1].replaceAll('`', '')
+      const oldVersion = match[2]
+      const newVersion = match[3]
       entries.push({
         pullRequestNumber,
+        pullRequestUrl,
         repository,
-
-        // Remove redundant '`' characters on packages pulled from the body
-        package: match[1].replaceAll('`', ''),
-        oldVersion: match[2],
-        newVersion: match[3]
+        package: pckge,
+        oldVersion,
+        newVersion
       })
     }
     return entries

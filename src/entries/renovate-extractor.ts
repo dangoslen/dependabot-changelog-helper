@@ -55,6 +55,7 @@ export class RenovateExtractor implements EntryExtractor {
           if (pkgName && versions) {
             entries.push({
               pullRequestNumber: event.pull_request?.number || 0,
+              pullRequestUrl: event.pull_request?.html_url,
               repository: undefined,
               package: pkgName,
               oldVersion: versions.oldVersion,

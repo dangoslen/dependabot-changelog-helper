@@ -2,6 +2,7 @@ import {WebhookPayload} from '@actions/github/lib/interfaces'
 
 export interface VersionEntry {
   pullRequestNumber: number
+  pullRequestUrl?: string
   repository: string | undefined
   package: string
   oldVersion?: string
