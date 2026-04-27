@@ -2,7 +2,6 @@
     <img src="https://github.com/dangoslen/dependabot-changelog-helper/actions/workflows/pull-request.yml/badge.svg" alt="build" />
     <img src="https://img.shields.io/github/v/release/dangoslen/dependabot-changelog-helper?color=orange&label=Latest" alt="latest version" />
     <img src="./coverage/badge.svg" alt="coverage badge" />
-    <a href="https://github.com/search?q=dangoslen+dependabot-changelog-helper+path:.github/workflows+language:YAML&type=Code"><img src="https://img.shields.io/endpoint?url=https://dangoslen.github.io/dependabot-changelog-helper/dependabot-changelog-helper.json" alt="count of usage"></a>
 </p>
 
 ## Dependabot Changelog Helper
@@ -50,7 +49,7 @@ jobs:
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: dangoslen/dependabot-changelog-helper@v3
+      - uses: dangoslen/dependabot-changelog-helper@v4.3.0
         with:
           activationLabels: dependencies
           changelogPath: './CHANGELOG.md'
