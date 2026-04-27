@@ -4,6 +4,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [UNRELEASED]
 
+### Dependencies
+
+- Bump `stefanzweifel/git-auto-commit-action` from 6 to 7 ([#421](https://github.com/dangoslen/dependabot-changelog-helper/pull/421))
+
 ## [4.2.1]
 
 ### Fixed
