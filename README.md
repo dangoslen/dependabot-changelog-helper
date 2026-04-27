@@ -50,7 +50,7 @@ jobs:
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: dangoslen/dependabot-changelog-helper@v3
+      - uses: dangoslen/dependabot-changelog-helper@v4.3.0
         with:
           activationLabels: dependencies
           changelogPath: './CHANGELOG.md'
